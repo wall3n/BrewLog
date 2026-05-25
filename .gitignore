@@ -29,3 +29,6 @@ dist-ssr
 
 # Vercel
 .vercel
+
+# Brainstorming session files
+.superpowers/

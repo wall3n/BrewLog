@@ -20,13 +20,13 @@ const MOBILE_NAV = [
   { path: '/',          label: 'Home',      icon: 'home' },
   { path: '/history',   label: 'History',   icon: 'history' },
   { path: '/beans',     label: 'Beans',     icon: 'bean' },
-  { path: '/analytics', label: 'Analytics', icon: 'chart' },
+  { path: '/settings',  label: 'Settings',  icon: 'settings' },
 ];
 
 const MORE_ITEMS = [
   { path: '/recipes',   label: 'Recipes',   icon: 'recipe' },
   { path: '/equipment', label: 'Equipment', icon: 'equipment' },
-  { path: '/settings',  label: 'Settings',  icon: 'settings' },
+  { path: '/analytics', label: 'Analytics', icon: 'chart' },
 ];
 
 function ThemeApplier() {
