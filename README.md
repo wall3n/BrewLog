@@ -39,6 +39,8 @@ All data stays on your device in IndexedDB. Nothing is sent anywhere.
 - **Dark / light / system theme** — persisted per device
 - **JSON export & import** — full backup and restore from Settings
 - **Offline-first PWA** — install via Safari or Chrome, fully functional with no network
+- **Responsive layout** — sidebar navigation on desktop (≥1024 px), bottom tab bar on mobile via CSS media queries
+- **iOS home screen ready** — apple-touch-icon, status bar style, standalone display, no-flash theme init
 
 ---
 
@@ -80,8 +82,17 @@ npm run lint     # ESLint
 
 ### Install as PWA
 
-- **iPhone / iPad**: open in Safari → Share → Add to Home Screen
-- **MacOS / Windows / Android**: open in Chrome → install prompt in address bar
+Build first — the dev server does not register the service worker:
+
+```bash
+npm run build
+npm run preview
+```
+
+- **iPhone / iPad**: `npm run preview -- --host`, find your local IP (`ipconfig getifaddr en0`), open `http://192.168.x.x:4173` in Safari → Share → Add to Home Screen
+- **MacOS / Windows / Android**: open in Chrome → install icon in address bar (or ⋮ → Install app)
+
+Run a Lighthouse audit in Chrome DevTools → Lighthouse → Progressive Web App to verify full installability.
 
 ---
 
@@ -106,6 +117,13 @@ src/
 ├── utils/          # ratioCalc, scaChart, formatters, methodDefaults
 ├── styles/         # global.css — CSS custom property design token system
 └── router.tsx      # createBrowserRouter — all routes
+
+scripts/
+└── gen-icons.mjs   # Generates PWA PNG icons (192, 512, 180 px) — pure Node.js, no extra deps
+
+public/
+├── favicon.svg
+└── icons/          # icon-192.png, icon-512.png, apple-touch-icon.png
 ```
 
 ---
@@ -132,7 +150,9 @@ src/
 | Analytics dashboard | Done |
 | SCA extraction chart | Done |
 | Settings + JSON export/import | Done |
-| PWA / offline support | Done |
+| PWA / offline support | Done — Workbox precache, skipWaiting, clientsClaim |
+| Responsive layout (sidebar ↔ bottom nav) | Done — CSS media queries at 1024 px |
+| iOS install support | Done — apple-touch-icon, meta tags, no-FOUC theme init |
 | Dark / light theme | Done |
 | Unit tests | In progress |
 | Cloud sync (Supabase) | Planned — v2 |
