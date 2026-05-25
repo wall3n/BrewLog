@@ -9,10 +9,12 @@ interface AppState {
   extractions: Extraction[];
   settings: AppSettings;
   loading: boolean;
+  showWelcome: boolean;
 }
 
 type AppAction =
   | { type: 'LOADED'; payload: Omit<AppState, 'loading'> }
+  | { type: 'DISMISS_WELCOME' }
   | { type: 'ADD_EXTRACTION'; payload: Extraction }
   | { type: 'UPDATE_EXTRACTION'; payload: Extraction }
   | { type: 'DELETE_EXTRACTION'; id: number }
@@ -32,12 +34,13 @@ const defaultSettings: AppSettings = {
 
 const initialState: AppState = {
   beans: [], equipment: [], recipes: [], extractions: [],
-  settings: defaultSettings, loading: true,
+  settings: defaultSettings, loading: true, showWelcome: false,
 };
 
 function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
     case 'LOADED': return { ...action.payload, loading: false };
+    case 'DISMISS_WELCOME': return { ...state, showWelcome: false };
     case 'ADD_EXTRACTION': return { ...state, extractions: [action.payload, ...state.extractions] };
     case 'UPDATE_EXTRACTION': return { ...state, extractions: state.extractions.map(e => e.id === action.payload.id ? action.payload : e) };
     case 'DELETE_EXTRACTION': return { ...state, extractions: state.extractions.filter(e => e.id !== action.id) };
@@ -65,12 +68,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function loadAll() {
-      const [beans, equipment, recipes, extractions, settingsArr] = await Promise.all([
+      const [beans, equipment, recipes, extractions, settingsArr, settingsCount] = await Promise.all([
         db.beans.orderBy('createdAt').toArray(),
         db.equipment.orderBy('createdAt').toArray(),
         db.recipes.orderBy('createdAt').toArray(),
         db.extractions.orderBy('createdAt').reverse().toArray(),
         db.settings.toArray(),
+        db.settings.count(),
       ]);
       dispatch({
         type: 'LOADED',
@@ -80,6 +84,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           recipes,
           extractions,
           settings: settingsArr[0] ?? defaultSettings,
+          showWelcome: settingsCount === 0,
         },
       });
     }

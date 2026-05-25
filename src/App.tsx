@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useApp } from './context/AppContext';
 import { Icon } from './components/Icons';
 import { FAB } from './components/UI';
+import { WelcomeModal } from './screens/Welcome/WelcomeModal';
 
 const NAV_ITEMS = [
   { path: '/',          label: 'Home',      icon: 'home' },
@@ -19,6 +21,11 @@ const MOBILE_NAV = [
   { path: '/history',   label: 'History',   icon: 'history' },
   { path: '/beans',     label: 'Beans',     icon: 'bean' },
   { path: '/analytics', label: 'Analytics', icon: 'chart' },
+];
+
+const MORE_ITEMS = [
+  { path: '/recipes',   label: 'Recipes',   icon: 'recipe' },
+  { path: '/equipment', label: 'Equipment', icon: 'equipment' },
   { path: '/settings',  label: 'Settings',  icon: 'settings' },
 ];
 
@@ -38,11 +45,26 @@ function ThemeApplier() {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { state } = useApp();
+  const [showMore, setShowMore] = useState(false);
   const isLog = location.pathname === '/log';
 
   function isActive(path: string): boolean {
     if (path === '/') return location.pathname === '/';
     return location.pathname.startsWith(path);
+  }
+
+  const isMoreActive = MORE_ITEMS.some(n => isActive(n.path));
+
+  if (state.loading) return <ThemeApplier />;
+
+  if (state.showWelcome) {
+    return (
+      <>
+        <ThemeApplier />
+        <WelcomeModal />
+      </>
+    );
   }
 
   return (
@@ -78,9 +100,34 @@ export default function App() {
               <span>{n.label}</span>
             </button>
           ))}
+          <button className={isMoreActive ? 'active' : ''} onClick={() => setShowMore(true)}>
+            <Icon name="more" size={20} />
+            <span>More</span>
+          </button>
         </nav>
 
         {!isLog && <FAB onClick={() => navigate('/log')} />}
+
+        {showMore && (
+          <>
+            <div className="more-sheet-backdrop" onClick={() => setShowMore(false)} />
+            <div className="more-sheet">
+              <div className="more-sheet-handle" />
+              <div className="more-sheet-grid">
+                {MORE_ITEMS.map(n => (
+                  <button
+                    key={n.path}
+                    className={`more-sheet-item ${isActive(n.path) ? 'active' : ''}`}
+                    onClick={() => { navigate(n.path); setShowMore(false); }}
+                  >
+                    <Icon name={n.icon} size={24} />
+                    <span>{n.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

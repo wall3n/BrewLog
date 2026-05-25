@@ -68,9 +68,13 @@ export function useDb() {
 
     // Settings
     async updateSettings(data: Partial<AppSettings>): Promise<void> {
+      const ts = now();
       const existing = await db.settings.toArray();
       if (existing[0]?.id) {
-        await db.settings.update(existing[0].id, data);
+        await db.settings.update(existing[0].id, data as Partial<AppSettings>);
+      } else {
+        const base: AppSettings = { weightUnit: 'g', tempUnit: 'C', volumeUnit: 'ml', ratingScale: '5', defaultMethod: 'espresso', theme: 'system' };
+        await db.settings.add({ ...base, ...data, createdAt: ts, updatedAt: ts } as AppSettings & { createdAt: string; updatedAt: string });
       }
       dispatch({ type: 'UPDATE_SETTINGS', payload: data });
     },
