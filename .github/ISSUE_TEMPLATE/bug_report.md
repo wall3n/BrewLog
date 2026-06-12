@@ -7,8 +7,7 @@ assignees: ''
 ---
 
 ## Description
-
-A clear, concise description of the bug.
+_A clear, concise description of the bug._
 
 ## Steps to Reproduce
 
@@ -17,19 +16,15 @@ A clear, concise description of the bug.
 3. See error
 
 ## Expected Behavior
-
-What you expected to happen.
+_What you expected to happen._
 
 ## Actual Behavior
-
-What actually happened.
+_What actually happened._
 
 ## Screenshots / Screen Recording
-
-If applicable, add screenshots or a screen recording.
+_If applicable, add screenshots or a screen recording._
 
 ## Environment
-
 - Device: [e.g. iPhone 15, MacBook Pro M2]
 - Browser: [e.g. Safari 17, Chrome 124]
 - OS: [e.g. iOS 17.4, macOS 14.4]
@@ -37,5 +32,4 @@ If applicable, add screenshots or a screen recording.
 - Installed as PWA: [yes / no]
 
 ## Additional Context
-
-Any other context about the problem (e.g. only happens offline, only with a specific brewing method, etc.).
+_Any other context about the problem (e.g. only happens offline, only with a specific brewing method, etc.)._
