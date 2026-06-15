@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
+import i18n from '../i18n';
 import { db } from '../db/schema';
 import type { Bean, Equipment, Recipe, Extraction, AppSettings } from '../db/types';
 
@@ -29,7 +30,7 @@ type AppAction =
 
 const defaultSettings: AppSettings = {
   weightUnit: 'g', tempUnit: 'C', volumeUnit: 'ml',
-  ratingScale: '5', defaultMethod: 'espresso', theme: 'system',
+  ratingScale: '5', defaultMethod: 'espresso', theme: 'system', language: 'auto',
 };
 
 const initialState: AppState = {
@@ -76,6 +77,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         db.settings.toArray(),
         db.settings.count(),
       ]);
+      const settings = settingsArr[0] ?? defaultSettings;
+      if (settings.language && settings.language !== 'auto') {
+        i18n.changeLanguage(settings.language);
+      }
       dispatch({
         type: 'LOADED',
         payload: {
@@ -83,7 +88,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
           equipment,
           recipes,
           extractions,
-          settings: settingsArr[0] ?? defaultSettings,
+          settings,
           showWelcome: settingsCount === 0,
         },
       });

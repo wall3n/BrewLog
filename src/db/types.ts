@@ -80,6 +80,7 @@ export interface AppSettings {
   ratingScale: '5' | '10';
   defaultMethod: string;
   theme: 'system' | 'light' | 'dark';
+  language: 'auto' | 'en' | 'es' | 'fr';
 }
 
 export interface MethodConfig {
