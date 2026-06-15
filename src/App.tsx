@@ -108,7 +108,7 @@ export default function App() {
           </button>
         </nav>
 
-        {!isLog && <FAB onClick={() => navigate('/log')} />}
+        {!isLog && !showMore && state.modalDepth === 0 && <FAB onClick={() => navigate('/log')} />}
 
         {showMore && (
           <>
