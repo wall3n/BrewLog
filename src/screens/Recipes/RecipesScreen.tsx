@@ -21,7 +21,7 @@ export function RecipesScreen() {
   const [q, setQ] = useState('');
   const [sort, setSort] = useState<'recent' | 'name' | 'fastest' | 'doseDesc' | 'yieldDesc' | 'createdDesc'>('recent');
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showFilters, setShowFilters] = useState(false);
 
   const [totalCount, setTotalCount] = useState(0);
@@ -42,7 +42,7 @@ export function RecipesScreen() {
 
     db.getRecipesTotalCount().then(setRecipesTotalCount);
     db.getRecipeMethods().then(setRecipeMethods);
-  }, [db, method, q, sort, page]);
+  }, [db, method, q, sort, page, itemsPerPage]);
 
   useEffect(() => {
     loadRecipes();
@@ -178,7 +178,16 @@ export function RecipesScreen() {
                 </div>
               ))}
             </StagList>
-            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              itemsPerPage={itemsPerPage}
+              onItemsPerPageChange={(limit) => {
+                setItemsPerPage(limit);
+                setPage(1);
+              }}
+            />
           </>
         )}
       </div>

@@ -23,6 +23,7 @@
     "prev": "Précédent",
     "next": "Suivant",
     "pageOf": "{{current}} / {{total}}",
+    "perPage": "Par page",
     "filters": "Filtres",
     "addFilter": "Filtrer",
     "filterBy": "Filtrer par"

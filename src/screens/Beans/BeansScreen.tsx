@@ -80,7 +80,7 @@ export function BeansScreen() {
   const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showFilters, setShowFilters] = useState(false);
 
   const loadBeans = useCallback(() => {
@@ -105,7 +105,7 @@ export function BeansScreen() {
       setTabCounts({ active, finished, wishlist });
       setBeansTotalCount(totalAll);
     });
-  }, [db, tab, q, roastFilter, sort, page]);
+  }, [db, tab, q, roastFilter, sort, page, itemsPerPage]);
 
   useEffect(() => {
     loadBeans();
@@ -213,7 +213,16 @@ export function BeansScreen() {
         }
       </div>
 
-      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={(limit) => {
+          setItemsPerPage(limit);
+          setPage(1);
+        }}
+      />
 
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('beans.add')}>
         <QuickAddBean onSave={async (payload) => { await db.addBean(payload); await loadBeans(); setAdding(false); }} />

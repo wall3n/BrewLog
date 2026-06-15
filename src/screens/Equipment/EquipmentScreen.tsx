@@ -43,7 +43,7 @@ export function EquipmentScreen() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'usesDesc'|'usesAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showFilters, setShowFilters] = useState(false);
 
   const loadEquipment = useCallback(() => {
@@ -59,7 +59,7 @@ export function EquipmentScreen() {
     });
 
     db.getEquipmentTotalCount().then(setEquipmentTotalCount);
-  }, [db, typeFilter, q, sort, page]);
+  }, [db, typeFilter, q, sort, page, itemsPerPage]);
 
   useEffect(() => {
     loadEquipment();
@@ -178,7 +178,16 @@ export function EquipmentScreen() {
         )
       }
 
-      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={(limit) => {
+          setItemsPerPage(limit);
+          setPage(1);
+        }}
+      />
 
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('equipment.addEquipment')}>
         <QuickAddEquipment onSave={async (payload) => { await db.addEquipment({ ...payload, usage: 0 }); await loadEquipment(); setAdding(false); }} />

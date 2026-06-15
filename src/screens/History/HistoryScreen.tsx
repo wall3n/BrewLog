@@ -56,7 +56,7 @@ export function HistoryScreen() {
 
   const [sort, setSort] = useState<'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'>('dateDesc');
   const [page, setPage] = useState(1);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showFilters, setShowFilters] = useState(false);
 
   const [totalCount, setTotalCount] = useState(0);
@@ -83,7 +83,7 @@ export function HistoryScreen() {
 
     db.getExtractionsTotalCount().then(setExtractionsTotalCount);
     db.getExtractionMethods().then(setMethods);
-  }, [db, q, methodFilter, flagFilter, ratingFilter, sort, page]);
+  }, [db, q, methodFilter, flagFilter, ratingFilter, sort, page, itemsPerPage]);
 
   useEffect(() => {
     loadExtractions();
@@ -211,7 +211,16 @@ export function HistoryScreen() {
         }
       </div>
 
-      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={(limit) => {
+          setItemsPerPage(limit);
+          setPage(1);
+        }}
+      />
     </div>
   );
 }
