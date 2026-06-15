@@ -59,8 +59,15 @@ export default function App() {
   const isMoreActive = MORE_ITEMS.some(n => isActive(n.path));
 
   useEffect(() => {
-    document.body.style.overflow = showMore ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    const mainEl = document.querySelector('.main');
+    if (mainEl instanceof HTMLElement) {
+      mainEl.style.overflow = showMore ? 'hidden' : '';
+    }
+    return () => {
+      if (mainEl instanceof HTMLElement) {
+        mainEl.style.overflow = '';
+      }
+    };
   }, [showMore]);
 
   if (state.loading) return <ThemeApplier />;
