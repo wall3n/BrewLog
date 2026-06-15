@@ -81,6 +81,11 @@ export function useDb() {
       const ts = now();
       await db.recipes.add({ ...data, createdAt: ts, updatedAt: ts });
     },
+    async updateRecipe(data: Partial<Recipe> & { id: number }): Promise<void> {
+      const existing = await db.recipes.get(data.id);
+      if (!existing) return;
+      await db.recipes.put({ ...existing, ...data, updatedAt: now() });
+    },
     async deleteRecipe(id: number): Promise<void> {
       await db.recipes.delete(id);
     },
