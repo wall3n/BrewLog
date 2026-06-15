@@ -1,18 +1,2 @@
-.extractionCard  { padding: 16px 20px; }
-.cardContent     { align-items: flex-start; gap: 12px; }
-.cardLeft        { flex: 1; min-width: 0; }
-.beanName        { font-family: var(--serif); font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.metaRow         { font-size: 12px; }
-.cardRight       { align-items: flex-end; gap: 6px; }
-.flagLabel       { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
-.flagDialled     { color: var(--success); }
-.flagAdjust      { color: var(--warning); }
-.flagFail        { color: var(--danger); }
-.beanCardContent { margin-bottom: 12px; align-items: flex-start; }
-.beanCardLeft    { flex: 1; min-width: 0; }
-.beanCardName    { font-family: var(--serif); font-size: 17px; line-height: 1.2; }
-.beanCardRoaster { font-size: 11px; letter-spacing: 0.04em; }
-.beanCardOrigin  { font-size: 10px; letter-spacing: 0.05em; }
-.beanCardBottom  { align-items: flex-end; }
-.statSuffix      { font-size: 14px; margin-left: 6px; }
-.seeAllBtn       { width: auto; padding: 4px 8px; }
+/* Home screen styles — weekly dashboard */
+/* Most layout uses global rank-row / week-stats / home-min classes from global.css */

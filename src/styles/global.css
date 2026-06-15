@@ -374,6 +374,66 @@ input[type=range].brew-slider::-moz-range-thumb { width: 14px; height: 14px; bor
 .more-sheet-item.active { color: var(--accent); background: var(--accent-bg); border-color: var(--accent-dim); }
 .more-sheet-item.active svg { stroke: var(--accent); }
 
+/* ── Minimal home (weekly dashboard) ─────────────────────── */
+.home-min { max-width: 680px; }
+.home-hero { margin-bottom: 48px; }
+.home-hero .t-upper { margin-bottom: 14px; display: block; }
+.home-hero h1 { font-size: 44px; margin: 0; line-height: 1; }
+@media (max-width: 1023px) {
+  .home-hero { margin-bottom: 36px; }
+  .home-hero h1 { font-size: 34px; }
+}
+.home-block { margin-bottom: 44px; }
+.home-block:last-child { margin-bottom: 0; }
+.block-label {
+  display: flex; align-items: baseline; justify-content: space-between;
+  padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--border);
+}
+.block-link {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: transparent; border: none; cursor: pointer;
+  font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-secondary); transition: color 120ms;
+}
+.block-link:hover { color: var(--accent); }
+/* week stats */
+.week-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 1023px) { .week-stats { grid-template-columns: repeat(2, 1fr); gap: 28px 16px; } }
+.wstat { display: flex; flex-direction: column; gap: 8px; }
+.wstat .wv { font-family: var(--serif); font-size: 40px; line-height: 0.95; letter-spacing: -0.02em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.wstat .wv .wu { font-family: var(--mono); font-size: 15px; color: var(--text-tertiary); margin-left: 3px; letter-spacing: 0; }
+.wstat .wl { font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-tertiary); }
+@media (max-width: 1023px) { .wstat .wv { font-size: 34px; } }
+/* ranked list rows */
+.rank-list { display: flex; flex-direction: column; }
+.rank-row {
+  display: flex; align-items: center; gap: 18px; width: 100%; text-align: left;
+  background: transparent; border: none; cursor: pointer;
+  padding: 16px 4px; border-bottom: 1px solid var(--border); transition: padding-left 140ms ease;
+}
+.rank-row:last-child { border-bottom: none; }
+.rank-row:hover { padding-left: 10px; }
+.rank-n { font-family: var(--serif); font-size: 26px; line-height: 1; color: var(--text-tertiary); width: 26px; flex-shrink: 0; font-variant-numeric: tabular-nums; text-align: center; }
+.rank-row:hover .rank-n { color: var(--accent); }
+.rank-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.rank-title { font-family: var(--serif); font-size: 18px; line-height: 1.1; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+.rank-metric { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+.rank-metric .rm-v { font-family: var(--mono); font-size: 22px; font-weight: 500; line-height: 1; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.rank-metric .rm-l { font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-tertiary); }
+
+/* ── Recipe filter bar ───────────────────────────────────── */
+.filter-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 24px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.filter-bar::-webkit-scrollbar { display: none; }
+.recipe-meta-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+/* recipe stage editor */
+.stage-edit-row { display: grid; grid-template-columns: 24px 1fr 76px 76px 28px; gap: 10px; align-items: center; }
+.stage-edit-row .sn { font-family: var(--serif); font-size: 18px; color: var(--text-tertiary); text-align: center; }
+.stage-mini-input { background: transparent; border: none; border-bottom: 1px solid var(--border); padding: 7px 0; font-family: var(--mono); font-size: 13px; color: var(--text-primary); width: 100%; text-align: right; font-variant-numeric: tabular-nums; }
+.stage-mini-input:focus { border-color: var(--accent); outline: none; }
+.icon-btn { background: transparent; border: none; color: var(--text-tertiary); cursor: pointer; padding: 4px; display: inline-flex; border-radius: 6px; transition: color 120ms, background 120ms; }
+.icon-btn:hover { color: var(--danger); background: var(--bg-elevated); }
+
 /* ── Welcome overlay ─────────────────────────────────────── */
 .welcome-overlay {
   position: fixed; inset: 0; z-index: 100;
