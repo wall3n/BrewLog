@@ -1,4 +1,7 @@
 {
+  "app": {
+    "tagline": "YOUR EXTRACTION JOURNAL"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -10,11 +13,60 @@
     "export": "Export",
     "import": "Import",
     "loading": "Loading…",
+    "saving": "Saving…",
+    "remove": "Remove",
     "noData": "No data yet",
     "search": "Search",
     "continue": "Continue",
     "skip": "Skip",
     "unknown": "Unknown"
+  },
+  "welcome": {
+    "quickSetup": "✦ Quick setup",
+    "startFresh": "Start fresh",
+    "demoData": "Demo data",
+    "tagline": "YOUR EXTRACTION JOURNAL",
+    "copy": "Track every pour. Dial in your perfect cup."
+  },
+  "wizard": {
+    "backLabel": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "step1": {
+      "title": "What do you brew most?",
+      "sub": "Sets your default method. Change any time in Settings."
+    },
+    "step2": {
+      "title": "Your units",
+      "sub": "Used across all measurements in the app.",
+      "weight": "Weight",
+      "weightG": "Grams (g)",
+      "weightOz": "Ounces (oz)",
+      "temperature": "Temperature"
+    },
+    "step3": {
+      "title": "Your current bean",
+      "sub": "Add the coffee you're brewing with right now.",
+      "beanName": "Bean name",
+      "beanNamePlaceholder": "e.g. Ethiopia Yirgacheffe",
+      "roaster": "Roaster",
+      "roasterPlaceholder": "e.g. Sample Roasters",
+      "roastLevel": "Roast level",
+      "roastLight": "Light",
+      "roastLightDesc": "Floral, fruity, bright",
+      "roastMedium": "Medium",
+      "roastMediumDesc": "Balanced, caramel, nutty",
+      "roastDark": "Dark",
+      "roastDarkDesc": "Bold, smoky, bittersweet"
+    },
+    "step4": {
+      "title": "Your equipment",
+      "sub": "Grinder, machine, scale — add what you use.",
+      "typePlaceholder": "Type…",
+      "namePlaceholder": "Name or model",
+      "addAnother": "+ Add another",
+      "skip": "Skip for now"
+    }
   },
   "nav": {
     "home": "Home",
@@ -294,7 +346,22 @@
     "new": "New recipe",
     "noRecipes": "No recipes",
     "noRecipesBody": "Save a brew as a recipe to reuse parameters.",
-    "used": "Used {{date}}"
+    "used": "Used {{date}}",
+    "backToRecipes": "Back to recipes",
+    "notFound": "Recipe not found",
+    "neverUsed": "Never used",
+    "lastUsed": "Last used {{date}}",
+    "fields": {
+      "dose": "Dose",
+      "yield": "Yield",
+      "ratio": "Ratio",
+      "time": "Time",
+      "temp": "Temp"
+    },
+    "pourSchedule": "Pour schedule",
+    "startBrew": "Start brew",
+    "deleteRecipe": "Delete recipe",
+    "confirmDelete": "Delete this recipe?"
   },
   "analytics": {
     "title": "Analytics",

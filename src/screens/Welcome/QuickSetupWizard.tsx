@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Icon } from '../../components/Icons';
 import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
@@ -41,6 +42,7 @@ export function QuickSetupWizard({ onBack }: Props) {
   const { dispatch } = useApp();
   const db = useDb();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   function patch(update: Partial<WizardData>) {
     setData(prev => ({ ...prev, ...update }));
@@ -90,7 +92,7 @@ export function QuickSetupWizard({ onBack }: Props) {
   return (
     <div className="wizard-container">
       <div className="wizard-header">
-        <button className="wizard-back-btn" onClick={handleBack} aria-label="Back">
+        <button className="wizard-back-btn" onClick={handleBack} aria-label={t('wizard.backLabel')}>
           <Icon name="arrowLeft" size={20} />
         </button>
         <div className="wizard-dots">
@@ -112,7 +114,7 @@ export function QuickSetupWizard({ onBack }: Props) {
             onClick={() => finish(false)}
             disabled={saving}
           >
-            {saving ? 'Saving…' : 'Finish'}
+            {saving ? t('common.saving') : t('wizard.finish')}
           </button>
         ) : (
           <button
@@ -120,7 +122,7 @@ export function QuickSetupWizard({ onBack }: Props) {
             onClick={handleNext}
             disabled={!isStepValid()}
           >
-            Next <Icon name="arrowRight" size={16} />
+            {t('wizard.next')} <Icon name="arrowRight" size={16} />
           </button>
         )}
       </div>

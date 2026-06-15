@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { METHODS } from '../../../utils/methodDefaults';
 import { Icon } from '../../../components/Icons';
 import type { WizardData } from '../QuickSetupWizard';
@@ -8,10 +9,11 @@ interface Props {
 }
 
 export function WizardStep1Method({ data, onChange }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="wizard-step">
-      <h2 className="wizard-step-title">What do you brew most?</h2>
-      <p className="wizard-step-sub">Sets your default method. Change any time in Settings.</p>
+      <h2 className="wizard-step-title">{t('wizard.step1.title')}</h2>
+      <p className="wizard-step-sub">{t('wizard.step1.sub')}</p>
       <div className="wizard-method-grid">
         {METHODS.filter(m => m.id !== 'custom').map(m => (
           <button

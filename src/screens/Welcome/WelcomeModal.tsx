@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { seedDemoData } from '../../db/seed';
@@ -7,6 +8,7 @@ import { QuickSetupWizard } from './QuickSetupWizard';
 export function WelcomeModal() {
   const { dispatch } = useApp();
   const db = useDb();
+  const { t } = useTranslation();
   const [showWizard, setShowWizard] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -30,9 +32,9 @@ export function WelcomeModal() {
         <>
           <div className="welcome-hero">
             <div className="welcome-logo">BrewLog</div>
-            <div className="welcome-tagline">YOUR EXTRACTION JOURNAL</div>
+            <div className="welcome-tagline">{t('welcome.tagline')}</div>
             <div className="welcome-divider" />
-            <div className="welcome-copy">Track every pour. Dial in your perfect cup.</div>
+            <div className="welcome-copy">{t('welcome.copy')}</div>
           </div>
 
           <div className="welcome-sheet">
@@ -41,7 +43,7 @@ export function WelcomeModal() {
               onClick={() => setShowWizard(true)}
               disabled={loading}
             >
-              ✦ Quick setup
+              {t('welcome.quickSetup')}
             </button>
             <div className="welcome-sheet-row">
               <button
@@ -50,7 +52,7 @@ export function WelcomeModal() {
                 onClick={handleFresh}
                 disabled={loading}
               >
-                Start fresh
+                {t('welcome.startFresh')}
               </button>
               <button
                 className="btn btn-ghost"
@@ -58,7 +60,7 @@ export function WelcomeModal() {
                 onClick={handleDemo}
                 disabled={loading}
               >
-                {loading ? 'Loading…' : 'Demo data'}
+                {loading ? t('common.loading') : t('welcome.demoData')}
               </button>
             </div>
           </div>

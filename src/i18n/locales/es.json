@@ -1,4 +1,7 @@
 {
+  "app": {
+    "tagline": "TU DIARIO DE EXTRACCIONES"
+  },
   "common": {
     "save": "Guardar",
     "cancel": "Cancelar",
@@ -10,11 +13,60 @@
     "export": "Exportar",
     "import": "Importar",
     "loading": "Cargando…",
+    "saving": "Guardando…",
+    "remove": "Eliminar",
     "noData": "Sin datos aún",
     "search": "Buscar",
     "continue": "Continuar",
     "skip": "Omitir",
     "unknown": "Desconocido"
+  },
+  "welcome": {
+    "quickSetup": "✦ Configuración rápida",
+    "startFresh": "Empezar desde cero",
+    "demoData": "Datos de demo",
+    "tagline": "TU DIARIO DE EXTRACCIONES",
+    "copy": "Registra cada extracción. Perfecciona tu taza ideal."
+  },
+  "wizard": {
+    "backLabel": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "step1": {
+      "title": "¿Qué preparas más?",
+      "sub": "Establece tu método por defecto. Cámbialo en Ajustes."
+    },
+    "step2": {
+      "title": "Tus unidades",
+      "sub": "Usadas en todas las medidas de la app.",
+      "weight": "Peso",
+      "weightG": "Gramos (g)",
+      "weightOz": "Onzas (oz)",
+      "temperature": "Temperatura"
+    },
+    "step3": {
+      "title": "Tu grano actual",
+      "sub": "Añade el café con el que estás preparando ahora.",
+      "beanName": "Nombre del grano",
+      "beanNamePlaceholder": "p.ej. Etiopía Yirgacheffe",
+      "roaster": "Tostador",
+      "roasterPlaceholder": "p.ej. Sample Roasters",
+      "roastLevel": "Nivel de tueste",
+      "roastLight": "Claro",
+      "roastLightDesc": "Floral, afrutado, brillante",
+      "roastMedium": "Medio",
+      "roastMediumDesc": "Equilibrado, caramelo, frutos secos",
+      "roastDark": "Oscuro",
+      "roastDarkDesc": "Intenso, ahumado, agridulce"
+    },
+    "step4": {
+      "title": "Tu equipo",
+      "sub": "Molino, máquina, báscula — añade lo que usas.",
+      "typePlaceholder": "Tipo…",
+      "namePlaceholder": "Nombre o modelo",
+      "addAnother": "+ Añadir otro",
+      "skip": "Omitir por ahora"
+    }
   },
   "nav": {
     "home": "Inicio",
@@ -294,7 +346,22 @@
     "new": "Nueva receta",
     "noRecipes": "Sin recetas",
     "noRecipesBody": "Guarda una preparación como receta para reutilizar parámetros.",
-    "used": "Usado {{date}}"
+    "used": "Usado {{date}}",
+    "backToRecipes": "Volver a recetas",
+    "notFound": "Receta no encontrada",
+    "neverUsed": "Nunca usada",
+    "lastUsed": "Última vez {{date}}",
+    "fields": {
+      "dose": "Dosis",
+      "yield": "Rendimiento",
+      "ratio": "Ratio",
+      "time": "Tiempo",
+      "temp": "Temp"
+    },
+    "pourSchedule": "Calendario de vertidos",
+    "startBrew": "Iniciar extracción",
+    "deleteRecipe": "Eliminar receta",
+    "confirmDelete": "¿Eliminar esta receta?"
   },
   "analytics": {
     "title": "Análisis",

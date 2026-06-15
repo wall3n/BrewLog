@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { WizardData } from '../QuickSetupWizard';
 
 interface Props {
@@ -32,19 +33,20 @@ function ToggleGroup<T extends string>({ label, options, value, onSelect }: Togg
 }
 
 export function WizardStep2Units({ data, onChange }: Props) {
+  const { t } = useTranslation();
   return (
     <div className="wizard-step">
-      <h2 className="wizard-step-title">Your units</h2>
-      <p className="wizard-step-sub">Used across all measurements in the app.</p>
+      <h2 className="wizard-step-title">{t('wizard.step2.title')}</h2>
+      <p className="wizard-step-sub">{t('wizard.step2.sub')}</p>
       <div className="wizard-unit-list">
         <ToggleGroup
-          label="Weight"
-          options={[{ value: 'g', label: 'Grams (g)' }, { value: 'oz', label: 'Ounces (oz)' }]}
+          label={t('wizard.step2.weight')}
+          options={[{ value: 'g', label: t('wizard.step2.weightG') }, { value: 'oz', label: t('wizard.step2.weightOz') }]}
           value={data.weightUnit}
           onSelect={v => onChange({ weightUnit: v })}
         />
         <ToggleGroup
-          label="Temperature"
+          label={t('wizard.step2.temperature')}
           options={[{ value: 'C', label: '°C' }, { value: 'F', label: '°F' }]}
           value={data.tempUnit}
           onSelect={v => onChange({ tempUnit: v })}
