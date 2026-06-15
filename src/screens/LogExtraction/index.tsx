@@ -5,6 +5,7 @@ import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, ProgressBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
+import css from './styles.module.css';
 import { StepMethod } from './steps/StepMethod';
 import { StepBean } from './steps/StepBean';
 import { StepEquipment } from './steps/StepEquipment';
@@ -79,14 +80,14 @@ export function LogExtractionScreen() {
 
   return (
     <div>
-      <div className="row row-between" style={{ marginBottom: 24 }}>
-        <Button variant="ghost" style={{ padding: '6px 10px' }} onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}>
+      <div className={`row row-between ${css.navRow}`}>
+        <Button variant="ghost" className={css.navBtn} onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}>
           <Icon name="arrowLeft" size={16} />
           <span>{step === 1 ? t('extraction.cancel') : t('extraction.back')}</span>
         </Button>
         <span className="t-upper">{t('extraction.step', { current: step, total: TOTAL })}</span>
       </div>
-      <div style={{ marginBottom: 32 }}>
+      <div className={css.progressWrap}>
         <ProgressBar value={step} max={TOTAL} />
       </div>
 

@@ -6,6 +6,7 @@ import { Button } from '../../../components/UI';
 import { fmtTime } from '../../../utils/formatters';
 import type { WizardDraft } from '../index';
 import type { Recipe } from '../../../db/types';
+import css from './styles.module.css';
 
 interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void; onNext: () => void; onSkip: () => void; }
 
@@ -27,17 +28,17 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
 
   return (
     <div>
-      <div className="step-meta" style={{ marginBottom: 20 }}>
+      <div className={`step-meta ${css.stepMeta}`}>
         <div className="col col-gap-4">
-          <h2 className="h-display" style={{ fontSize: 28, margin: 0 }}>{t('extraction.steps.timer.title')}</h2>
-          <span className="t-sec" style={{ fontSize: 12 }}>{t('extraction.steps.timer.subtitle')}</span>
+          <h2 className={`h-display ${css.stepTitle}`}>{t('extraction.steps.timer.title')}</h2>
+          <span className={`t-sec ${css.stepSub}`}>{t('extraction.steps.timer.subtitle')}</span>
         </div>
         <button type="button" className="skip" onClick={onSkip}>{t('extraction.steps.timer.skip')}</button>
       </div>
 
-      <div className="card" style={{ padding: 32, marginBottom: 24, textAlign: 'center' }}>
+      <div className={`card ${css.timerCard}`}>
         <div className="timer">{display}</div>
-        <div className="row row-gap-12" style={{ justifyContent: 'center', marginTop: 24 }}>
+        <div className={`row row-gap-12 ${css.timerControls}`}>
           {!isRunning
             ? <Button onClick={start} leftIcon="play">{t('extraction.steps.timer.start')}</Button>
             : <Button variant="ghost" onClick={pause} leftIcon="pause">{t('extraction.steps.timer.pause')}</Button>
@@ -50,8 +51,8 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
       </div>
 
       {stages.length > 0 && (
-        <div className="col col-gap-8" style={{ marginBottom: 24 }}>
-          <div className="t-upper" style={{ marginBottom: 4 }}>{recipe!.name}</div>
+        <div className={`col col-gap-8 ${css.recipeMb}`}>
+          <div className={`t-upper ${css.recipeTitle}`}>{recipe!.name}</div>
           {stages.map((s, i) => (
             <div key={s.id} className={`pour-stage ${i === activeStageIdx ? 'active' : ''}`}>
               <span className="pn">{i + 1}</span>

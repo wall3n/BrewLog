@@ -5,6 +5,7 @@ import { Button, Field, Input } from '../../../components/UI';
 import { Icon } from '../../../components/Icons';
 import type { WizardDraft } from '../index';
 import type { Equipment } from '../../../db/types';
+import css from './styles.module.css';
 
 interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void; onNext: () => void; }
 
@@ -29,28 +30,27 @@ export function StepEquipment({ draft, update, onNext }: Props) {
 
   return (
     <div>
-      <div className="step-meta" style={{ marginBottom: 20 }}>
+      <div className={`step-meta ${css.stepMeta}`}>
         <div className="col col-gap-4">
-          <h2 className="h-display" style={{ fontSize: 28, margin: 0 }}>{t('extraction.steps.equipment.title')}</h2>
-          <span className="t-sec" style={{ fontSize: 12 }}>{t('extraction.steps.equipment.subtitle')}</span>
+          <h2 className={`h-display ${css.stepTitle}`}>{t('extraction.steps.equipment.title')}</h2>
+          <span className={`t-sec ${css.stepSub}`}>{t('extraction.steps.equipment.subtitle')}</span>
         </div>
       </div>
-      <div className="col col-gap-24" style={{ marginBottom: 24 }}>
+      <div className={`col col-gap-24 ${css.eqListMb}`}>
         {Object.entries(groups).map(([type, items]) => (
           <div key={type}>
-            <div className="t-upper" style={{ marginBottom: 8 }}>{t(`equipment.types.${type}`, { defaultValue: type })}</div>
+            <div className={`t-upper ${css.eqGroupHead}`}>{t(`equipment.types.${type}`, { defaultValue: type })}</div>
             <div className="col col-gap-8">
               {items.map(item => {
                 const sel = draft.equipmentIds.includes(item.id!);
                 return (
                   <button key={item.id} type="button" onClick={() => toggle(item.id!)}
-                    className="card card-tight"
-                    style={{ padding: '12px 16px', border: sel ? '1px solid var(--accent)' : '1px solid var(--border)', background: sel ? 'var(--accent-bg)' : 'var(--bg-surface)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', width: '100%', textAlign: 'left' }}>
+                    className={`card card-tight ${css.eqItem} ${sel ? css.eqItemSel : ''}`}>
                     <div className="col col-gap-4">
-                      <span style={{ fontSize: 13 }}>{item.name}</span>
-                      {item.model && <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{item.model}</span>}
+                      <span className={css.eqItemName}>{item.name}</span>
+                      {item.model && <span className={`t-sec ${css.eqItemModel}`}>{item.model}</span>}
                     </div>
-                    {sel && <Icon name="check" size={16} style={{ color: 'var(--accent)' }} />}
+                    {sel && <span className="t-acc"><Icon name="check" size={16} /></span>}
                   </button>
                 );
               })}
@@ -59,7 +59,7 @@ export function StepEquipment({ draft, update, onNext }: Props) {
         ))}
       </div>
       {hasGrinder && (
-        <div style={{ marginBottom: 24 }}>
+        <div className={css.eqSkipWrap}>
           <Field label={t('extraction.steps.equipment.grindSetting')} hint={t('extraction.steps.equipment.grindSettingHint')}>
             <Input value={draft.grindSetting} onChange={e => update({ grindSetting: e.target.value })} placeholder={t('extraction.steps.equipment.grindPlaceholder')} />
           </Field>

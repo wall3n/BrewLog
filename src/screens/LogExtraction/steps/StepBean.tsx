@@ -5,6 +5,7 @@ import { Button, Field, Input, Slider, Sheet, RoastDot, DaysOffRoast } from '../
 import { Icon } from '../../../components/Icons';
 import type { WizardDraft } from '../index';
 import type { Bean } from '../../../db/types';
+import css from './styles.module.css';
 
 interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void; onNext: () => void; }
 
@@ -30,7 +31,7 @@ function QuickAddBean({ onSave }: { onSave: (p: { name: string; roaster: string;
         <Field label={t('beans.fields.roastLevel')}>
           <div className="row row-gap-8">
             {(['light','medium','dark'] as const).map(r => (
-              <button key={r} type="button" className={`tag ${roast === r ? 'active' : ''}`} onClick={() => setRoast(r)} style={{ flex: 1, justifyContent: 'center' }}>{t(`beans.roasts.${r}`)}</button>
+              <button key={r} type="button" className={`tag ${roast === r ? 'active' : ''} ${css.roastBtn}`} onClick={() => setRoast(r)}>{t(`beans.roasts.${r}`)}</button>
             ))}
           </div>
         </Field>
@@ -64,40 +65,41 @@ export function StepBean({ draft, update, onNext }: Props) {
 
   return (
     <div>
-      <div className="step-meta" style={{ marginBottom: 20 }}>
-        <h2 className="h-display" style={{ fontSize: 28, margin: 0 }}>{t('extraction.steps.bean.title')}</h2>
+      <div className={`step-meta ${css.stepMeta}`}>
+        <h2 className={`h-display ${css.stepTitle}`}>{t('extraction.steps.bean.title')}</h2>
       </div>
-      <div className="search-bar" style={{ marginBottom: 16 }}>
-        <Icon name="search" size={16} style={{ color: 'var(--text-tertiary)' }} />
+      <div className={`search-bar ${css.searchMb}`}>
+        <span className="t-ter"><Icon name="search" size={16} /></span>
         <input placeholder={t('extraction.steps.bean.search')} value={q} onChange={e => setQ(e.target.value)} />
       </div>
-      <div className="col col-gap-12" style={{ marginBottom: 16 }}>
+      <div className={`col col-gap-12 ${css.beanListMb}`}>
         {filtered.map(b => {
           const sel = draft.beanId === b.id;
           return (
-            <div key={b.id} className="card card-tight card-hover" onClick={() => update({ beanId: b.id! })}
-              style={{ padding: 16, border: sel ? '1.5px solid var(--accent)' : '1px solid var(--border)', background: sel ? 'var(--accent-bg)' : 'var(--bg-surface)' }}>
-              <div className="row row-between" style={{ alignItems: 'flex-start' }}>
-                <div className="col col-gap-4" style={{ flex: 1 }}>
+            <button key={b.id} type="button"
+              className={`${css.beanOption} ${sel ? css.beanOptionSel : ''}`}
+              onClick={() => update({ beanId: b.id! })}>
+              <div className={`row row-between ${css.beanOptHeader}`}>
+                <div className={`col col-gap-4 ${css.beanOptLeft}`}>
                   <div className="row row-gap-8">
                     <RoastDot level={b.roast} />
-                    <span style={{ fontFamily: 'var(--serif)', fontSize: 16 }}>{b.name}</span>
+                    <span className={css.beanOptName}>{b.name}</span>
                   </div>
-                  <span style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{b.roaster} · {b.process}</span>
+                  <span className={`t-sec ${css.beanOptMeta}`}>{b.roaster} · {b.process}</span>
                 </div>
-                <div className="col" style={{ alignItems: 'flex-end', gap: 6 }}>
+                <div className={`col ${css.beanOptRight}`}>
                   <DaysOffRoast iso={b.roastedAt} />
-                  {sel && <Icon name="check" size={16} style={{ color: 'var(--accent)' }} />}
+                  {sel && <span className="t-acc"><Icon name="check" size={16} /></span>}
                 </div>
               </div>
-            </div>
+            </button>
           );
         })}
       </div>
-      <button type="button" className="sidebar-link" style={{ color: 'var(--accent)', padding: '8px 0' }} onClick={() => setAdding(true)}>
+      <button type="button" className={`sidebar-link t-acc ${css.addBeanLink}`} onClick={() => setAdding(true)}>
         <Icon name="plus" size={16} /> {t('extraction.steps.bean.quickAdd')}
       </button>
-      <div style={{ height: 24 }} />
+      <div className={css.spacer24} />
       <Button full size="lg" onClick={onNext} rightIcon="arrowRight" disabled={!draft.beanId}>{t('common.continue')}</Button>
 
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('beans.add')}>

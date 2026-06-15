@@ -1,0 +1,57 @@
+/* Shared step header */
+.stepMeta      { margin-bottom: 20px; }
+.stepTitle     { font-size: 28px; margin: 0; }
+.stepSub       { font-size: 12px; }
+
+/* StepMethod */
+.methodGrid    { margin-bottom: 32px; }
+
+/* StepBean */
+.roastBtn      { flex: 1; justify-content: center; }
+.searchMb      { margin-bottom: 16px; }
+.beanListMb    { margin-bottom: 16px; }
+.beanOption    { padding: 16px; border: 1px solid var(--border); background: var(--bg-surface); border-radius: 10px; cursor: pointer; width: 100%; text-align: left; }
+.beanOptionSel { border: 1.5px solid var(--accent); background: var(--accent-bg); }
+.beanOptHeader { align-items: flex-start; }
+.beanOptLeft   { flex: 1; }
+.beanOptName   { font-family: var(--serif); font-size: 16px; }
+.beanOptMeta   { font-size: 11px; }
+.beanOptRight  { align-items: flex-end; gap: 6px; }
+.addBeanLink   { padding: 8px 0; }
+.spacer24      { height: 24px; }
+
+/* StepEquipment */
+.eqListMb      { margin-bottom: 24px; }
+.eqGroupHead   { margin-bottom: 8px; }
+.eqItem        { padding: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; width: 100%; text-align: left; background: var(--bg-surface); border: 1px solid var(--border); }
+.eqItemSel     { border-color: var(--accent); background: var(--accent-bg); }
+.eqItemName    { font-size: 13px; }
+.eqItemModel   { font-size: 11px; }
+.eqSkipWrap    { margin-bottom: 24px; }
+
+/* StepParameters */
+.algoCard      { padding: 0; }
+.algoBtn       { background: transparent; border: none; width: 100%; padding: 20px 24px; cursor: pointer; text-align: left; }
+.algoTitle     { font-family: var(--serif); font-size: 16px; }
+.algoBody      { padding: 0 24px 20px; border-top: 1px solid var(--border); }
+.algoContent   { padding-top: 16px; }
+.eyStat        { font-size: 13px; font-weight: 600; }
+.eyRow         { margin-bottom: 8px; }
+.unitHint      { font-size: 11px; }
+.cardMb        { margin-bottom: 24px; }
+.checkLabel    { cursor: pointer; user-select: none; }
+.tdsWrap       { margin-top: 12px; }
+
+/* StepTimer */
+.timerCard     { padding: 32px; margin-bottom: 24px; text-align: center; }
+.timerControls { justify-content: center; margin-top: 24px; }
+.recipeMb      { margin-bottom: 24px; }
+.recipeTitle   { margin-bottom: 4px; }
+
+/* StepTasting */
+.outcomeMb     { margin-bottom: 12px; }
+.rateMb        { margin-bottom: 12px; }
+.rateCount     { font-size: 12px; }
+.flavourMb     { margin-bottom: 16px; }
+.notesMb       { margin-bottom: 12px; }
+.cardLgMb      { margin-bottom: 16px; }
