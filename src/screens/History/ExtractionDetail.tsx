@@ -5,6 +5,7 @@ import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, Stars, Tag, MethodBadge, Empty } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import type { Extraction, Bean, Equipment } from '../../db/types';
+import s from './styles.module.css';
 
 function TastingRadar({ values }: { values: Pick<Extraction, 'acidity'|'sweetness'|'bitterness'|'body'|'balance'> }) {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ function TastingRadar({ values }: { values: Pick<Extraction, 'acidity'|'sweetnes
     return [cx + Math.cos(angle) * r, cy + Math.sin(angle) * r, labels[k]] as [number, number, string];
   });
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <div className={s.radarCenter}>
       <svg width={size} height={size}>
         {[1,2,3,4,5].map(level => {
           const r = (level / 5) * maxR;
@@ -76,19 +77,19 @@ export function ExtractionDetail() {
   return (
     <div>
       <BackBar onClick={() => navigate('/history')} label={t('extraction.backToHistory')} />
-      <div className="page-head" style={{ marginBottom: 16 }}>
-        <div className="row row-gap-12" style={{ marginBottom: 8 }}>
+      <div className={`page-head ${s.pageHeadMb}`}>
+        <div className="row row-gap-12 mb-2">
           <span className="t-upper">{fmtRelDate(ext.createdAt)}</span>
           <MethodBadge method={ext.method} />
-          {ext.flag === 'dialled' && <span style={{ fontSize: 10, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>✓ {t('extraction.flags.dialled')}</span>}
-          {ext.flag === 'adjust'  && <span style={{ fontSize: 10, color: 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>! {t('extraction.flags.adjust')}</span>}
-          {ext.flag === 'fail'    && <span style={{ fontSize: 10, color: 'var(--danger)',  textTransform: 'uppercase', letterSpacing: '0.06em' }}>✗ {t('extraction.flags.fail')}</span>}
+          {ext.flag === 'dialled' && <span className={`${s.flagSpan} ${s.flagDialled}`}>✓ {t('extraction.flags.dialled')}</span>}
+          {ext.flag === 'adjust'  && <span className={`${s.flagSpan} ${s.flagAdjust}`}>! {t('extraction.flags.adjust')}</span>}
+          {ext.flag === 'fail'    && <span className={`${s.flagSpan} ${s.flagFail}`}>✗ {t('extraction.flags.fail')}</span>}
         </div>
         <h1>{bean?.name ?? t('extraction.unknownBean')}</h1>
         {bean && <p>{bean.roaster} · {bean.process}</p>}
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
+      <div className={`card ${s.cardMb}`}>
         <div className="grid grid-3">
           {[
             { v: `${ext.dose}g`,              l: t('extraction.fields.dose') },
@@ -99,51 +100,51 @@ export function ExtractionDetail() {
             ...(ext.tds ? [{ v: `${ext.tds}%`, l: t('extraction.fields.tds') }] : []),
             ...(ext.grindSetting ? [{ v: ext.grindSetting, l: t('extraction.fields.grind') }] : []),
             ...((ext.pressure && (ext.method === 'espresso' || ext.method === 'moka-pot')) ? [{ v: `${ext.pressure}bar`, l: t('extraction.fields.pressure') }] : []),
-          ].map(s => (
-            <div key={s.l} className="stat">
-              <div className="v t-mono" style={s.accent ? { color: 'var(--accent)' } : {}}>{s.v}</div>
-              <div className="l">{s.l}</div>
+          ].map(stat => (
+            <div key={stat.l} className="stat">
+              <div className={`v t-mono${stat.accent ? ` ${s.statAccent}` : ''}`}>{stat.v}</div>
+              <div className="l">{stat.l}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
-        <div className="row row-between" style={{ marginBottom: 16 }}>
+      <div className={`card ${s.cardMb}`}>
+        <div className={`row row-between ${s.tastingHeader}`}>
           <span className="t-upper">{t('extraction.fields.tasting')}</span>
           <Stars value={ext.rating} size={16} />
         </div>
         <TastingRadar values={{ acidity: ext.acidity, sweetness: ext.sweetness, bitterness: ext.bitterness, body: ext.body, balance: ext.balance }} />
         {ext.flavours?.length > 0 && (
           <>
-            <div style={{ height: 16 }} />
-            <div className="t-upper" style={{ marginBottom: 8 }}>{t('extraction.fields.notes')}</div>
+            <div className={s.spacer} />
+            <div className={`t-upper ${s.flavourMb}`}>{t('extraction.fields.notes')}</div>
             <div className="row row-wrap row-gap-8">{ext.flavours.map(f => <Tag key={f}>{f}</Tag>)}</div>
           </>
         )}
         {ext.notes && (
           <>
             <div className="divider" />
-            <div style={{ fontSize: 13, lineHeight: 1.6, fontStyle: 'italic' }}>"{ext.notes}"</div>
+            <div className={s.noteText}>"{ext.notes}"</div>
           </>
         )}
       </div>
 
       {equipment.length > 0 && (
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="t-upper" style={{ marginBottom: 12 }}>{t('extraction.equipmentSection')}</div>
+        <div className={`card ${s.cardMb}`}>
+          <div className="t-upper mb-3">{t('extraction.equipmentSection')}</div>
           <div className="col col-gap-8">
             {equipment.map(e => (
               <div key={e.id} className="row row-between">
-                <span style={{ fontSize: 13 }}>{e.name}</span>
-                <span className="t-mono t-sec" style={{ fontSize: 11 }}>{e.type}</span>
+                <span className={s.eqItemName}>{e.name}</span>
+                <span className={`t-mono t-sec ${s.eqItemType}`}>{e.type}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      <div className="row row-gap-12" style={{ marginTop: 24 }}>
+      <div className={`row row-gap-12 ${s.actionRow}`}>
         <Button variant="ghost" full leftIcon="copy" onClick={() => navigate('/log', { state: ext })}>{t('extraction.duplicate')}</Button>
         <Button variant="danger" leftIcon="trash" onClick={async () => {
           if (confirm(t('extraction.confirmDelete'))) {
