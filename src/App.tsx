@@ -89,7 +89,7 @@ export default function App() {
               <span>{n.label}</span>
             </button>
           ))}
-          <div className="sidebar-foot">v{__APP_VERSION__} · local-first</div>
+          <div className="sidebar-foot">v{__APP_VERSION__}</div>
         </aside>
 
         <main className="main">
