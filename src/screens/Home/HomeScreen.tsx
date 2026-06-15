@@ -74,7 +74,7 @@ export function HomeScreen() {
   });
   const avgRating = thisMonth.length
     ? (thisMonth.reduce((a, e) => a + (e.rating || 0), 0) / thisMonth.length).toFixed(1)
-    : '—';
+    : null;
   const activeBeans = beans.filter(b => b.status === 'active');
   const recent = extractions.slice(0, 5);
 
@@ -92,7 +92,10 @@ export function HomeScreen() {
             <div className="l">{t('home.stats.totalExtractions')}</div>
           </div>
           <div className="stat">
-            <div className="v">{avgRating}<span style={{ fontSize: 14, color: 'var(--text-tertiary)', marginLeft: 6 }}>/ 5</span></div>
+            <div className="v">
+              {avgRating ?? '0'}
+              {avgRating && <span style={{ fontSize: 14, color: 'var(--text-tertiary)', marginLeft: 6 }}>/ 5</span>}
+            </div>
             <div className="l">{t('home.stats.avgThisMonth')}</div>
           </div>
           <div className="stat">
