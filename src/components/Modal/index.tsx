@@ -1,9 +1,18 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Icon } from '../Icons';
+import { useApp } from '../../context/AppContext';
 import s from './styles.module.css';
 
 interface SheetProps { open: boolean; onClose: () => void; title: string; children: ReactNode; foot?: ReactNode; }
 export function Sheet({ open, onClose, title, children, foot }: SheetProps) {
+  const { dispatch } = useApp();
+
+  useEffect(() => {
+    if (!open) return;
+    dispatch({ type: 'OPEN_MODAL' });
+    return () => { dispatch({ type: 'CLOSE_MODAL' }); };
+  }, [open, dispatch]);
+
   if (!open) return null;
   return (
     <div className="scrim" onClick={onClose}>

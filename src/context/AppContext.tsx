@@ -8,13 +8,16 @@ interface AppState {
   settings: AppSettings;
   loading: boolean;
   showWelcome: boolean;
+  modalDepth: number;
 }
 
 type AppAction =
-  | { type: 'LOADED'; payload: Omit<AppState, 'loading'> }
+  | { type: 'LOADED'; payload: Omit<AppState, 'loading' | 'modalDepth'> }
   | { type: 'DISMISS_WELCOME' }
   | { type: 'ACTIVE_BEANS_CHANGED'; payload: Bean[] }
-  | { type: 'UPDATE_SETTINGS'; payload: Partial<AppSettings> };
+  | { type: 'UPDATE_SETTINGS'; payload: Partial<AppSettings> }
+  | { type: 'OPEN_MODAL' }
+  | { type: 'CLOSE_MODAL' };
 
 const defaultSettings: AppSettings = {
   weightUnit: 'g', tempUnit: 'C', volumeUnit: 'ml',
@@ -26,14 +29,17 @@ const initialState: AppState = {
   settings: defaultSettings,
   loading: true,
   showWelcome: false,
+  modalDepth: 0,
 };
 
 function reducer(state: AppState, action: AppAction): AppState {
   switch (action.type) {
-    case 'LOADED': return { ...action.payload, loading: false };
+    case 'LOADED': return { ...action.payload, loading: false, modalDepth: 0 };
     case 'DISMISS_WELCOME': return { ...state, showWelcome: false };
     case 'ACTIVE_BEANS_CHANGED': return { ...state, activeBeans: action.payload };
     case 'UPDATE_SETTINGS': return { ...state, settings: { ...state.settings, ...action.payload } };
+    case 'OPEN_MODAL': return { ...state, modalDepth: state.modalDepth + 1 };
+    case 'CLOSE_MODAL': return { ...state, modalDepth: Math.max(0, state.modalDepth - 1) };
     default: return state;
   }
 }
