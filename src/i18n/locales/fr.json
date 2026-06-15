@@ -1,4 +1,7 @@
 {
+  "app": {
+    "tagline": "VOTRE JOURNAL D'EXTRACTION"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -10,11 +13,60 @@
     "export": "Exporter",
     "import": "Importer",
     "loading": "Chargement…",
+    "saving": "Enregistrement…",
+    "remove": "Supprimer",
     "noData": "Aucune donnée",
     "search": "Rechercher",
     "continue": "Continuer",
     "skip": "Passer",
     "unknown": "Inconnu"
+  },
+  "welcome": {
+    "quickSetup": "✦ Configuration rapide",
+    "startFresh": "Repartir de zéro",
+    "demoData": "Données démo",
+    "tagline": "VOTRE JOURNAL D'EXTRACTION",
+    "copy": "Suivez chaque infusion. Perfectionnez votre tasse idéale."
+  },
+  "wizard": {
+    "backLabel": "Retour",
+    "next": "Suivant",
+    "finish": "Terminer",
+    "step1": {
+      "title": "Quelle est votre méthode principale ?",
+      "sub": "Définit votre méthode par défaut. Modifiable dans Réglages."
+    },
+    "step2": {
+      "title": "Vos unités",
+      "sub": "Utilisées dans toutes les mesures de l'app.",
+      "weight": "Poids",
+      "weightG": "Grammes (g)",
+      "weightOz": "Onces (oz)",
+      "temperature": "Température"
+    },
+    "step3": {
+      "title": "Votre café actuel",
+      "sub": "Ajoutez le café avec lequel vous préparez en ce moment.",
+      "beanName": "Nom du café",
+      "beanNamePlaceholder": "ex. Éthiopie Yirgacheffe",
+      "roaster": "Torréfacteur",
+      "roasterPlaceholder": "ex. Sample Roasters",
+      "roastLevel": "Niveau de torréfaction",
+      "roastLight": "Claire",
+      "roastLightDesc": "Floral, fruité, vif",
+      "roastMedium": "Moyenne",
+      "roastMediumDesc": "Équilibré, caramel, noix",
+      "roastDark": "Foncée",
+      "roastDarkDesc": "Puissant, fumé, amer-doux"
+    },
+    "step4": {
+      "title": "Votre équipement",
+      "sub": "Moulin, machine, balance — ajoutez ce que vous utilisez.",
+      "typePlaceholder": "Type…",
+      "namePlaceholder": "Nom ou modèle",
+      "addAnother": "+ Ajouter un autre",
+      "skip": "Passer pour l'instant"
+    }
   },
   "nav": {
     "home": "Accueil",
@@ -77,6 +129,12 @@
       "confirmClear": "Réinitialiser toutes les données BrewLog ? Cette action est irréversible.",
       "confirmImport": "Remplacer les données actuelles par l'import ?",
       "invalidJson": "JSON invalide."
+    },
+    "about": {
+      "title": "À propos",
+      "version": "Version",
+      "storage": "Stockage",
+      "storageValue": "Local"
     }
   },
   "home": {
@@ -294,7 +352,22 @@
     "new": "Nouvelle recette",
     "noRecipes": "Aucune recette",
     "noRecipesBody": "Sauvegardez une préparation comme recette pour réutiliser les paramètres.",
-    "used": "Utilisé {{date}}"
+    "used": "Utilisé {{date}}",
+    "backToRecipes": "Retour aux recettes",
+    "notFound": "Recette introuvable",
+    "neverUsed": "Jamais utilisée",
+    "lastUsed": "Utilisée {{date}}",
+    "fields": {
+      "dose": "Dose",
+      "yield": "Rendement",
+      "ratio": "Ratio",
+      "time": "Temps",
+      "temp": "Temp"
+    },
+    "pourSchedule": "Programme de versements",
+    "startBrew": "Démarrer l'infusion",
+    "deleteRecipe": "Supprimer la recette",
+    "confirmDelete": "Supprimer cette recette ?"
   },
   "analytics": {
     "title": "Analyse",

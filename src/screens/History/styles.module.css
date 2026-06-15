@@ -1,0 +1,28 @@
+/* ExtractionRow */
+.extractionCard  { padding: 16px 20px; }
+.cardContent     { align-items: flex-start; gap: 12px; }
+.cardLeft        { flex: 1; min-width: 0; }
+.beanName        { font-family: var(--serif); font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.metaRow         { font-size: 12px; }
+.cardRight       { align-items: flex-end; gap: 6px; }
+.flagLabel       { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+.flagDialled     { color: var(--success); }
+.flagAdjust      { color: var(--warning); }
+.flagFail        { color: var(--danger); }
+
+/* HistoryScreen */
+.separator       { width: 1px; background: var(--border); margin: 0 4px; }
+
+/* ExtractionDetail */
+.pageHeadMb      { margin-bottom: 16px; }
+.flagSpan        { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+.statAccent      { color: var(--accent); }
+.cardMb          { margin-bottom: 16px; }
+.tastingHeader   { margin-bottom: 16px; }
+.spacer          { height: 16px; }
+.flavourMb       { margin-bottom: 8px; }
+.noteText        { font-size: 13px; line-height: 1.6; font-style: italic; }
+.eqItemName      { font-size: 13px; }
+.eqItemType      { font-size: 11px; }
+.actionRow       { margin-top: 24px; }
+.radarCenter     { display: flex; justify-content: center; }

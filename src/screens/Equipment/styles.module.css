@@ -1,0 +1,10 @@
+.pageRow        { align-items: flex-end; margin-bottom: 24px; }
+.pageHead       { margin-bottom: 0; }
+.groupHeader    { margin-bottom: 12px; }
+.itemCard       { padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; }
+.itemName       { font-size: 14px; }
+.itemModel      { font-size: 11px; }
+.itemNotes      { font-size: 11px; font-style: italic; }
+.usageCount     { font-size: 11px; }
+.deleteBtn      { background: transparent; border: none; color: var(--text-tertiary); cursor: pointer; padding: 4px; }
+.deleteBtn:hover { color: var(--danger); }

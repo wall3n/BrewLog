@@ -76,7 +76,7 @@ export default function App() {
         <aside className="sidebar">
           <div className="sidebar-brand">
             <div className="title">BrewLog</div>
-            <div className="sub">your extraction journal</div>
+            <div className="sub">{t('app.tagline')}</div>
           </div>
           {NAV_ITEMS.map(n => (
             <button key={n.path} className={`sidebar-link ${isActive(n.path) ? 'active' : ''}`} onClick={() => navigate(n.path)}>
@@ -84,7 +84,7 @@ export default function App() {
               <span>{n.label}</span>
             </button>
           ))}
-          <div className="sidebar-foot">v1.0 · local-first</div>
+          <div className="sidebar-foot">v{__APP_VERSION__} · local-first</div>
         </aside>
 
         <main className="main">

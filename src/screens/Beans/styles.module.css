@@ -1,0 +1,29 @@
+/* BeanCard */
+.beanCardHeader  { margin-bottom: 12px; align-items: flex-start; }
+.beanCardLeft    { flex: 1; min-width: 0; }
+.beanName        { font-family: var(--serif); font-size: 17px; line-height: 1.2; }
+.beanRoaster     { font-size: 11px; letter-spacing: 0.04em; }
+.beanOrigin      { font-size: 10px; letter-spacing: 0.05em; }
+.beanCardPad     { padding: 20px; }
+.beanCardBottom  { align-items: flex-end; }
+
+/* BeansScreen */
+.pageRow         { align-items: flex-end; margin-bottom: 24px; }
+.tabCount        { margin-left: 6px; }
+.gridEmpty       { grid-column: 1 / -1; }
+.roastBtn        { flex: 1; justify-content: center; }
+
+/* BeanDetail */
+.statSuffix      { font-size: 12px; margin-left: 4px; }
+.statFlex        { display: flex; align-items: center; gap: 6px; }
+.diallingTable   { display: flex; flex-direction: column; }
+.diallingHead    { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.diallingHeadCell{ flex: 1; }
+.diallingCell    { width: 60px; text-align: right; }
+.diallingRow     { background: transparent; border: none; text-align: left; cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; width: 100%; }
+.diallingDate    { flex: 1; font-size: 12px; }
+.starFilled      { color: var(--accent); }
+.starEmpty       { color: var(--text-tertiary); }
+.noteText        { font-size: 13px; line-height: 1.6; font-style: italic; }
+.cardMb          { margin-bottom: 16px; }
+.detailValue     { font-size: 13px; }
