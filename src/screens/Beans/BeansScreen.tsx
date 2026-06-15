@@ -4,21 +4,22 @@ import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider } from '../../components/UI';
 import type { Bean } from '../../db/types';
+import s from './styles.module.css';
 
 function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
   return (
-    <div className="card card-hover" onClick={onClick} style={{ padding: 20 }}>
-      <div className="row row-between" style={{ marginBottom: 12, alignItems: 'flex-start' }}>
-        <div className="col col-gap-4" style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--serif)', fontSize: 17, lineHeight: 1.2 }}>{bean.name}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>{bean.roaster}</div>
+    <div className={`card card-hover ${s.beanCardPad}`} onClick={onClick}>
+      <div className={`row row-between ${s.beanCardHeader}`}>
+        <div className={`col col-gap-4 ${s.beanCardLeft}`}>
+          <div className={s.beanName}>{bean.name}</div>
+          <div className={`t-sec ${s.beanRoaster}`}>{bean.roaster}</div>
         </div>
         <RoastDot level={bean.roast} />
       </div>
-      <div className="row row-between" style={{ alignItems: 'flex-end' }}>
+      <div className={`row row-between ${s.beanCardBottom}`}>
         <div className="col col-gap-4">
           <span className="t-upper">{bean.process}</span>
-          <span style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}>{(bean.origin ?? '').toUpperCase()}</span>
+          <span className={`t-ter ${s.beanOrigin}`}>{(bean.origin ?? '').toUpperCase()}</span>
         </div>
         <DaysOffRoast iso={bean.roastedAt} />
       </div>
@@ -47,7 +48,7 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
         <Field label={t('beans.fields.roastLevel')}>
           <div className="row row-gap-8">
             {(['light','medium','dark'] as const).map(r => (
-              <button key={r} type="button" className={`tag ${roast === r ? 'active' : ''}`} onClick={() => setRoast(r)} style={{ flex: 1, justifyContent: 'center' }}>{t(`beans.roasts.${r}`)}</button>
+              <button key={r} type="button" className={`tag ${roast === r ? 'active' : ''} ${s.roastBtn}`} onClick={() => setRoast(r)}>{t(`beans.roasts.${r}`)}</button>
             ))}
           </div>
         </Field>
@@ -80,8 +81,8 @@ export function BeansScreen() {
 
   return (
     <div>
-      <div className="row row-between" style={{ alignItems: 'flex-end', marginBottom: 24 }}>
-        <div className="page-head" style={{ marginBottom: 0 }}>
+      <div className={`row row-between ${s.pageRow}`}>
+        <div className="page-head">
           <h1>{t('beans.title')}</h1>
           <p>{t('beans.total', { count: beans.length })}</p>
         </div>
@@ -90,13 +91,13 @@ export function BeansScreen() {
       <div className="tabs">
         {(['active', 'finished', 'wishlist'] as const).map(k => (
           <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>
-            {t(`beans.tabs.${k}`)} <span style={{ marginLeft: 6, color: 'var(--text-tertiary)' }}>{beans.filter(b => b.status === k).length}</span>
+            {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{beans.filter(b => b.status === k).length}</span>
           </button>
         ))}
       </div>
       <div className="grid grid-2">
         {visibleBeans.length === 0
-          ? <div style={{ gridColumn: '1 / -1' }}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
+          ? <div className={s.gridEmpty}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
           : visibleBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
         }
       </div>

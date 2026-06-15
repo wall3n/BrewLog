@@ -5,12 +5,13 @@ import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, RoastDot, Empty } from '../../components/UI';
 import { daysSince, fmtRelDate, fmtTime } from '../../utils/formatters';
 import type { Bean, Extraction } from '../../db/types';
+import s from './styles.module.css';
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="row row-between">
       <span className="t-upper">{label}</span>
-      <span className="t-mono" style={{ fontSize: 13 }}>{value}</span>
+      <span className={`t-mono ${s.detailValue}`}>{value}</span>
     </div>
   );
 }
@@ -46,8 +47,8 @@ export function BeanDetail() {
   return (
     <div>
       <BackBar onClick={() => navigate('/beans')} label={t('beans.backToBeans')} />
-      <div className="page-head" style={{ marginBottom: 20 }}>
-        <div className="row row-gap-12" style={{ marginBottom: 6 }}>
+      <div className="page-head mb-5">
+        <div className="row row-gap-12 mb-[6px]">
           <RoastDot level={bean.roast} />
           <span className="t-upper">{bean.process} · {bean.roast}</span>
         </div>
@@ -55,19 +56,19 @@ export function BeanDetail() {
         <p>{bean.roaster}</p>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
+      <div className={`card ${s.cardMb}`}>
         <div className="grid grid-3">
           <div className="stat"><div className="v t-mono">{extractions.length}</div><div className="l">{t('beans.stats.extractions')}</div></div>
           <div className="stat">
             <div className="v t-mono">
               {avgRating ?? '0'}
-              {avgRating && <span style={{ fontSize: 12, color: 'var(--text-tertiary)', marginLeft: 4 }}>/5</span>}
+              {avgRating && <span className={`t-ter ${s.statSuffix}`}>/5</span>}
             </div>
             <div className="l">{t('beans.stats.avgRating')}</div>
           </div>
           <div className="stat">
-            <div className="v t-mono" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              {daysSince(bean.roastedAt) ?? '—'}<span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>d</span>
+            <div className={`v t-mono ${s.statFlex}`}>
+              {daysSince(bean.roastedAt) ?? '—'}<span className={`t-ter ${s.statSuffix}`}>d</span>
             </div>
             <div className="l">{t('beans.stats.offRoast')}</div>
           </div>
@@ -82,29 +83,28 @@ export function BeanDetail() {
         {bean.notes && (
           <>
             <div className="divider" />
-            <div style={{ fontSize: 13, lineHeight: 1.6, fontStyle: 'italic' }}>"{bean.notes}"</div>
+            <div className={s.noteText}>"{bean.notes}"</div>
           </>
         )}
       </div>
 
       {extractions.length > 0 && (
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="t-upper" style={{ marginBottom: 16 }}>{t('beans.diallingTable')}</div>
-          <div className="col">
-            <div className="row" style={{ paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>
-              <div className="t-upper" style={{ flex: 1 }}>{t('beans.diallingHeaders.date')}</div>
+        <div className={`card ${s.cardMb}`}>
+          <div className="t-upper mb-4">{t('beans.diallingTable')}</div>
+          <div className={s.diallingTable}>
+            <div className={`row ${s.diallingHead}`}>
+              <div className={`t-upper ${s.diallingHeadCell}`}>{t('beans.diallingHeaders.date')}</div>
               {(['grind','ratio','time','rating'] as const).map(h => (
-                <div key={h} className="t-upper" style={{ width: 60, textAlign: 'right' }}>{t(`beans.diallingHeaders.${h}`)}</div>
+                <div key={h} className={`t-upper ${s.diallingCell}`}>{t(`beans.diallingHeaders.${h}`)}</div>
               ))}
             </div>
             {extractions.map(e => (
-              <button key={e.id} onClick={() => navigate(`/history/${e.id}`)}
-                style={{ background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', padding: '10px 0', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', width: '100%' }}>
-                <div style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)' }} className="t-mono">{fmtRelDate(e.createdAt)}</div>
-                <div style={{ width: 60, textAlign: 'right' }} className="t-mono">{e.grindSetting ?? '—'}</div>
-                <div style={{ width: 60, textAlign: 'right' }} className="t-mono t-acc">1:{e.ratio.toFixed(1)}</div>
-                <div style={{ width: 60, textAlign: 'right' }} className="t-mono">{fmtTime(e.timeS)}</div>
-                <div style={{ width: 60, textAlign: 'right' }} className="t-mono">{'★'.repeat(e.rating)}<span style={{ color: 'var(--text-tertiary)' }}>{'·'.repeat(5 - e.rating)}</span></div>
+              <button key={e.id} onClick={() => navigate(`/history/${e.id}`)} className={s.diallingRow}>
+                <div className={`t-mono t-sec ${s.diallingDate}`}>{fmtRelDate(e.createdAt)}</div>
+                <div className={`t-mono ${s.diallingCell}`}>{e.grindSetting ?? '—'}</div>
+                <div className={`t-mono t-acc ${s.diallingCell}`}>1:{e.ratio.toFixed(1)}</div>
+                <div className={`t-mono ${s.diallingCell}`}>{fmtTime(e.timeS)}</div>
+                <div className={`t-mono ${s.diallingCell}`}><span className={s.starFilled}>{'★'.repeat(e.rating)}</span><span className={s.starEmpty}>{'·'.repeat(5 - e.rating)}</span></div>
               </button>
             ))}
           </div>
