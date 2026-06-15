@@ -12,3 +12,7 @@ export { StagList } from './StagList';
 export { BackBar } from './BackBar';
 export { FAB } from './FAB';
 export { SegToggle } from './SegToggle';
+export { Pagination } from './Pagination';
+export { FilterBar } from './FilterBar';
+
+

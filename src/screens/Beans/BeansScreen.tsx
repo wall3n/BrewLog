@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider } from '../../components/UI';
+import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, FilterBar } from '../../components/UI';
+import { Icon } from '../../components/Icons';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
@@ -71,39 +72,162 @@ export function BeansScreen() {
   const [tab, setTab] = useState<'active'|'finished'|'wishlist'>('active');
   const [adding, setAdding] = useState(false);
   const [beans, setBeans] = useState<Bean[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [beansTotalCount, setBeansTotalCount] = useState(0);
+  const [tabCounts, setTabCounts] = useState<{ active: number; finished: number; wishlist: number }>({ active: 0, finished: 0, wishlist: 0 });
 
-  const loadBeans = () => db.getAllBeans().then(setBeans);
-  useEffect(() => { loadBeans(); }, []);
+  const [q, setQ] = useState('');
+  const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
+  const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
+  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [showFilters, setShowFilters] = useState(false);
 
-  const visibleBeans = beans.filter(b => b.status === tab);
+  const loadBeans = useCallback(() => {
+    db.getBeansPage({
+      status: tab,
+      q,
+      roastFilter,
+      sort,
+      page,
+      limit: itemsPerPage
+    }).then(({ items, total }) => {
+      setBeans(items);
+      setTotalCount(total);
+    });
+
+    Promise.all([
+      db.getBeansCountByStatus('active'),
+      db.getBeansCountByStatus('finished'),
+      db.getBeansCountByStatus('wishlist'),
+      db.getBeansTotalCount()
+    ]).then(([active, finished, wishlist, totalAll]) => {
+      setTabCounts({ active, finished, wishlist });
+      setBeansTotalCount(totalAll);
+    });
+  }, [db, tab, q, roastFilter, sort, page, itemsPerPage]);
+
+  useEffect(() => {
+    loadBeans();
+  }, [loadBeans]);
+
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+
   const noBeansTitle = tab === 'active' ? t('beans.noActive') : tab === 'finished' ? t('beans.noFinished') : t('beans.noWishlist');
   const noBeansBody = tab === 'wishlist' ? t('beans.noWishlistBody') : t('beans.noBeansBody');
+
+  const handleTabChange = (newTab: 'active'|'finished'|'wishlist') => {
+    setTab(newTab);
+    setPage(1);
+  };
+
+  const activeFilters = [];
+  if (roastFilter !== 'all') {
+    activeFilters.push({
+      id: 'roast',
+      label: `${t('beans.fields.roastLevel')}: ${t(`beans.roasts.${roastFilter}`)}`,
+      onRemove: () => { setRoastFilter('all'); setPage(1); }
+    });
+  }
+
+  const categories = [
+    {
+      id: 'roast',
+      label: t('beans.fields.roastLevel'),
+      onSelect: (val: string | number) => { setRoastFilter(val as 'all'|'light'|'medium'|'dark'); setPage(1); },
+      options: [
+        { value: 'all', label: t('beans.filters.roastAll') },
+        { value: 'light', label: t('beans.roasts.light') },
+        { value: 'medium', label: t('beans.roasts.medium') },
+        { value: 'dark', label: t('beans.roasts.dark') }
+      ]
+    }
+  ];
+
+  const activeFiltersCount = activeFilters.length;
 
   return (
     <div>
       <div className={`row row-between ${s.pageRow}`}>
         <div className="page-head">
           <h1>{t('beans.title')}</h1>
-          <p>{t('beans.total', { count: beans.length })}</p>
+          <p>
+            {t('beans.total', { count: beansTotalCount })}
+            {(q || roastFilter !== 'all') && ` · ${t('history.shown', { count: totalCount })}`}
+          </p>
         </div>
         <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('beans.add')}</Button>
       </div>
       <div className="tabs">
         {(['active', 'finished', 'wishlist'] as const).map(k => (
-          <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>
-            {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{beans.filter(b => b.status === k).length}</span>
+          <button key={k} className={tab === k ? 'active' : ''} onClick={() => handleTabChange(k)}>
+            {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{tabCounts[k]}</span>
           </button>
         ))}
       </div>
+
+      <div className="row row-gap-8 mb-4">
+        <div className="search-bar flex-1">
+          <Icon name="search" size={16} className="t-ter" />
+          <input 
+            placeholder={t('beans.search')} 
+            value={q} 
+            onChange={e => { setQ(e.target.value); setPage(1); }} 
+          />
+        </div>
+        <Button
+          variant="ghost"
+          leftIcon="filter"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          {t('common.filters')}
+          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+        </Button>
+      </div>
+
+      <div className="row row-between mb-4">
+        {showFilters ? (
+          <FilterBar activeFilters={activeFilters} categories={categories} />
+        ) : (
+          <div />
+        )}
+        <select
+          className="input-underline"
+          value={sort}
+          onChange={e => { setSort(e.target.value as 'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'); setPage(1); }}
+          style={{ width: 'auto', padding: '6px 4px', fontSize: 12, color: 'var(--text-secondary)', flexShrink: 0 }}
+        >
+          <option value="nameAsc">{t('beans.sorts.nameAsc')}</option>
+          <option value="nameDesc">{t('beans.sorts.nameDesc')}</option>
+          <option value="roastedDesc">{t('beans.sorts.roastedDesc')}</option>
+          <option value="roastedAsc">{t('beans.sorts.roastedAsc')}</option>
+          <option value="createdDesc">{t('beans.sorts.createdDesc')}</option>
+        </select>
+      </div>
+
+
       <div className="grid grid-2">
-        {visibleBeans.length === 0
+        {beans.length === 0
           ? <div className={s.gridEmpty}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
-          : visibleBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
+          : beans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
         }
       </div>
+
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={(limit) => {
+          setItemsPerPage(limit);
+          setPage(1);
+        }}
+      />
+
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('beans.add')}>
         <QuickAddBean onSave={async (payload) => { await db.addBean(payload); await loadBeans(); setAdding(false); }} />
       </Sheet>
     </div>
   );
 }
+

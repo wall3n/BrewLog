@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Tag, StagList, Empty, Stars, MethodBadge } from '../../components/UI';
+import { Button, StagList, Empty, Stars, MethodBadge, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { methodById } from '../../utils/methodDefaults';
@@ -54,58 +54,174 @@ export function HistoryScreen() {
   const [flagFilter, setFlagFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState(0);
 
+  const [sort, setSort] = useState<'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'>('dateDesc');
+  const [page, setPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [totalCount, setTotalCount] = useState(0);
+  const [extractionsTotalCount, setExtractionsTotalCount] = useState(0);
+  const [methods, setMethods] = useState<string[]>([]);
+
   useEffect(() => {
-    Promise.all([db.getAllExtractions(), db.getAllBeans()])
-      .then(([exts, bns]) => { setExtractions(exts); setBeans(bns); });
-  }, []);
+    db.getAllBeans().then(setBeans);
+  }, [db]);
 
-  const filtered = extractions.filter(e => {
-    const bean = beans.find(b => b.id === e.beanId);
-    const text = `${bean?.name ?? ''} ${bean?.roaster ?? ''} ${e.notes ?? ''} ${(e.flavours ?? []).join(' ')}`.toLowerCase();
-    if (q && !text.includes(q.toLowerCase())) return false;
-    if (methodFilter !== 'all' && e.method !== methodFilter) return false;
-    if (flagFilter !== 'all' && e.flag !== flagFilter) return false;
-    if (ratingFilter > 0 && (e.rating ?? 0) < ratingFilter) return false;
-    return true;
-  });
+  const loadExtractions = useCallback(() => {
+    db.getExtractionsPage({
+      q,
+      methodFilter,
+      flagFilter,
+      ratingFilter,
+      sort,
+      page,
+      limit: itemsPerPage
+    }).then(({ items, total }) => {
+      setExtractions(items);
+      setTotalCount(total);
+    });
 
-  const methods = ['all', ...new Set(extractions.map(e => e.method))];
+    db.getExtractionsTotalCount().then(setExtractionsTotalCount);
+    db.getExtractionMethods().then(setMethods);
+  }, [db, q, methodFilter, flagFilter, ratingFilter, sort, page, itemsPerPage]);
+
+  useEffect(() => {
+    loadExtractions();
+  }, [loadExtractions]);
+
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
+
+  const handleQChange = (val: string) => { setQ(val); setPage(1); };
+  const handleMethodChange = (val: string) => { setMethodFilter(val); setPage(1); };
+  const handleFlagChange = (val: string) => { setFlagFilter(val); setPage(1); };
+  const handleRatingChange = (val: number) => { setRatingFilter(val); setPage(1); };
+
+  const activeFilters = [];
+  if (methodFilter !== 'all') {
+    activeFilters.push({
+      id: 'method',
+      label: `${t('recipes.form.method')}: ${t(`methods.${methodFilter}`, { defaultValue: methodById(methodFilter)?.name })}`,
+      onRemove: () => handleMethodChange('all')
+    });
+  }
+  if (flagFilter !== 'all') {
+    activeFilters.push({
+      id: 'flag',
+      label: `${t('extraction.steps.tasting.outcome')}: ${t(`history.flags.${flagFilter}`)}`,
+      onRemove: () => handleFlagChange('all')
+    });
+  }
+  if (ratingFilter > 0) {
+    activeFilters.push({
+      id: 'rating',
+      label: `${t('extraction.fields.rating')}: ${ratingFilter}+ ★`,
+      onRemove: () => handleRatingChange(0)
+    });
+  }
+
+  const categories = [
+    {
+      id: 'method',
+      label: t('recipes.form.method'),
+      onSelect: (val: string | number) => handleMethodChange(String(val)),
+      options: [
+        { value: 'all', label: t('history.filters.allMethods') },
+        ...methods.filter(m => m !== 'all').map(m => ({
+          value: m,
+          label: t(`methods.${m}`, { defaultValue: methodById(m)?.name || m })
+        }))
+      ]
+    },
+    {
+      id: 'flag',
+      label: t('extraction.steps.tasting.outcome'),
+      onSelect: (val: string | number) => handleFlagChange(String(val)),
+      options: [
+        { value: 'all', label: t('history.filters.anyFlag') },
+        ...['dialled','adjust','fail'].map(f => ({
+          value: f,
+          label: t(`history.flags.${f}`)
+        }))
+      ]
+    },
+    {
+      id: 'rating',
+      label: t('extraction.fields.rating'),
+      onSelect: (val: string | number) => handleRatingChange(Number(val)),
+      options: [
+        { value: 0, label: t('history.filters.anyRating') },
+        ...[3, 4, 5].map(r => ({
+          value: r,
+          label: `${r}+ ★`
+        }))
+      ]
+    }
+  ];
+
+  const activeFiltersCount = activeFilters.length;
 
   return (
     <div>
       <div className="page-head">
         <h1>{t('history.title')}</h1>
-        <p>{t('history.subtitle', { count: extractions.length })} · {t('history.shown', { count: filtered.length })}</p>
+        <p>{t('history.subtitle', { count: extractionsTotalCount })} · {t('history.shown', { count: totalCount })}</p>
       </div>
-      <div className="search-bar mb-4">
-        <Icon name="search" size={16} className="t-ter" />
-        <input placeholder={t('history.search')} value={q} onChange={e => setQ(e.target.value)} />
+      <div className="row row-gap-8 mb-4">
+        <div className="search-bar flex-1">
+          <Icon name="search" size={16} className="t-ter" />
+          <input placeholder={t('history.search')} value={q} onChange={e => handleQChange(e.target.value)} />
+        </div>
+        <Button
+          variant="ghost"
+          leftIcon="filter"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          {t('common.filters')}
+          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+        </Button>
       </div>
-      <div className="scroll-x mb-6">
-        {methods.map(m => (
-          <Tag key={m} active={methodFilter === m} onClick={() => setMethodFilter(m)}>
-            {m === 'all' ? t('history.filters.allMethods') : t(`methods.${m}`, { defaultValue: methodById(m).name })}
-          </Tag>
-        ))}
-        <span className={s.separator} />
-        {(['all','dialled','adjust','fail'] as const).map(f => (
-          <Tag key={f} active={flagFilter === f} onClick={() => setFlagFilter(f)}>
-            {f === 'all' ? t('history.filters.anyFlag') : t(`history.flags.${f}`)}
-          </Tag>
-        ))}
-        <span className={s.separator} />
-        {[0,3,4,5].map(r => (
-          <Tag key={r} active={ratingFilter === r} onClick={() => setRatingFilter(r)}>
-            {r === 0 ? t('history.filters.anyRating') : `${r}+ ★`}
-          </Tag>
-        ))}
+
+      <div className="row row-between mb-4">
+        {showFilters ? (
+          <FilterBar activeFilters={activeFilters} categories={categories} />
+        ) : (
+          <div />
+        )}
+        <select
+          className="input-underline"
+          value={sort}
+          onChange={e => { setSort(e.target.value as 'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'); setPage(1); }}
+          style={{ width: 'auto', padding: '6px 4px', fontSize: 12, color: 'var(--text-secondary)', flexShrink: 0 }}
+        >
+          <option value="dateDesc">{t('history.sorts.dateDesc')}</option>
+          <option value="dateAsc">{t('history.sorts.dateAsc')}</option>
+          <option value="ratingDesc">{t('history.sorts.ratingDesc')}</option>
+          <option value="ratingAsc">{t('history.sorts.ratingAsc')}</option>
+          <option value="timeDesc">{t('history.sorts.timeDesc')}</option>
+          <option value="timeAsc">{t('history.sorts.timeAsc')}</option>
+          <option value="ratioDesc">{t('history.sorts.ratioDesc')}</option>
+          <option value="ratioAsc">{t('history.sorts.ratioAsc')}</option>
+        </select>
       </div>
+
       <div className="col col-gap-12">
-        {filtered.length === 0
+        {extractions.length === 0
           ? <Empty icon="history" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />
-          : <StagList>{filtered.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
+          : <StagList>{extractions.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
         }
       </div>
+
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+        itemsPerPage={itemsPerPage}
+        onItemsPerPageChange={(limit) => {
+          setItemsPerPage(limit);
+          setPage(1);
+        }}
+      />
     </div>
   );
 }
+
