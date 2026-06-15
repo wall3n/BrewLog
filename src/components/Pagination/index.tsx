@@ -19,7 +19,7 @@ export function Pagination({
 }: PaginationProps) {
   const { t } = useTranslation();
 
-  const showNavigation = totalPages > 1;
+  const showNavigation = totalPages >= 1;
   const showPerPage = itemsPerPage !== undefined && onItemsPerPageChange !== undefined;
 
   if (!showNavigation && !showPerPage) return null;
@@ -30,7 +30,7 @@ export function Pagination({
         <div className={`row row-between ${s.paginationContainer}`}>
           <Button
             variant="ghost"
-            disabled={currentPage === 1}
+            disabled={currentPage <= 1}
             onClick={() => onPageChange(currentPage - 1)}
             leftIcon="arrowLeft"
             className={s.pageBtn}
@@ -42,7 +42,7 @@ export function Pagination({
           </span>
           <Button
             variant="ghost"
-            disabled={currentPage === totalPages}
+            disabled={currentPage >= totalPages}
             onClick={() => onPageChange(currentPage + 1)}
             rightIcon="arrowRight"
             className={s.pageBtn}
