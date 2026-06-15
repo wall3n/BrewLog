@@ -47,16 +47,14 @@ export function WelcomeModal() {
             </button>
             <div className="welcome-sheet-row">
               <button
-                className="btn btn-ghost"
-                style={{ flex: 1 }}
+                className="btn btn-ghost flex-1"
                 onClick={handleFresh}
                 disabled={loading}
               >
                 {t('welcome.startFresh')}
               </button>
               <button
-                className="btn btn-ghost"
-                style={{ flex: 1 }}
+                className="btn btn-ghost flex-1"
                 onClick={handleDemo}
                 disabled={loading}
               >

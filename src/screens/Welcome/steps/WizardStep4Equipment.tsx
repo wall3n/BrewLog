@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { WizardData } from '../QuickSetupWizard';
+import css from './styles.module.css';
 
 interface Props {
   data: WizardData;
@@ -58,7 +59,7 @@ export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
 
       <button className="wizard-add-link" onClick={addRow}>{t('wizard.step4.addAnother')}</button>
 
-      <div style={{ marginTop: 24, textAlign: 'center' }}>
+      <div className={css.skipWrap}>
         <button className="wizard-skip-link" onClick={onSkip}>{t('wizard.step4.skip')}</button>
       </div>
     </div>

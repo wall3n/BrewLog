@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { WizardData } from '../QuickSetupWizard';
+import css from './styles.module.css';
 
 interface Props {
   data: WizardData;
@@ -20,7 +21,7 @@ export function WizardStep3Bean({ data, onChange }: Props) {
       <h2 className="wizard-step-title">{t('wizard.step3.title')}</h2>
       <p className="wizard-step-sub">{t('wizard.step3.sub')}</p>
 
-      <div className="field" style={{ marginBottom: 20 }}>
+      <div className={`field ${css.fieldMb}`}>
         <span className="field-label">{t('wizard.step3.beanName')}</span>
         <input
           className="input-underline"
@@ -31,7 +32,7 @@ export function WizardStep3Bean({ data, onChange }: Props) {
         />
       </div>
 
-      <div className="field" style={{ marginBottom: 28 }}>
+      <div className={`field ${css.fieldLgMb}`}>
         <span className="field-label">{t('wizard.step3.roaster')}</span>
         <input
           className="input-underline"
@@ -41,7 +42,7 @@ export function WizardStep3Bean({ data, onChange }: Props) {
         />
       </div>
 
-      <span className="field-label" style={{ display: 'block', marginBottom: 12 }}>{t('wizard.step3.roastLevel')}</span>
+      <span className={`field-label ${css.roastLabel}`}>{t('wizard.step3.roastLevel')}</span>
       <div className="wizard-roast-grid">
         {ROAST_LEVELS.map(r => (
           <button
