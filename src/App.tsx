@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Analytics } from '@vercel/analytics/react';
 import { useApp } from './context/AppContext';
 import { Icon } from './components/Icons';
 import { FAB } from './components/UI';
@@ -76,6 +77,7 @@ export default function App() {
     return (
       <>
         <ThemeApplier />
+        <Analytics />
         <WelcomeModal />
       </>
     );
@@ -84,6 +86,7 @@ export default function App() {
   return (
     <>
       <ThemeApplier />
+      <Analytics />
       <div className="app-root">
         <aside className="sidebar">
           <div className="sidebar-brand">

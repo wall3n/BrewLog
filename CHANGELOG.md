@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Recipe Creation Modal**: Added a quick modal to create new recipes directly from the recipes list view.
 - **Version Display System**: Added a dynamic version tracking system displaying the current version (0.1.0) in the sidebar and Settings screen.
 - **Vercel Speed Insights**: Added analytics and speed measurement tools.
+- **Vercel Analytics**: Integrated Vercel Web Analytics by adding the `<Analytics />` component to the application's layout.
+- **Node 24 LTS Upgrade**: Switched the project to target Node 24 (the latest LTS version) for stability, configuring `.node-version`, `.nvmrc`, and `package.json` engines.
 
 ### Changed
 - **Modular Components**: Refactored monolithic component file `UI.tsx` into clean, individual reusable components inside `src/components/`.
@@ -28,3 +30,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Asset/Favicon Optimization**: Replaced default SVG favicon with a proper high-resolution PNG favicon and updated PWA manifest icons.
 - **Modals Behavior**: Hid the PWA quick add floating button when modals are active.
 - **CSS Import Shadowing**: Renamed CSS module imports in Settings screen to prevent namespace clashes with local state attributes.
+- **Security & Dependency Maintenance**: Executed `npm audit fix` to ensure zero known vulnerabilities are present in project dependencies.
