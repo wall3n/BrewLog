@@ -5,12 +5,12 @@ import { useDb } from '../../hooks/useDb';
 import { Button, SegToggle } from '../../components/UI';
 import { METHODS } from '../../utils/methodDefaults';
 import type { AppSettings } from '../../db/types';
-import s from './styles.module.css';
+import css from './styles.module.css';
 
 function SettingRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className={`row row-between ${s.settingRow}`}>
-      <span className={s.settingLabel}>{label}</span>
+    <div className={`row row-between ${css.settingRow}`}>
+      <span className={css.settingLabel}>{label}</span>
       {children}
     </div>
   );
@@ -80,8 +80,8 @@ export function SettingsScreen() {
         <p>{t('settings.subtitle')}</p>
       </div>
 
-      <div className={`card ${s.cardMb}`}>
-        <div className={`t-upper ${s.sectionHead}`}>{t('settings.units.title')}</div>
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.units.title')}</div>
         <div className="col col-gap-16">
           <SettingRow label={t('settings.units.weight')}><SegToggle value={s.weightUnit} options={[['g','grams'],['oz','ounces']]} onChange={v => set({ weightUnit: v as 'g'|'oz' })} /></SettingRow>
           <SettingRow label={t('settings.units.temperature')}><SegToggle value={s.tempUnit} options={[['C','°C'],['F','°F']]} onChange={v => set({ tempUnit: v as 'C'|'F' })} /></SettingRow>
@@ -89,11 +89,11 @@ export function SettingsScreen() {
         </div>
       </div>
 
-      <div className={`card ${s.cardMb}`}>
-        <div className={`t-upper ${s.sectionHead}`}>{t('settings.defaults.title')}</div>
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.defaults.title')}</div>
         <div className="col col-gap-16">
           <SettingRow label={t('settings.defaults.method')}>
-            <select className={`input-underline ${s.methodSelect}`} value={s.defaultMethod} onChange={e => set({ defaultMethod: e.target.value })}>
+            <select className={`input-underline ${css.methodSelect}`} value={s.defaultMethod} onChange={e => set({ defaultMethod: e.target.value })}>
               {METHODS.map(m => <option key={m.id} value={m.id}>{t(`methods.${m.id}`)}</option>)}
             </select>
           </SettingRow>
@@ -103,8 +103,8 @@ export function SettingsScreen() {
         </div>
       </div>
 
-      <div className={`card ${s.cardMb}`}>
-        <div className={`t-upper ${s.sectionHead}`}>{t('settings.appearance.title')}</div>
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.appearance.title')}</div>
         <SettingRow label={t('settings.appearance.theme')}>
           <SegToggle
             value={s.theme}
@@ -118,8 +118,8 @@ export function SettingsScreen() {
         </SettingRow>
       </div>
 
-      <div className={`card ${s.cardMb}`}>
-        <div className={`t-upper ${s.sectionHead}`}>{t('settings.language.title')}</div>
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.language.title')}</div>
         <SettingRow label={t('settings.language.title')}>
           <SegToggle
             value={s.language ?? 'auto'}
@@ -135,7 +135,7 @@ export function SettingsScreen() {
       </div>
 
       <div className="card">
-        <div className={`t-upper ${s.sectionHead}`}>{t('settings.data.title')}</div>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.data.title')}</div>
         <div className="col col-gap-12">
           <Button variant="ghost" full leftIcon="download" onClick={handleExport}>{t('settings.data.exportJson')}</Button>
           <Button variant="ghost" full leftIcon="upload" onClick={handleImport}>{t('settings.data.importJson')}</Button>
@@ -143,8 +143,8 @@ export function SettingsScreen() {
         </div>
       </div>
 
-      <div className={`card ${s.cardMt}`}>
-        <div className={`t-upper ${s.sectionHead}`}>{t('settings.about.title')}</div>
+      <div className={`card ${css.cardMt}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.about.title')}</div>
         <div className="col col-gap-12">
           <SettingRow label={t('settings.about.version')}>
             <span className="t-mono t-sec">v{__APP_VERSION__}</span>
