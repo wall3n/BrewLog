@@ -27,3 +27,6 @@
 .noteText        { font-size: 13px; line-height: 1.6; font-style: italic; }
 .cardMb          { margin-bottom: 16px; }
 .detailValue     { font-size: 13px; }
+.actionRow       { display: flex; gap: 12px; margin-top: 16px; }
+
+

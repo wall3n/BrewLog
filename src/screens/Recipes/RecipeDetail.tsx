@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, MethodBadge, Empty } from '../../components/UI';
+import { Button, BackBar, MethodBadge, Empty, Sheet } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { RecipeForm } from './RecipeForm';
 import type { Recipe } from '../../db/types';
 import s from './styles.module.css';
+
 
 export function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -15,6 +17,7 @@ export function RecipeDetail() {
 
   const [r, setR] = useState<Recipe | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     db.getRecipe(Number(id)).then(recipe => {
@@ -73,9 +76,25 @@ export function RecipeDetail() {
         {t('recipes.startBrew')}
       </Button>
       <div className={s.spacer12} />
-      <Button variant="danger" leftIcon="trash" onClick={async () => {
-        if (confirm(t('recipes.confirmDelete'))) { await db.deleteRecipe(r.id!); navigate('/recipes'); }
-      }}>{t('recipes.deleteRecipe')}</Button>
+      <div className={s.actionRow}>
+        <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
+        <Button variant="danger" leftIcon="trash" onClick={async () => {
+          if (confirm(t('recipes.confirmDelete'))) { await db.deleteRecipe(r.id!); navigate('/recipes'); }
+        }}>{t('recipes.deleteRecipe')}</Button>
+      </div>
+
+      <Sheet open={editing} onClose={() => setEditing(false)} title={t('common.edit')}>
+        <RecipeForm
+          initial={r}
+          onSave={async (payload) => {
+            if (!r) return;
+            const updated = { ...r, ...payload, id: r.id! };
+            await db.updateRecipe(updated);
+            setR(updated);
+            setEditing(false);
+          }}
+        />
+      </Sheet>
     </div>
   );
 }
