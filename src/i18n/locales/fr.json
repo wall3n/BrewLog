@@ -19,7 +19,10 @@
     "search": "Rechercher",
     "continue": "Continuer",
     "skip": "Passer",
-    "unknown": "Inconnu"
+    "unknown": "Inconnu",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "pageOf": "{{current}} / {{total}}"
   },
   "welcome": {
     "quickSetup": "✦ Configuration rapide",
@@ -179,7 +182,18 @@
       "fail": "Raté"
     },
     "nothingMatches": "Aucun résultat",
-    "loosenFilters": "Élargissez vos filtres."
+    "loosenFilters": "Élargissez vos filtres.",
+    "sortBy": "Trier: ",
+    "sorts": {
+      "dateDesc": "Plus récent",
+      "dateAsc": "Plus ancien",
+      "ratingDesc": "Meilleure note",
+      "ratingAsc": "Moins bonne note",
+      "timeDesc": "Plus long",
+      "timeAsc": "Plus court",
+      "ratioDesc": "Plus grand ratio",
+      "ratioAsc": "Plus petit ratio"
+    }
   },
   "extraction": {
     "title": "Enregistrer extraction",
@@ -289,6 +303,21 @@
       "finished": "Terminé",
       "wishlist": "Liste de souhaits"
     },
+    "search": "Rechercher café, torréfacteur, origine...",
+    "sortBy": "Trier: ",
+    "sorts": {
+      "nameAsc": "Nom A–Z",
+      "nameDesc": "Nom Z–A",
+      "roastedDesc": "Torréfaction (récente)",
+      "roastedAsc": "Torréfaction (ancienne)",
+      "createdDesc": "Date d'ajout (récente)"
+    },
+    "filters": {
+      "roastAll": "Toutes torréfactions",
+      "roastLight": "Torréfaction claire",
+      "roastMedium": "Torréfaction moyenne",
+      "roastDark": "Torréfaction foncée"
+    },
     "noActive": "Aucun café actif",
     "noFinished": "Aucun café terminé",
     "noWishlist": "Aucun café en liste de souhaits",
@@ -335,6 +364,18 @@
     "title": "Matériel",
     "items": "{{count}} ÉLÉMENTS",
     "addGear": "Ajouter du matériel",
+    "search": "Rechercher matériel, modèle...",
+    "sortBy": "Trier: ",
+    "sorts": {
+      "nameAsc": "Nom A–Z",
+      "nameDesc": "Nom Z–A",
+      "usesDesc": "Plus utilisé",
+      "usesAsc": "Moins utilisé",
+      "createdDesc": "Date d'ajout (récente)"
+    },
+    "filters": {
+      "typeAll": "Tous types"
+    },
     "noEquipment": "Aucun matériel",
     "noEquipmentBody": "Ajoutez votre moulin, balance et plus.",
     "types": {
@@ -361,6 +402,10 @@
     "saved": "{{count}} SAUVEGARDÉES",
     "shown": "{{count}} AFFICHÉES",
     "new": "Nouvelle recette",
+    "search": "Rechercher nom de recette...",
+    "sortDoseDesc": "Plus grande dose",
+    "sortYieldDesc": "Plus grand rendement",
+    "sortCreatedDesc": "Date d'ajout (récente)",
     "noRecipes": "Aucune recette",
     "noRecipesBody": "Sauvegardez une préparation comme recette pour réutiliser les paramètres.",
     "noMethodMatch": "Aucun résultat",

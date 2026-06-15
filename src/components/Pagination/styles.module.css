@@ -1,0 +1,15 @@
+.paginationContainer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  width: 100%;
+}
+
+.pageBtn {
+  min-width: 90px;
+}
+
+.pageIndicator {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}

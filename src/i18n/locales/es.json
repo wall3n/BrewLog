@@ -19,7 +19,10 @@
     "search": "Buscar",
     "continue": "Continuar",
     "skip": "Omitir",
-    "unknown": "Desconocido"
+    "unknown": "Desconocido",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "{{current}} / {{total}}"
   },
   "welcome": {
     "quickSetup": "✦ Configuración rápida",
@@ -179,7 +182,18 @@
       "fail": "Fallido"
     },
     "nothingMatches": "Sin resultados",
-    "loosenFilters": "Amplía los filtros."
+    "loosenFilters": "Amplía los filtros.",
+    "sortBy": "Ordenar: ",
+    "sorts": {
+      "dateDesc": "Más reciente",
+      "dateAsc": "Más antiguo",
+      "ratingDesc": "Mayor valoración",
+      "ratingAsc": "Menor valoración",
+      "timeDesc": "Mayor tiempo",
+      "timeAsc": "Menor tiempo",
+      "ratioDesc": "Mayor ratio",
+      "ratioAsc": "Menor ratio"
+    }
   },
   "extraction": {
     "title": "Registrar extracción",
@@ -289,6 +303,21 @@
       "finished": "Terminado",
       "wishlist": "Lista de deseos"
     },
+    "search": "Buscar café, tostador, origen...",
+    "sortBy": "Ordenar: ",
+    "sorts": {
+      "nameAsc": "Nombre A–Z",
+      "nameDesc": "Nombre Z–A",
+      "roastedDesc": "Fecha de tueste (reciente)",
+      "roastedAsc": "Fecha de tueste (antiguo)",
+      "createdDesc": "Fecha de agregado (reciente)"
+    },
+    "filters": {
+      "roastAll": "Todos los tuestes",
+      "roastLight": "Tueste claro",
+      "roastMedium": "Tueste medio",
+      "roastDark": "Tueste oscuro"
+    },
     "noActive": "Sin cafés activos",
     "noFinished": "Sin cafés terminados",
     "noWishlist": "Sin cafés en lista de deseos",
@@ -335,6 +364,18 @@
     "title": "Equipo",
     "items": "{{count}} ELEMENTOS",
     "addGear": "Agregar equipo",
+    "search": "Buscar equipo, modelo...",
+    "sortBy": "Ordenar: ",
+    "sorts": {
+      "nameAsc": "Nombre A–Z",
+      "nameDesc": "Nombre Z–A",
+      "usesDesc": "Más usado",
+      "usesAsc": "Menos usado",
+      "createdDesc": "Fecha de agregado (reciente)"
+    },
+    "filters": {
+      "typeAll": "Todos los tipos"
+    },
     "noEquipment": "Sin equipo",
     "noEquipmentBody": "Agrega tu molino, báscula y más.",
     "types": {
@@ -361,6 +402,10 @@
     "saved": "{{count}} GUARDADAS",
     "shown": "{{count}} MOSTRADAS",
     "new": "Nueva receta",
+    "search": "Buscar nombre de receta...",
+    "sortDoseDesc": "Mayor dosis",
+    "sortYieldDesc": "Mayor rendimiento",
+    "sortCreatedDesc": "Fecha de agregado (reciente)",
     "noRecipes": "Sin recetas",
     "noRecipesBody": "Guarda una preparación como receta para reutilizar parámetros.",
     "noMethodMatch": "Sin resultados",

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider } from '../../components/UI';
+import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, Tag } from '../../components/UI';
+import { Icon } from '../../components/Icons';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
@@ -72,38 +73,129 @@ export function BeansScreen() {
   const [adding, setAdding] = useState(false);
   const [beans, setBeans] = useState<Bean[]>([]);
 
-  const loadBeans = () => db.getAllBeans().then(setBeans);
-  useEffect(() => { loadBeans(); }, []);
+  const [q, setQ] = useState('');
+  const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
+  const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const visibleBeans = beans.filter(b => b.status === tab);
+  const loadBeans = useCallback(() => db.getAllBeans().then(setBeans), [db]);
+  useEffect(() => {
+    loadBeans();
+  }, [loadBeans]);
+
+  const filtered = beans.filter(b => {
+    if (b.status !== tab) return false;
+    
+    if (roastFilter !== 'all' && b.roast !== roastFilter) return false;
+    
+    if (q) {
+      const query = q.toLowerCase();
+      const matchName = b.name.toLowerCase().includes(query);
+      const matchRoaster = b.roaster.toLowerCase().includes(query);
+      const matchOrigin = (b.origin ?? '').toLowerCase().includes(query);
+      const matchProcess = (b.process ?? '').toLowerCase().includes(query);
+      const matchNotes = (b.notes ?? '').toLowerCase().includes(query);
+      if (!matchName && !matchRoaster && !matchOrigin && !matchProcess && !matchNotes) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === 'nameAsc') return a.name.localeCompare(b.name);
+    if (sort === 'nameDesc') return b.name.localeCompare(a.name);
+    if (sort === 'roastedDesc') {
+      const da = a.roastedAt ? new Date(a.roastedAt).getTime() : 0;
+      const db = b.roastedAt ? new Date(b.roastedAt).getTime() : 0;
+      return db - da;
+    }
+    if (sort === 'roastedAsc') {
+      const da = a.roastedAt ? new Date(a.roastedAt).getTime() : 0;
+      const db = b.roastedAt ? new Date(b.roastedAt).getTime() : 0;
+      return da - db;
+    }
+    // createdDesc
+    const ca = new Date(a.createdAt).getTime();
+    const cb = new Date(b.createdAt).getTime();
+    return cb - ca;
+  });
+
+  const totalPages = Math.ceil(sorted.length / itemsPerPage);
+  const paginatedBeans = sorted.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
   const noBeansTitle = tab === 'active' ? t('beans.noActive') : tab === 'finished' ? t('beans.noFinished') : t('beans.noWishlist');
   const noBeansBody = tab === 'wishlist' ? t('beans.noWishlistBody') : t('beans.noBeansBody');
+
+  const handleTabChange = (newTab: 'active'|'finished'|'wishlist') => {
+    setTab(newTab);
+    setPage(1);
+  };
 
   return (
     <div>
       <div className={`row row-between ${s.pageRow}`}>
         <div className="page-head">
           <h1>{t('beans.title')}</h1>
-          <p>{t('beans.total', { count: beans.length })}</p>
+          <p>
+            {t('beans.total', { count: beans.length })}
+            {(q || roastFilter !== 'all') && ` · ${t('history.shown', { count: sorted.length })}`}
+          </p>
         </div>
         <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('beans.add')}</Button>
       </div>
       <div className="tabs">
         {(['active', 'finished', 'wishlist'] as const).map(k => (
-          <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>
+          <button key={k} className={tab === k ? 'active' : ''} onClick={() => handleTabChange(k)}>
             {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{beans.filter(b => b.status === k).length}</span>
           </button>
         ))}
       </div>
+
+      <div className="search-bar mb-4">
+        <Icon name="search" size={16} className="t-ter" />
+        <input 
+          placeholder={t('beans.search')} 
+          value={q} 
+          onChange={e => { setQ(e.target.value); setPage(1); }} 
+        />
+      </div>
+
+      <div className="filter-bar">
+        {(['all', 'light', 'medium', 'dark'] as const).map(r => (
+          <Tag key={r} active={roastFilter === r} onClick={() => { setRoastFilter(r); setPage(1); }}>
+            {r === 'all' ? t('beans.filters.roastAll') : t(`beans.roasts.${r}`)}
+          </Tag>
+        ))}
+        <div style={{ flex: 1 }} />
+        <select
+          className="input-underline"
+          value={sort}
+          onChange={e => { setSort(e.target.value as 'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'); setPage(1); }}
+          style={{ width: 'auto', padding: '6px 4px', fontSize: 12, color: 'var(--text-secondary)', flexShrink: 0 }}
+        >
+          <option value="nameAsc">{t('beans.sorts.nameAsc')}</option>
+          <option value="nameDesc">{t('beans.sorts.nameDesc')}</option>
+          <option value="roastedDesc">{t('beans.sorts.roastedDesc')}</option>
+          <option value="roastedAsc">{t('beans.sorts.roastedAsc')}</option>
+          <option value="createdDesc">{t('beans.sorts.createdDesc')}</option>
+        </select>
+      </div>
+
       <div className="grid grid-2">
-        {visibleBeans.length === 0
+        {paginatedBeans.length === 0
           ? <div className={s.gridEmpty}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
-          : visibleBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
+          : paginatedBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
         }
       </div>
+
+      <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('beans.add')}>
         <QuickAddBean onSave={async (payload) => { await db.addBean(payload); await loadBeans(); setAdding(false); }} />
       </Sheet>
     </div>
   );
 }
+

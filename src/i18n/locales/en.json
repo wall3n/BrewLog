@@ -19,7 +19,10 @@
     "search": "Search",
     "continue": "Continue",
     "skip": "Skip",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "prev": "Prev",
+    "next": "Next",
+    "pageOf": "{{current}} / {{total}}"
   },
   "welcome": {
     "quickSetup": "✦ Quick setup",
@@ -179,7 +182,18 @@
       "fail": "Failure"
     },
     "nothingMatches": "Nothing matches",
-    "loosenFilters": "Loosen your filters."
+    "loosenFilters": "Loosen your filters.",
+    "sortBy": "Sort: ",
+    "sorts": {
+      "dateDesc": "Newest first",
+      "dateAsc": "Oldest first",
+      "ratingDesc": "Highest rating",
+      "ratingAsc": "Lowest rating",
+      "timeDesc": "Longest time",
+      "timeAsc": "Shortest time",
+      "ratioDesc": "Highest ratio",
+      "ratioAsc": "Lowest ratio"
+    }
   },
   "extraction": {
     "title": "Log extraction",
@@ -289,6 +303,21 @@
       "finished": "Finished",
       "wishlist": "Wishlist"
     },
+    "search": "Search bean, roaster, origin...",
+    "sortBy": "Sort: ",
+    "sorts": {
+      "nameAsc": "Name A–Z",
+      "nameDesc": "Name Z–A",
+      "roastedDesc": "Roast date (newest)",
+      "roastedAsc": "Roast date (oldest)",
+      "createdDesc": "Date added (newest)"
+    },
+    "filters": {
+      "roastAll": "All roasts",
+      "roastLight": "Light roast",
+      "roastMedium": "Medium roast",
+      "roastDark": "Dark roast"
+    },
     "noActive": "No active beans",
     "noFinished": "No finished beans",
     "noWishlist": "No wishlist beans",
@@ -335,6 +364,18 @@
     "title": "Equipment",
     "items": "{{count}} ITEMS",
     "addGear": "Add gear",
+    "search": "Search gear, model...",
+    "sortBy": "Sort: ",
+    "sorts": {
+      "nameAsc": "Name A–Z",
+      "nameDesc": "Name Z–A",
+      "usesDesc": "Most used",
+      "usesAsc": "Least used",
+      "createdDesc": "Date added (newest)"
+    },
+    "filters": {
+      "typeAll": "All types"
+    },
     "noEquipment": "No equipment",
     "noEquipmentBody": "Add your grinder, scale, and more.",
     "types": {
@@ -361,6 +402,10 @@
     "saved": "{{count}} SAVED",
     "shown": "{{count}} SHOWN",
     "new": "New recipe",
+    "search": "Search recipe name...",
+    "sortDoseDesc": "Highest dose",
+    "sortYieldDesc": "Highest yield",
+    "sortCreatedDesc": "Date added (newest)",
     "noRecipes": "No recipes",
     "noRecipesBody": "Save a brew as a recipe to reuse parameters.",
     "noMethodMatch": "No matches",
