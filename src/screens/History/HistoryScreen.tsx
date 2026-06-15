@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Tag, StagList, Empty, Stars, MethodBadge, Pagination } from '../../components/UI';
+import { Button, StagList, Empty, Stars, MethodBadge, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { methodById } from '../../utils/methodDefaults';
@@ -57,6 +57,7 @@ export function HistoryScreen() {
   const [sort, setSort] = useState<'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'>('dateDesc');
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     Promise.all([db.getAllExtractions(), db.getAllBeans()])
@@ -111,38 +112,97 @@ export function HistoryScreen() {
   const handleFlagChange = (val: string) => { setFlagFilter(val); setPage(1); };
   const handleRatingChange = (val: number) => { setRatingFilter(val); setPage(1); };
 
+  const activeFilters = [];
+  if (methodFilter !== 'all') {
+    activeFilters.push({
+      id: 'method',
+      label: `${t('recipes.form.method')}: ${t(`methods.${methodFilter}`, { defaultValue: methodById(methodFilter)?.name })}`,
+      onRemove: () => handleMethodChange('all')
+    });
+  }
+  if (flagFilter !== 'all') {
+    activeFilters.push({
+      id: 'flag',
+      label: `${t('extraction.steps.tasting.outcome')}: ${t(`history.flags.${flagFilter}`)}`,
+      onRemove: () => handleFlagChange('all')
+    });
+  }
+  if (ratingFilter > 0) {
+    activeFilters.push({
+      id: 'rating',
+      label: `${t('extraction.fields.rating')}: ${ratingFilter}+ ★`,
+      onRemove: () => handleRatingChange(0)
+    });
+  }
+
+  const categories = [
+    {
+      id: 'method',
+      label: t('recipes.form.method'),
+      onSelect: (val: string | number) => handleMethodChange(String(val)),
+      options: [
+        { value: 'all', label: t('history.filters.allMethods') },
+        ...methods.filter(m => m !== 'all').map(m => ({
+          value: m,
+          label: t(`methods.${m}`, { defaultValue: methodById(m)?.name || m })
+        }))
+      ]
+    },
+    {
+      id: 'flag',
+      label: t('extraction.steps.tasting.outcome'),
+      onSelect: (val: string | number) => handleFlagChange(String(val)),
+      options: [
+        { value: 'all', label: t('history.filters.anyFlag') },
+        ...['dialled','adjust','fail'].map(f => ({
+          value: f,
+          label: t(`history.flags.${f}`)
+        }))
+      ]
+    },
+    {
+      id: 'rating',
+      label: t('extraction.fields.rating'),
+      onSelect: (val: string | number) => handleRatingChange(Number(val)),
+      options: [
+        { value: 0, label: t('history.filters.anyRating') },
+        ...[3, 4, 5].map(r => ({
+          value: r,
+          label: `${r}+ ★`
+        }))
+      ]
+    }
+  ];
+
+  const activeFiltersCount = activeFilters.length;
+
   return (
     <div>
       <div className="page-head">
         <h1>{t('history.title')}</h1>
         <p>{t('history.subtitle', { count: extractions.length })} · {t('history.shown', { count: filtered.length })}</p>
       </div>
-      <div className="search-bar mb-4">
-        <Icon name="search" size={16} className="t-ter" />
-        <input placeholder={t('history.search')} value={q} onChange={e => handleQChange(e.target.value)} />
-      </div>
-      <div className="scroll-x mb-6">
-        {methods.map(m => (
-          <Tag key={m} active={methodFilter === m} onClick={() => handleMethodChange(m)}>
-            {m === 'all' ? t('history.filters.allMethods') : t(`methods.${m}`, { defaultValue: methodById(m).name })}
-          </Tag>
-        ))}
-        <span className={s.separator} />
-        {(['all','dialled','adjust','fail'] as const).map(f => (
-          <Tag key={f} active={flagFilter === f} onClick={() => handleFlagChange(f)}>
-            {f === 'all' ? t('history.filters.anyFlag') : t(`history.flags.${f}`)}
-          </Tag>
-        ))}
-        <span className={s.separator} />
-        {[0,3,4,5].map(r => (
-          <Tag key={r} active={ratingFilter === r} onClick={() => handleRatingChange(r)}>
-            {r === 0 ? t('history.filters.anyRating') : `${r}+ ★`}
-          </Tag>
-        ))}
+      <div className="row row-gap-8 mb-4">
+        <div className="search-bar flex-1">
+          <Icon name="search" size={16} className="t-ter" />
+          <input placeholder={t('history.search')} value={q} onChange={e => handleQChange(e.target.value)} />
+        </div>
+        <Button
+          variant="ghost"
+          leftIcon="filter"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          {t('common.filters')}
+          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+        </Button>
       </div>
 
-      <div className="row row-between mb-6">
-        <span className="t-upper">{t('history.sortBy')}</span>
+      <div className="row row-between mb-4">
+        {showFilters ? (
+          <FilterBar activeFilters={activeFilters} categories={categories} />
+        ) : (
+          <div />
+        )}
         <select
           className="input-underline"
           value={sort}

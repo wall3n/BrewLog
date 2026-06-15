@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, Tag } from '../../components/UI';
+import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
@@ -78,6 +78,7 @@ export function BeansScreen() {
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+  const [showFilters, setShowFilters] = useState(false);
 
   const loadBeans = useCallback(() => db.getAllBeans().then(setBeans), [db]);
   useEffect(() => {
@@ -133,6 +134,31 @@ export function BeansScreen() {
     setPage(1);
   };
 
+  const activeFilters = [];
+  if (roastFilter !== 'all') {
+    activeFilters.push({
+      id: 'roast',
+      label: `${t('beans.fields.roastLevel')}: ${t(`beans.roasts.${roastFilter}`)}`,
+      onRemove: () => { setRoastFilter('all'); setPage(1); }
+    });
+  }
+
+  const categories = [
+    {
+      id: 'roast',
+      label: t('beans.fields.roastLevel'),
+      onSelect: (val: string | number) => { setRoastFilter(val as 'all'|'light'|'medium'|'dark'); setPage(1); },
+      options: [
+        { value: 'all', label: t('beans.filters.roastAll') },
+        { value: 'light', label: t('beans.roasts.light') },
+        { value: 'medium', label: t('beans.roasts.medium') },
+        { value: 'dark', label: t('beans.roasts.dark') }
+      ]
+    }
+  ];
+
+  const activeFiltersCount = activeFilters.length;
+
   return (
     <div>
       <div className={`row row-between ${s.pageRow}`}>
@@ -153,22 +179,31 @@ export function BeansScreen() {
         ))}
       </div>
 
-      <div className="search-bar mb-4">
-        <Icon name="search" size={16} className="t-ter" />
-        <input 
-          placeholder={t('beans.search')} 
-          value={q} 
-          onChange={e => { setQ(e.target.value); setPage(1); }} 
-        />
+      <div className="row row-gap-8 mb-4">
+        <div className="search-bar flex-1">
+          <Icon name="search" size={16} className="t-ter" />
+          <input 
+            placeholder={t('beans.search')} 
+            value={q} 
+            onChange={e => { setQ(e.target.value); setPage(1); }} 
+          />
+        </div>
+        <Button
+          variant="ghost"
+          leftIcon="filter"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          {t('common.filters')}
+          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+        </Button>
       </div>
 
-      <div className="filter-bar">
-        {(['all', 'light', 'medium', 'dark'] as const).map(r => (
-          <Tag key={r} active={roastFilter === r} onClick={() => { setRoastFilter(r); setPage(1); }}>
-            {r === 'all' ? t('beans.filters.roastAll') : t(`beans.roasts.${r}`)}
-          </Tag>
-        ))}
-        <div style={{ flex: 1 }} />
+      <div className="row row-between mb-4">
+        {showFilters ? (
+          <FilterBar activeFilters={activeFilters} categories={categories} />
+        ) : (
+          <div />
+        )}
         <select
           className="input-underline"
           value={sort}
@@ -182,6 +217,7 @@ export function BeansScreen() {
           <option value="createdDesc">{t('beans.sorts.createdDesc')}</option>
         </select>
       </div>
+
 
       <div className="grid grid-2">
         {paginatedBeans.length === 0

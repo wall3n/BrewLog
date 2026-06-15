@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, StagList, Empty, MethodBadge, Tag, Sheet, Pagination } from '../../components/UI';
+import { Button, StagList, Empty, MethodBadge, Sheet, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { METHODS } from '../../utils/methodDefaults';
@@ -22,6 +22,7 @@ export function RecipesScreen() {
   const [sort, setSort] = useState<'recent' | 'name' | 'fastest' | 'doseDesc' | 'yieldDesc' | 'createdDesc'>('recent');
   const [page, setPage] = useState(1);
   const itemsPerPage = 10;
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => { db.getAllRecipes().then(setRecipes); }, [db]);
 
@@ -64,6 +65,33 @@ export function RecipesScreen() {
     setPage(1);
   };
 
+  const activeFilters = [];
+  if (method !== 'all') {
+    const mName = usedMethods.find(m => m.id === method)?.name || method;
+    activeFilters.push({
+      id: 'method',
+      label: `${t('recipes.form.method')}: ${mName}`,
+      onRemove: () => handleMethodChange('all')
+    });
+  }
+
+  const categories = [
+    {
+      id: 'method',
+      label: t('recipes.form.method'),
+      onSelect: (val: string | number) => handleMethodChange(String(val)),
+      options: [
+        { value: 'all', label: t('recipes.filterAll') },
+        ...usedMethods.map(m => ({
+          value: m.id,
+          label: m.name
+        }))
+      ]
+    }
+  ];
+
+  const activeFiltersCount = activeFilters.length;
+
   return (
     <div>
       <div className={`row row-between ${s.pageRow}`}>
@@ -79,25 +107,31 @@ export function RecipesScreen() {
         </Button>
       </div>
 
-      <div className="search-bar mb-4">
-        <Icon name="search" size={16} className="t-ter" />
-        <input 
-          placeholder={t('recipes.search')} 
-          value={q} 
-          onChange={e => { setQ(e.target.value); setPage(1); }} 
-        />
+      <div className="row row-gap-8 mb-4">
+        <div className="search-bar flex-1">
+          <Icon name="search" size={16} className="t-ter" />
+          <input 
+            placeholder={t('recipes.search')} 
+            value={q} 
+            onChange={e => { setQ(e.target.value); setPage(1); }} 
+          />
+        </div>
+        <Button
+          variant="ghost"
+          leftIcon="filter"
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          {t('common.filters')}
+          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
+        </Button>
       </div>
 
-      <div className="filter-bar">
-        <Tag active={method === 'all'} onClick={() => handleMethodChange('all')}>
-          {t('recipes.filterAll')}
-        </Tag>
-        {usedMethods.map(m => (
-          <Tag key={m.id} active={method === m.id} onClick={() => handleMethodChange(m.id)}>
-            {m.name}
-          </Tag>
-        ))}
-        <div style={{ flex: 1 }} />
+      <div className="row row-between mb-4">
+        {showFilters ? (
+          <FilterBar activeFilters={activeFilters} categories={categories} />
+        ) : (
+          <div />
+        )}
         <select
           className="input-underline"
           value={sort}

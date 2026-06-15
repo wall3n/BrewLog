@@ -22,7 +22,10 @@
     "unknown": "Inconnu",
     "prev": "Précédent",
     "next": "Suivant",
-    "pageOf": "{{current}} / {{total}}"
+    "pageOf": "{{current}} / {{total}}",
+    "filters": "Filtres",
+    "addFilter": "Filtrer",
+    "filterBy": "Filtrer par"
   },
   "welcome": {
     "quickSetup": "✦ Configuration rapide",
