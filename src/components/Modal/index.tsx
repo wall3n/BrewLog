@@ -11,10 +11,15 @@ export function Sheet({ open, onClose, title, children, foot }: SheetProps) {
   useEffect(() => {
     if (!open) return;
     dispatch({ type: 'OPEN_MODAL' });
-    document.body.style.overflow = 'hidden';
+    const mainEl = document.querySelector('.main');
+    if (mainEl instanceof HTMLElement) {
+      mainEl.style.overflow = 'hidden';
+    }
     return () => {
       dispatch({ type: 'CLOSE_MODAL' });
-      document.body.style.overflow = '';
+      if (mainEl instanceof HTMLElement) {
+        mainEl.style.overflow = '';
+      }
     };
   }, [open, dispatch]);
 
