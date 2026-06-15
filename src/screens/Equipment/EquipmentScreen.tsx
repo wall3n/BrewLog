@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, Sheet, Field, Input, Tag, Empty } from '../../components/UI';
 import { Icon } from '../../components/Icons';
+import type { Equipment } from '../../db/types';
 
 function QuickAddEquipment({ onSave }: { onSave: (p: { type: string; name: string; model?: string }) => void }) {
   const { t } = useTranslation();
@@ -31,25 +31,28 @@ function QuickAddEquipment({ onSave }: { onSave: (p: { type: string; name: strin
 }
 
 export function EquipmentScreen() {
-  const { state } = useApp();
   const db = useDb();
   const { t } = useTranslation();
   const [adding, setAdding] = useState(false);
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
 
-  const groups: Record<string, typeof state.equipment> = {};
-  state.equipment.forEach(e => { (groups[e.type] = groups[e.type] || []).push(e); });
+  const loadEquipment = () => db.getAllEquipment().then(setEquipment);
+  useEffect(() => { loadEquipment(); }, []);
+
+  const groups: Record<string, Equipment[]> = {};
+  equipment.forEach(e => { (groups[e.type] = groups[e.type] || []).push(e); });
 
   return (
     <div>
       <div className="row row-between" style={{ alignItems: 'flex-end', marginBottom: 24 }}>
         <div className="page-head" style={{ marginBottom: 0 }}>
           <h1>{t('equipment.title')}</h1>
-          <p>{t('equipment.items', { count: state.equipment.length })}</p>
+          <p>{t('equipment.items', { count: equipment.length })}</p>
         </div>
         <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('equipment.addGear')}</Button>
       </div>
 
-      {state.equipment.length === 0
+      {equipment.length === 0
         ? <Empty icon="equipment" title={t('equipment.noEquipment')} body={t('equipment.noEquipmentBody')} />
         : (
           <div className="col col-gap-32">
@@ -67,7 +70,10 @@ export function EquipmentScreen() {
                       <div className="row row-gap-12">
                         <span className="t-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{t('equipment.uses', { count: item.usage ?? 0 })}</span>
                         <button type="button" onClick={async () => {
-                          if (confirm(t('equipment.confirmDelete', { name: item.name }))) await db.deleteEquipment(item.id!);
+                          if (confirm(t('equipment.confirmDelete', { name: item.name }))) {
+                            await db.deleteEquipment(item.id!);
+                            await loadEquipment();
+                          }
                         }} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', padding: 4 }}>
                           <Icon name="trash" size={14} />
                         </button>
@@ -82,7 +88,7 @@ export function EquipmentScreen() {
       }
 
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('equipment.addEquipment')}>
-        <QuickAddEquipment onSave={async (payload) => { await db.addEquipment({ ...payload, usage: 0 }); setAdding(false); }} />
+        <QuickAddEquipment onSave={async (payload) => { await db.addEquipment({ ...payload, usage: 0 }); await loadEquipment(); setAdding(false); }} />
       </Sheet>
     </div>
   );

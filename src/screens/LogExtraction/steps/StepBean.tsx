@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../../context/AppContext';
 import { useDb } from '../../../hooks/useDb';
 import { Button, Field, Input, Slider, Sheet, RoastDot, DaysOffRoast } from '../../../components/UI';
 import { Icon } from '../../../components/Icons';
 import type { WizardDraft } from '../index';
+import type { Bean } from '../../../db/types';
 
 interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void; onNext: () => void; }
 
@@ -48,13 +48,15 @@ function QuickAddBean({ onSave }: { onSave: (p: { name: string; roaster: string;
 }
 
 export function StepBean({ draft, update, onNext }: Props) {
-  const { state } = useApp();
   const db = useDb();
   const { t } = useTranslation();
   const [q, setQ] = useState('');
   const [adding, setAdding] = useState(false);
+  const [beans, setBeans] = useState<Bean[]>([]);
 
-  const beans = state.beans.filter(b => b.status !== 'wishlist');
+  const loadBeans = () => db.getAllBeans().then(all => setBeans(all.filter(b => b.status !== 'wishlist')));
+  useEffect(() => { loadBeans(); }, []);
+
   const filtered = beans.filter(b =>
     b.name.toLowerCase().includes(q.toLowerCase()) ||
     (b.roaster ?? '').toLowerCase().includes(q.toLowerCase())
@@ -102,6 +104,7 @@ export function StepBean({ draft, update, onNext }: Props) {
         <QuickAddBean onSave={async (payload) => {
           const newBean = await db.addBean({ ...payload, status: 'active' });
           if (newBean.id) update({ beanId: newBean.id });
+          await loadBeans();
           setAdding(false);
         }} />
       </Sheet>

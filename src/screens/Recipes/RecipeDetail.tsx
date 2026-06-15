@@ -1,17 +1,27 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, MethodBadge, Empty } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import type { Recipe } from '../../db/types';
 
 export function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
-  const { state } = useApp();
   const db = useDb();
   const navigate = useNavigate();
 
-  const r = state.recipes.find(x => x.id === Number(id));
-  if (!r) return <div><BackBar onClick={() => navigate('/recipes')} label="Back to recipes" /><Empty icon="recipe" title="Recipe not found" /></div>;
+  const [r, setR] = useState<Recipe | null>(null);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    db.getRecipe(Number(id)).then(recipe => {
+      if (!recipe) setNotFound(true);
+      else setR(recipe);
+    });
+  }, [id]);
+
+  if (notFound) return <div><BackBar onClick={() => navigate('/recipes')} label="Back to recipes" /><Empty icon="recipe" title="Recipe not found" /></div>;
+  if (!r) return null;
 
   return (
     <div>

@@ -8,65 +8,84 @@ export function useDb() {
   const { dispatch } = useApp();
 
   return {
-    // Extractions
+    // ── Read ──────────────────────────────────────────────────────
+    async getAllExtractions(): Promise<Extraction[]> {
+      return db.extractions.orderBy('createdAt').reverse().toArray();
+    },
+    async getExtraction(id: number): Promise<Extraction | undefined> {
+      return db.extractions.get(id);
+    },
+    async getAllBeans(): Promise<Bean[]> {
+      return db.beans.orderBy('createdAt').toArray();
+    },
+    async getBean(id: number): Promise<Bean | undefined> {
+      return db.beans.get(id);
+    },
+    async getActiveBeans(): Promise<Bean[]> {
+      return db.beans.where('status').equals('active').toArray();
+    },
+    async getAllEquipment(): Promise<Equipment[]> {
+      return db.equipment.orderBy('createdAt').toArray();
+    },
+    async getAllRecipes(): Promise<Recipe[]> {
+      return db.recipes.orderBy('createdAt').toArray();
+    },
+    async getRecipe(id: number): Promise<Recipe | undefined> {
+      return db.recipes.get(id);
+    },
+
+    // ── Extractions ───────────────────────────────────────────────
     async addExtraction(data: Omit<Extraction, 'id' | 'createdAt' | 'updatedAt'>): Promise<number> {
       const ts = now();
       const id = await db.extractions.add({ ...data, createdAt: ts, updatedAt: ts });
-      const saved = await db.extractions.get(id as number);
-      if (saved) dispatch({ type: 'ADD_EXTRACTION', payload: saved });
       return id as number;
     },
     async updateExtraction(data: Extraction): Promise<void> {
       await db.extractions.put({ ...data, updatedAt: now() });
-      dispatch({ type: 'UPDATE_EXTRACTION', payload: data });
     },
     async deleteExtraction(id: number): Promise<void> {
       await db.extractions.delete(id);
-      dispatch({ type: 'DELETE_EXTRACTION', id });
     },
 
-    // Beans
+    // ── Beans ─────────────────────────────────────────────────────
     async addBean(data: Omit<Bean, 'id' | 'createdAt' | 'updatedAt'>): Promise<Bean> {
       const ts = now();
       const id = await db.beans.add({ ...data, createdAt: ts, updatedAt: ts });
       const saved = await db.beans.get(id as number);
-      if (saved) dispatch({ type: 'ADD_BEAN', payload: saved });
+      const activeBeans = await db.beans.where('status').equals('active').toArray();
+      dispatch({ type: 'ACTIVE_BEANS_CHANGED', payload: activeBeans });
       return saved!;
     },
     async updateBean(data: Bean): Promise<void> {
       await db.beans.put({ ...data, updatedAt: now() });
-      dispatch({ type: 'UPDATE_BEAN', payload: data });
+      const activeBeans = await db.beans.where('status').equals('active').toArray();
+      dispatch({ type: 'ACTIVE_BEANS_CHANGED', payload: activeBeans });
     },
     async deleteBean(id: number): Promise<void> {
       await db.beans.delete(id);
-      dispatch({ type: 'DELETE_BEAN', id });
+      const activeBeans = await db.beans.where('status').equals('active').toArray();
+      dispatch({ type: 'ACTIVE_BEANS_CHANGED', payload: activeBeans });
     },
 
-    // Equipment
+    // ── Equipment ─────────────────────────────────────────────────
     async addEquipment(data: Omit<Equipment, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
       const ts = now();
-      const id = await db.equipment.add({ ...data, createdAt: ts, updatedAt: ts });
-      const saved = await db.equipment.get(id as number);
-      if (saved) dispatch({ type: 'ADD_EQUIPMENT', payload: saved });
+      await db.equipment.add({ ...data, createdAt: ts, updatedAt: ts });
     },
     async deleteEquipment(id: number): Promise<void> {
       await db.equipment.delete(id);
-      dispatch({ type: 'DELETE_EQUIPMENT', id });
     },
 
-    // Recipes
+    // ── Recipes ───────────────────────────────────────────────────
     async addRecipe(data: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
       const ts = now();
-      const id = await db.recipes.add({ ...data, createdAt: ts, updatedAt: ts });
-      const saved = await db.recipes.get(id as number);
-      if (saved) dispatch({ type: 'ADD_RECIPE', payload: saved });
+      await db.recipes.add({ ...data, createdAt: ts, updatedAt: ts });
     },
     async deleteRecipe(id: number): Promise<void> {
       await db.recipes.delete(id);
-      dispatch({ type: 'DELETE_RECIPE', id });
     },
 
-    // Settings
+    // ── Settings ──────────────────────────────────────────────────
     async updateSettings(data: Partial<AppSettings>): Promise<void> {
       const ts = now();
       const existing = await db.settings.toArray();
@@ -79,7 +98,7 @@ export function useDb() {
       dispatch({ type: 'UPDATE_SETTINGS', payload: data });
     },
 
-    // Export / Import
+    // ── Export / Import ───────────────────────────────────────────
     async exportAll() {
       const [beans, equipment, recipes, extractions, settings] = await Promise.all([
         db.beans.toArray(),

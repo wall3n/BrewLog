@@ -1,18 +1,24 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../../context/AppContext';
+import { useDb } from '../../../hooks/useDb';
 import { useTimer } from '../../../hooks/useTimer';
 import { Button } from '../../../components/UI';
 import { fmtTime } from '../../../utils/formatters';
 import type { WizardDraft } from '../index';
+import type { Recipe } from '../../../db/types';
 
 interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void; onNext: () => void; onSkip: () => void; }
 
 export function StepTimer({ draft, update, onNext, onSkip }: Props) {
-  const { state } = useApp();
+  const db = useDb();
   const { t } = useTranslation();
   const { seconds, display, isRunning, start, pause, reset } = useTimer();
+  const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
 
-  const recipe = state.recipes.find(r => r.method === draft.method);
+  useEffect(() => {
+    db.getAllRecipes().then(all => setRecipe(all.find(r => r.method === draft.method)));
+  }, [draft.method]);
+
   const stages = recipe?.stages ?? [];
   const activeStageIdx = stages.findIndex((s, i) => {
     const next = stages[i + 1];

@@ -1,9 +1,10 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, RoastDot, Empty } from '../../components/UI';
 import { daysSince, fmtRelDate, fmtTime } from '../../utils/formatters';
+import type { Bean, Extraction } from '../../db/types';
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -16,16 +17,31 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 
 export function BeanDetail() {
   const { id } = useParams<{ id: string }>();
-  const { state } = useApp();
   const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const bean = state.beans.find(b => b.id === Number(id));
-  if (!bean) return <div><BackBar onClick={() => navigate('/beans')} label={t('beans.backToBeans')} /><Empty icon="bean" title={t('beans.notFound')} /></div>;
+  const [bean, setBean] = useState<Bean | null>(null);
+  const [extractions, setExtractions] = useState<Extraction[]>([]);
+  const [notFound, setNotFound] = useState(false);
 
-  const ext = state.extractions.filter(e => e.beanId === bean.id);
-  const avgRating = ext.length ? (ext.reduce((a, e) => a + (e.rating ?? 0), 0) / ext.length).toFixed(1) : '—';
+  useEffect(() => {
+    async function load() {
+      const b = await db.getBean(Number(id));
+      if (!b) { setNotFound(true); return; }
+      setBean(b);
+      const allExts = await db.getAllExtractions();
+      setExtractions(allExts.filter(e => e.beanId === b.id));
+    }
+    load();
+  }, [id]);
+
+  if (notFound) return <div><BackBar onClick={() => navigate('/beans')} label={t('beans.backToBeans')} /><Empty icon="bean" title={t('beans.notFound')} /></div>;
+  if (!bean) return null;
+
+  const avgRating = extractions.length
+    ? (extractions.reduce((a, e) => a + (e.rating ?? 0), 0) / extractions.length).toFixed(1)
+    : null;
 
   return (
     <div>
@@ -41,8 +57,14 @@ export function BeanDetail() {
 
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="grid grid-3">
-          <div className="stat"><div className="v t-mono">{ext.length}</div><div className="l">{t('beans.stats.extractions')}</div></div>
-          <div className="stat"><div className="v t-mono">{avgRating}{ext.length ? <span style={{ fontSize: 12, color: 'var(--text-tertiary)', marginLeft: 4 }}>/5</span> : null}</div><div className="l">{t('beans.stats.avgRating')}</div></div>
+          <div className="stat"><div className="v t-mono">{extractions.length}</div><div className="l">{t('beans.stats.extractions')}</div></div>
+          <div className="stat">
+            <div className="v t-mono">
+              {avgRating ?? '0'}
+              {avgRating && <span style={{ fontSize: 12, color: 'var(--text-tertiary)', marginLeft: 4 }}>/5</span>}
+            </div>
+            <div className="l">{t('beans.stats.avgRating')}</div>
+          </div>
           <div className="stat">
             <div className="v t-mono" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               {daysSince(bean.roastedAt) ?? '—'}<span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>d</span>
@@ -65,7 +87,7 @@ export function BeanDetail() {
         )}
       </div>
 
-      {ext.length > 0 && (
+      {extractions.length > 0 && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="t-upper" style={{ marginBottom: 16 }}>{t('beans.diallingTable')}</div>
           <div className="col">
@@ -75,7 +97,7 @@ export function BeanDetail() {
                 <div key={h} className="t-upper" style={{ width: 60, textAlign: 'right' }}>{t(`beans.diallingHeaders.${h}`)}</div>
               ))}
             </div>
-            {ext.map(e => (
+            {extractions.map(e => (
               <button key={e.id} onClick={() => navigate(`/history/${e.id}`)}
                 style={{ background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', padding: '10px 0', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', width: '100%' }}>
                 <div style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)' }} className="t-mono">{fmtRelDate(e.createdAt)}</div>

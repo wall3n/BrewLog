@@ -1,18 +1,22 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../../context/AppContext';
+import { useDb } from '../../../hooks/useDb';
 import { Button, Field, Input } from '../../../components/UI';
 import { Icon } from '../../../components/Icons';
 import type { WizardDraft } from '../index';
+import type { Equipment } from '../../../db/types';
 
 interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void; onNext: () => void; }
 
 export function StepEquipment({ draft, update, onNext }: Props) {
-  const { state } = useApp();
+  const db = useDb();
   const { t } = useTranslation();
-  const eq = state.equipment;
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
 
-  const groups: Record<string, typeof eq> = {};
-  eq.forEach(e => { (groups[e.type] = groups[e.type] || []).push(e); });
+  useEffect(() => { db.getAllEquipment().then(setEquipment); }, []);
+
+  const groups: Record<string, Equipment[]> = {};
+  equipment.forEach(e => { (groups[e.type] = groups[e.type] || []).push(e); });
 
   const toggle = (id: number) => {
     const next = draft.equipmentIds.includes(id)
@@ -21,7 +25,7 @@ export function StepEquipment({ draft, update, onNext }: Props) {
     update({ equipmentIds: next });
   };
 
-  const hasGrinder = draft.equipmentIds.some(id => eq.find(e => e.id === id)?.type === 'Grinder');
+  const hasGrinder = draft.equipmentIds.some(id => equipment.find(e => e.id === id)?.type === 'Grinder');
 
   return (
     <div>

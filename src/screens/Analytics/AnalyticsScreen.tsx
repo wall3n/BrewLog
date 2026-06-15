@@ -1,6 +1,8 @@
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../context/AppContext';
+import { useDb } from '../../hooks/useDb';
 import { Stars } from '../../components/UI';
+import type { Extraction, Bean } from '../../db/types';
 
 function LineChart({ data }: { data: { rating: number }[] }) {
   const { t } = useTranslation();
@@ -25,19 +27,26 @@ function LineChart({ data }: { data: { rating: number }[] }) {
 }
 
 export function AnalyticsScreen() {
-  const { state } = useApp();
+  const db = useDb();
   const { t } = useTranslation();
-  const ext = state.extractions;
 
-  const ratingsOverTime = [...ext].reverse().slice(-30).map(e => ({ rating: e.rating ?? 0 }));
+  const [extractions, setExtractions] = useState<Extraction[]>([]);
+  const [beans, setBeans] = useState<Bean[]>([]);
+
+  useEffect(() => {
+    Promise.all([db.getAllExtractions(), db.getAllBeans()])
+      .then(([exts, bns]) => { setExtractions(exts); setBeans(bns); });
+  }, []);
+
+  const ratingsOverTime = [...extractions].reverse().slice(-30).map(e => ({ rating: e.rating ?? 0 }));
 
   const methodCounts: Record<string, number> = {};
-  ext.forEach(e => { methodCounts[e.method] = (methodCounts[e.method] ?? 0) + 1; });
+  extractions.forEach(e => { methodCounts[e.method] = (methodCounts[e.method] ?? 0) + 1; });
   const methodList = Object.entries(methodCounts).sort((a, b) => b[1] - a[1]);
   const maxMethodCount = methodList[0]?.[1] ?? 1;
 
   const beanStats: Record<number, { sum: number; count: number }> = {};
-  ext.forEach(e => {
+  extractions.forEach(e => {
     if (!e.rating || !e.beanId) return;
     beanStats[e.beanId] = beanStats[e.beanId] ?? { sum: 0, count: 0 };
     beanStats[e.beanId].sum += e.rating;
@@ -56,7 +65,7 @@ export function AnalyticsScreen() {
 
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="t-upper" style={{ marginBottom: 8 }}>{t('analytics.totalExtractions')}</div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: 64, fontWeight: 300, letterSpacing: '-0.04em', lineHeight: 1 }}>{ext.length}</div>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 64, fontWeight: 300, letterSpacing: '-0.04em', lineHeight: 1 }}>{extractions.length}</div>
       </div>
 
       <div className="card" style={{ marginBottom: 16 }}>
@@ -90,12 +99,12 @@ export function AnalyticsScreen() {
           {topBeans.length === 0
             ? <span className="t-sec" style={{ fontSize: 12 }}>{t('analytics.noRatings')}</span>
             : topBeans.map((b, i) => {
-                const bean = state.beans.find(x => x.id === b.id);
+                const beanObj = beans.find(x => x.id === b.id);
                 return (
                   <div key={b.id} className="row row-between">
                     <div className="row row-gap-12">
                       <span className="t-mono" style={{ color: 'var(--text-tertiary)', width: 18 }}>{(i + 1).toString().padStart(2, '0')}</span>
-                      <span style={{ fontSize: 13 }}>{bean?.name ?? t('common.unknown')}</span>
+                      <span style={{ fontSize: 13 }}>{beanObj?.name ?? t('common.unknown')}</span>
                     </div>
                     <div className="row row-gap-8">
                       <Stars value={Math.round(b.avg)} size={12} />

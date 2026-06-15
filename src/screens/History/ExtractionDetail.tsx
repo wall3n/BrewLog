@@ -1,20 +1,20 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, Stars, Tag, MethodBadge, Empty } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
-import type { Extraction } from '../../db/types';
+import type { Extraction, Bean, Equipment } from '../../db/types';
 
 function TastingRadar({ values }: { values: Pick<Extraction, 'acidity'|'sweetness'|'bitterness'|'body'|'balance'> }) {
   const { t } = useTranslation();
   const axes = ['acidity', 'sweetness', 'bitterness', 'body', 'balance'] as const;
   const labels = {
-    acidity:   t('extraction.fields.acidity'),
-    sweetness: t('extraction.fields.sweetness'),
+    acidity:    t('extraction.fields.acidity'),
+    sweetness:  t('extraction.fields.sweetness'),
     bitterness: t('extraction.fields.bitterness'),
-    body:      t('extraction.fields.body'),
-    balance:   t('extraction.fields.balance'),
+    body:       t('extraction.fields.body'),
+    balance:    t('extraction.fields.balance'),
   };
   const size = 220, cx = 110, cy = 110, maxR = 70;
   const pts = axes.map((k, i) => {
@@ -46,16 +46,32 @@ function TastingRadar({ values }: { values: Pick<Extraction, 'acidity'|'sweetnes
 
 export function ExtractionDetail() {
   const { id } = useParams<{ id: string }>();
-  const { state } = useApp();
   const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const ext = state.extractions.find(e => e.id === Number(id));
-  if (!ext) return <div><BackBar onClick={() => navigate('/history')} label={t('extraction.backToHistory')} /><Empty icon="flask" title={t('extraction.notFound')} /></div>;
+  const [ext, setExt] = useState<Extraction | null>(null);
+  const [bean, setBean] = useState<Bean | undefined>(undefined);
+  const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [notFound, setNotFound] = useState(false);
 
-  const bean = state.beans.find(b => b.id === ext.beanId);
-  const eq = state.equipment.filter(x => (ext.equipmentIds ?? []).includes(x.id!));
+  useEffect(() => {
+    async function load() {
+      const extraction = await db.getExtraction(Number(id));
+      if (!extraction) { setNotFound(true); return; }
+      setExt(extraction);
+      const [b, allEq] = await Promise.all([
+        extraction.beanId ? db.getBean(extraction.beanId) : Promise.resolve(undefined),
+        db.getAllEquipment(),
+      ]);
+      setBean(b);
+      setEquipment(allEq.filter(e => (extraction.equipmentIds ?? []).includes(e.id!)));
+    }
+    load();
+  }, [id]);
+
+  if (notFound) return <div><BackBar onClick={() => navigate('/history')} label={t('extraction.backToHistory')} /><Empty icon="flask" title={t('extraction.notFound')} /></div>;
+  if (!ext) return null;
 
   return (
     <div>
@@ -75,11 +91,11 @@ export function ExtractionDetail() {
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="grid grid-3">
           {[
-            { v: `${ext.dose}g`,            l: t('extraction.fields.dose') },
-            { v: `${ext.yield}g`,           l: t('extraction.fields.yield') },
+            { v: `${ext.dose}g`,              l: t('extraction.fields.dose') },
+            { v: `${ext.yield}g`,             l: t('extraction.fields.yield') },
             { v: `1:${ext.ratio.toFixed(1)}`, l: t('extraction.fields.ratio'), accent: true },
-            { v: fmtTime(ext.timeS),         l: t('extraction.fields.time') },
-            { v: `${ext.temp}°C`,            l: t('extraction.fields.temp') },
+            { v: fmtTime(ext.timeS),           l: t('extraction.fields.time') },
+            { v: `${ext.temp}°C`,              l: t('extraction.fields.temp') },
             ...(ext.tds ? [{ v: `${ext.tds}%`, l: t('extraction.fields.tds') }] : []),
             ...(ext.grindSetting ? [{ v: ext.grindSetting, l: t('extraction.fields.grind') }] : []),
             ...((ext.pressure && (ext.method === 'espresso' || ext.method === 'moka-pot')) ? [{ v: `${ext.pressure}bar`, l: t('extraction.fields.pressure') }] : []),
@@ -113,11 +129,11 @@ export function ExtractionDetail() {
         )}
       </div>
 
-      {eq.length > 0 && (
+      {equipment.length > 0 && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="t-upper" style={{ marginBottom: 12 }}>{t('extraction.equipmentSection')}</div>
           <div className="col col-gap-8">
-            {eq.map(e => (
+            {equipment.map(e => (
               <div key={e.id} className="row row-between">
                 <span style={{ fontSize: 13 }}>{e.name}</span>
                 <span className="t-mono t-sec" style={{ fontSize: 11 }}>{e.type}</span>

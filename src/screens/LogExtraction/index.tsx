@@ -48,7 +48,7 @@ export function LogExtractionScreen() {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<WizardDraft>(() => ({
     method: prefill?.method ?? state.settings?.defaultMethod ?? 'espresso',
-    beanId: prefill?.beanId ?? state.beans.find(b => b.status === 'active')?.id ?? null,
+    beanId: prefill?.beanId ?? state.activeBeans.find(b => b.status === 'active')?.id ?? null,
     equipmentIds: prefill?.equipmentIds ?? [],
     grindSetting: prefill?.grindSetting ?? '',
     dose: prefill?.dose ?? 18,

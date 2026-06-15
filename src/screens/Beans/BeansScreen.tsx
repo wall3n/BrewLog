@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider } from '../../components/UI';
 import type { Bean } from '../../db/types';
@@ -65,15 +64,17 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
 }
 
 export function BeansScreen() {
-  const { state } = useApp();
   const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [tab, setTab] = useState<'active'|'finished'|'wishlist'>('active');
   const [adding, setAdding] = useState(false);
+  const [beans, setBeans] = useState<Bean[]>([]);
 
-  const beans = state.beans.filter(b => b.status === tab);
+  const loadBeans = () => db.getAllBeans().then(setBeans);
+  useEffect(() => { loadBeans(); }, []);
 
+  const visibleBeans = beans.filter(b => b.status === tab);
   const noBeansTitle = tab === 'active' ? t('beans.noActive') : tab === 'finished' ? t('beans.noFinished') : t('beans.noWishlist');
   const noBeansBody = tab === 'wishlist' ? t('beans.noWishlistBody') : t('beans.noBeansBody');
 
@@ -82,25 +83,25 @@ export function BeansScreen() {
       <div className="row row-between" style={{ alignItems: 'flex-end', marginBottom: 24 }}>
         <div className="page-head" style={{ marginBottom: 0 }}>
           <h1>{t('beans.title')}</h1>
-          <p>{t('beans.total', { count: state.beans.length })}</p>
+          <p>{t('beans.total', { count: beans.length })}</p>
         </div>
         <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('beans.add')}</Button>
       </div>
       <div className="tabs">
         {(['active', 'finished', 'wishlist'] as const).map(k => (
           <button key={k} className={tab === k ? 'active' : ''} onClick={() => setTab(k)}>
-            {t(`beans.tabs.${k}`)} <span style={{ marginLeft: 6, color: 'var(--text-tertiary)' }}>{state.beans.filter(b => b.status === k).length}</span>
+            {t(`beans.tabs.${k}`)} <span style={{ marginLeft: 6, color: 'var(--text-tertiary)' }}>{beans.filter(b => b.status === k).length}</span>
           </button>
         ))}
       </div>
       <div className="grid grid-2">
-        {beans.length === 0
+        {visibleBeans.length === 0
           ? <div style={{ gridColumn: '1 / -1' }}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
-          : beans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
+          : visibleBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
         }
       </div>
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('beans.add')}>
-        <QuickAddBean onSave={async (payload) => { await db.addBean(payload); setAdding(false); }} />
+        <QuickAddBean onSave={async (payload) => { await db.addBean(payload); await loadBeans(); setAdding(false); }} />
       </Sheet>
     </div>
   );

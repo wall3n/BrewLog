@@ -1,17 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useApp } from '../../context/AppContext';
+import { useDb } from '../../hooks/useDb';
 import { Tag, StagList, Empty, Stars, MethodBadge } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { methodById } from '../../utils/methodDefaults';
-import type { Extraction } from '../../db/types';
+import type { Extraction, Bean } from '../../db/types';
 
-export function ExtractionRow({ extraction, onClick }: { extraction: Extraction; onClick: () => void }) {
-  const { state } = useApp();
+export function ExtractionRow({ extraction, beans, onClick }: { extraction: Extraction; beans: readonly Bean[]; onClick: () => void }) {
   const { t } = useTranslation();
-  const bean = state.beans.find(b => b.id === extraction.beanId);
+  const bean = beans.find(b => b.id === extraction.beanId);
   return (
     <div className="card card-tight card-hover" onClick={onClick} style={{ padding: '16px 20px' }}>
       <div className="row row-between" style={{ alignItems: 'flex-start', gap: 12 }}>
@@ -43,16 +42,24 @@ export function ExtractionRow({ extraction, onClick }: { extraction: Extraction;
 }
 
 export function HistoryScreen() {
-  const { state } = useApp();
+  const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const [extractions, setExtractions] = useState<Extraction[]>([]);
+  const [beans, setBeans] = useState<Bean[]>([]);
   const [q, setQ] = useState('');
   const [methodFilter, setMethodFilter] = useState('all');
   const [flagFilter, setFlagFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState(0);
 
-  const filtered = state.extractions.filter(e => {
-    const bean = state.beans.find(b => b.id === e.beanId);
+  useEffect(() => {
+    Promise.all([db.getAllExtractions(), db.getAllBeans()])
+      .then(([exts, bns]) => { setExtractions(exts); setBeans(bns); });
+  }, []);
+
+  const filtered = extractions.filter(e => {
+    const bean = beans.find(b => b.id === e.beanId);
     const text = `${bean?.name ?? ''} ${bean?.roaster ?? ''} ${e.notes ?? ''} ${(e.flavours ?? []).join(' ')}`.toLowerCase();
     if (q && !text.includes(q.toLowerCase())) return false;
     if (methodFilter !== 'all' && e.method !== methodFilter) return false;
@@ -61,13 +68,13 @@ export function HistoryScreen() {
     return true;
   });
 
-  const methods = ['all', ...new Set(state.extractions.map(e => e.method))];
+  const methods = ['all', ...new Set(extractions.map(e => e.method))];
 
   return (
     <div>
       <div className="page-head">
         <h1>{t('history.title')}</h1>
-        <p>{t('history.subtitle', { count: state.extractions.length })} · {t('history.shown', { count: filtered.length })}</p>
+        <p>{t('history.subtitle', { count: extractions.length })} · {t('history.shown', { count: filtered.length })}</p>
       </div>
       <div className="search-bar" style={{ marginBottom: 16 }}>
         <Icon name="search" size={16} style={{ color: 'var(--text-tertiary)' }} />
@@ -95,7 +102,7 @@ export function HistoryScreen() {
       <div className="col col-gap-12">
         {filtered.length === 0
           ? <Empty icon="history" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />
-          : <StagList>{filtered.map(e => <ExtractionRow key={e.id} extraction={e} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
+          : <StagList>{filtered.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
         }
       </div>
     </div>

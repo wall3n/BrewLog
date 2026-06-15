@@ -1,15 +1,16 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
+import { useDb } from '../../hooks/useDb';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { Stars, MethodBadge, StagList, Empty, DaysOffRoast, RoastDot } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import type { Extraction, Bean } from '../../db/types';
 
-function ExtractionRow({ extraction, onClick }: { extraction: Extraction; onClick: () => void }) {
-  const { state } = useApp();
+function ExtractionRow({ extraction, beans, onClick }: { extraction: Extraction; beans: readonly Bean[]; onClick: () => void }) {
   const { t } = useTranslation();
-  const bean = state.beans.find(b => b.id === extraction.beanId);
+  const bean = beans.find(b => b.id === extraction.beanId);
   return (
     <div className="card card-tight card-hover" onClick={onClick} style={{ padding: '16px 20px' }}>
       <div className="row row-between" style={{ alignItems: 'flex-start', gap: 12 }}>
@@ -63,9 +64,17 @@ function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
 
 export function HomeScreen() {
   const { state } = useApp();
+  const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { extractions, beans } = state;
+
+  const [extractions, setExtractions] = useState<Extraction[]>([]);
+  const [beans, setBeans] = useState<Bean[]>([]);
+
+  useEffect(() => {
+    Promise.all([db.getAllExtractions(), db.getAllBeans()])
+      .then(([exts, bns]) => { setExtractions(exts); setBeans(bns); });
+  }, []);
 
   const now = new Date();
   const thisMonth = extractions.filter(e => {
@@ -75,7 +84,7 @@ export function HomeScreen() {
   const avgRating = thisMonth.length
     ? (thisMonth.reduce((a, e) => a + (e.rating || 0), 0) / thisMonth.length).toFixed(1)
     : null;
-  const activeBeans = beans.filter(b => b.status === 'active');
+  const activeBeans = state.activeBeans;
   const recent = extractions.slice(0, 5);
 
   return (
@@ -114,7 +123,7 @@ export function HomeScreen() {
       <div className="col col-gap-12" style={{ marginBottom: 32 }}>
         {recent.length === 0
           ? <Empty icon="flask" title={t('home.noExtractions')} body={t('home.noExtractionsBody')} />
-          : <StagList>{recent.map(e => <ExtractionRow key={e.id} extraction={e} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
+          : <StagList>{recent.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
         }
       </div>
 
