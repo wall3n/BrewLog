@@ -129,6 +129,12 @@
       "confirmClear": "Reset all BrewLog data to seed? This cannot be undone.",
       "confirmImport": "Replace current data with import?",
       "invalidJson": "Invalid JSON."
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "storage": "Storage",
+      "storageValue": "Local only · IndexedDB"
     }
   },
   "home": {

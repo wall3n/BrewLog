@@ -141,6 +141,18 @@ export function SettingsScreen() {
           <Button variant="danger" full leftIcon="trash" onClick={handleClear}>{t('settings.data.clearAll')}</Button>
         </div>
       </div>
+
+      <div className="card" style={{ marginTop: 16 }}>
+        <div className="t-upper" style={{ marginBottom: 16 }}>{t('settings.about.title')}</div>
+        <div className="col col-gap-12">
+          <SettingRow label={t('settings.about.version')}>
+            <span className="t-mono t-sec">v{__APP_VERSION__}</span>
+          </SettingRow>
+          <SettingRow label={t('settings.about.storage')}>
+            <span className="t-sec">{t('settings.about.storageValue')}</span>
+          </SettingRow>
+        </div>
+      </div>
     </div>
   );
 }

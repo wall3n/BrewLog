@@ -129,6 +129,12 @@
       "confirmClear": "Réinitialiser toutes les données BrewLog ? Cette action est irréversible.",
       "confirmImport": "Remplacer les données actuelles par l'import ?",
       "invalidJson": "JSON invalide."
+    },
+    "about": {
+      "title": "À propos",
+      "version": "Version",
+      "storage": "Stockage",
+      "storageValue": "Local uniquement · IndexedDB"
     }
   },
   "home": {
