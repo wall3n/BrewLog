@@ -58,6 +58,11 @@ export default function App() {
 
   const isMoreActive = MORE_ITEMS.some(n => isActive(n.path));
 
+  useEffect(() => {
+    document.body.style.overflow = showMore ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [showMore]);
+
   if (state.loading) return <ThemeApplier />;
 
   if (state.showWelcome) {
@@ -84,7 +89,7 @@ export default function App() {
               <span>{n.label}</span>
             </button>
           ))}
-          <div className="sidebar-foot">v{__APP_VERSION__} · local-first</div>
+          <div className="sidebar-foot">v{__APP_VERSION__}</div>
         </aside>
 
         <main className="main">
