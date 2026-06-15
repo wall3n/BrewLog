@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { Icon } from '../Icons';
 import { useApp } from '../../context/AppContext';
 import s from './styles.module.css';
@@ -10,11 +11,16 @@ export function Sheet({ open, onClose, title, children, foot }: SheetProps) {
   useEffect(() => {
     if (!open) return;
     dispatch({ type: 'OPEN_MODAL' });
-    return () => { dispatch({ type: 'CLOSE_MODAL' }); };
+    document.body.style.overflow = 'hidden';
+    return () => {
+      dispatch({ type: 'CLOSE_MODAL' });
+      document.body.style.overflow = '';
+    };
   }, [open, dispatch]);
 
   if (!open) return null;
-  return (
+
+  return createPortal(
     <div className="scrim" onClick={onClose}>
       <div className="sheet" onClick={e => e.stopPropagation()}>
         <div className={`row row-between ${s.header}`}>
@@ -26,6 +32,7 @@ export function Sheet({ open, onClose, title, children, foot }: SheetProps) {
         {children}
         {foot && <div className={s.footer}>{foot}</div>}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
