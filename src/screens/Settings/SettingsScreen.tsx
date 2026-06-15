@@ -4,7 +4,6 @@ import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, SegToggle } from '../../components/UI';
 import { METHODS } from '../../utils/methodDefaults';
-import { db as dexieDb } from '../../db/schema';
 import type { AppSettings } from '../../db/types';
 
 function SettingRow({ label, children }: { label: string; children: React.ReactNode }) {
@@ -54,12 +53,9 @@ export function SettingsScreen() {
       if (!file) return;
       const text = await file.text();
       try {
-        const data = JSON.parse(text);
+        const data = JSON.parse(text) as Parameters<ReturnType<typeof useDb>['importAll']>[0];
         if (confirm(t('settings.data.confirmImport'))) {
-          await dexieDb.beans.clear(); await dexieDb.beans.bulkAdd(data.beans ?? []);
-          await dexieDb.equipment.clear(); await dexieDb.equipment.bulkAdd(data.equipment ?? []);
-          await dexieDb.recipes.clear(); await dexieDb.recipes.bulkAdd(data.recipes ?? []);
-          await dexieDb.extractions.clear(); await dexieDb.extractions.bulkAdd(data.extractions ?? []);
+          await db.importAll(data);
           window.location.reload();
         }
       } catch { alert(t('settings.data.invalidJson')); }
@@ -69,9 +65,7 @@ export function SettingsScreen() {
 
   const handleClear = async () => {
     if (confirm(t('settings.data.confirmClear'))) {
-      await dexieDb.beans.clear(); await dexieDb.equipment.clear();
-      await dexieDb.recipes.clear(); await dexieDb.extractions.clear();
-      await dexieDb.settings.clear();
+      await db.clearAll();
       window.location.reload();
     }
   };

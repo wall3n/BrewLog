@@ -109,5 +109,25 @@ export function useDb() {
       ]);
       return { beans, equipment, recipes, extractions, settings };
     },
+
+    async importAll(data: {
+      beans?: Bean[];
+      equipment?: Equipment[];
+      recipes?: Recipe[];
+      extractions?: Extraction[];
+    }): Promise<void> {
+      await db.beans.clear();       await db.beans.bulkAdd(data.beans ?? []);
+      await db.equipment.clear();   await db.equipment.bulkAdd(data.equipment ?? []);
+      await db.recipes.clear();     await db.recipes.bulkAdd(data.recipes ?? []);
+      await db.extractions.clear(); await db.extractions.bulkAdd(data.extractions ?? []);
+    },
+
+    async clearAll(): Promise<void> {
+      await db.beans.clear();
+      await db.equipment.clear();
+      await db.recipes.clear();
+      await db.extractions.clear();
+      await db.settings.clear();
+    },
   };
 }
