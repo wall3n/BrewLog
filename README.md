@@ -64,42 +64,8 @@ All data stays on your device in IndexedDB. Nothing is sent anywhere.
 | Icons | lucide-react | latest |
 | Fonts | DM Serif Display + DM Mono (self-hosted via fontsource) | — |
 | Performance | Vercel Speed Insights | 2 |
-| Testing | Vitest + React Testing Library | — |
 
 No backend. No external UI library. All components hand-built from the design spec.
-
----
-
-## Getting Started
-
-```bash
-git clone https://github.com/your-handle/brewlog.git
-cd brewlog
-npm install
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173). On first launch the app seeds demo extractions, beans, and recipes so you can explore right away.
-
-```bash
-npm run build    # production build → dist/
-npm run preview  # preview the built PWA locally
-npm run lint     # ESLint
-```
-
-### Install as PWA
-
-Build first — the dev server does not register the service worker:
-
-```bash
-npm run build
-npm run preview
-```
-
-- **iPhone / iPad**: `npm run preview -- --host`, find your local IP (`ipconfig getifaddr en0`), open `http://192.168.x.x:4173` in Safari → Share → Add to Home Screen
-- **MacOS / Windows / Android**: open in Chrome → install icon in address bar (or ⋮ → Install app)
-
-Run a Lighthouse audit in Chrome DevTools → Lighthouse → Progressive Web App to verify full installability.
 
 ---
 
@@ -165,28 +131,10 @@ public/
 | i18n / Multi-language support | Done — English, Spanish, French |
 | Pagination, filtering & sorting | Done |
 | Item editing capabilities | Done |
-| Unit tests | In progress |
 | Cloud sync (Supabase) | Planned — v2 |
 | Scale integration (Acaia / Felicita via Web Bluetooth) | Planned — v2 |
 | Brew timer push notifications | Planned — v2 |
 | Public recipe sharing | Planned — v2 |
-
----
-
-## Deployment
-
-Deployed on **Vercel** as a static PWA. `vercel.json` rewrites all paths to `index.html` so React Router handles client-side navigation.
-
-No environment variables required at v1 — the app is fully local.
-
-When v2 Supabase sync ships:
-
-```bash
-cp .env.example .env.local
-# fill in:
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-```
 
 ---
 
