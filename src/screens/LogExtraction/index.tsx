@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, ProgressBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
+import css from './styles.module.css';
 import { StepMethod } from './steps/StepMethod';
 import { StepBean } from './steps/StepBean';
 import { StepEquipment } from './steps/StepEquipment';
@@ -13,6 +15,9 @@ import { StepTasting } from './steps/StepTasting';
 import type { Extraction } from '../../db/types';
 
 export interface WizardDraft {
+  id?: number;
+  isEditing?: boolean;
+  createdAt?: string;
   method: string;
   beanId: number | null;
   equipmentIds: number[];
@@ -39,14 +44,18 @@ export interface WizardDraft {
 export function LogExtractionScreen() {
   const navigate = useNavigate();
   const location = useLocation();
-  const prefill = location.state as Partial<Extraction> | null;
+  const prefill = location.state as (Partial<Extraction> & { isEditing?: boolean }) | null;
   const { state } = useApp();
   const db = useDb();
+  const { t } = useTranslation();
 
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<WizardDraft>(() => ({
+    id: prefill?.id,
+    isEditing: prefill?.isEditing,
+    createdAt: prefill?.createdAt,
     method: prefill?.method ?? state.settings?.defaultMethod ?? 'espresso',
-    beanId: prefill?.beanId ?? state.beans.find(b => b.status === 'active')?.id ?? null,
+    beanId: prefill?.beanId ?? state.activeBeans.find(b => b.status === 'active')?.id ?? null,
     equipmentIds: prefill?.equipmentIds ?? [],
     grindSetting: prefill?.grindSetting ?? '',
     dose: prefill?.dose ?? 18,
@@ -59,32 +68,48 @@ export function LogExtractionScreen() {
     showTds: !!(prefill?.tds),
     flag: prefill?.flag ?? 'dialled',
     rating: prefill?.rating ?? 0,
-    acidity: 3, sweetness: 3, bitterness: 3, body: 3, balance: 3,
-    flavours: [],
-    notes: '',
+    acidity: prefill?.acidity ?? 3,
+    sweetness: prefill?.sweetness ?? 3,
+    bitterness: prefill?.bitterness ?? 3,
+    body: prefill?.body ?? 3,
+    balance: prefill?.balance ?? 3,
+    flavours: prefill?.flavours ?? [],
+    notes: prefill?.notes ?? '',
   }));
 
   const update = (patch: Partial<WizardDraft>) => setDraft(d => ({ ...d, ...patch }));
 
   const onSave = async () => {
     if (!draft.beanId) return;
-    const { showTds, ...payload } = draft;
-    await db.addExtraction({ ...payload, beanId: draft.beanId });
-    navigate('/');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { showTds, isEditing, id, createdAt, ...payload } = draft;
+    if (isEditing && id) {
+      await db.updateExtraction({
+        ...payload,
+        beanId: draft.beanId,
+        id,
+        createdAt: createdAt!,
+        updatedAt: new Date().toISOString()
+      });
+      navigate(`/history/${id}`);
+    } else {
+      await db.addExtraction({ ...payload, beanId: draft.beanId });
+      navigate('/');
+    }
   };
 
   const TOTAL = 6;
 
   return (
     <div>
-      <div className="row row-between" style={{ marginBottom: 24 }}>
-        <Button variant="ghost" style={{ padding: '6px 10px' }} onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}>
+      <div className={`row row-between ${css.navRow}`}>
+        <Button variant="ghost" className={css.navBtn} onClick={() => step === 1 ? (draft.isEditing ? navigate(`/history/${draft.id}`) : navigate('/')) : setStep(step - 1)}>
           <Icon name="arrowLeft" size={16} />
-          <span>{step === 1 ? 'Cancel' : 'Back'}</span>
+          <span>{step === 1 ? t('extraction.cancel') : t('extraction.back')}</span>
         </Button>
-        <span className="t-upper">Step {step} of {TOTAL}</span>
+        <span className="t-upper">{t('extraction.step', { current: step, total: TOTAL })}</span>
       </div>
-      <div style={{ marginBottom: 32 }}>
+      <div className={css.progressWrap}>
         <ProgressBar value={step} max={TOTAL} />
       </div>
 

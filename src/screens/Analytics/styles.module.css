@@ -1,0 +1,15 @@
+.bigNum         { font-family: var(--mono); font-size: 64px; font-weight: 300; letter-spacing: -0.04em; line-height: 1; }
+.chartHeader    { margin-bottom: 16px; }
+.chartCount     { font-size: 11px; }
+.barRow         { margin-bottom: 6px; }
+.methodName     { font-size: 12px; }
+.methodCount    { font-size: 11px; }
+.barTrack       { height: 6px; background: var(--bg-elevated); border-radius: 3px; }
+.barFill        { height: 100%; background: var(--accent); border-radius: 3px; transition: width 300ms; }
+.beanRank       { color: var(--text-tertiary); width: 18px; }
+.beanName       { font-size: 13px; }
+.beanRating     { font-size: 11px; }
+.cardMb         { margin-bottom: 16px; }
+.cardHeaderMb   { margin-bottom: 8px; }
+.noData         { font-size: 12px; padding: 12px; }
+.chartSvg       { display: block; }

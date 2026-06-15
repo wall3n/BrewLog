@@ -1,13 +1,16 @@
+import { useTranslation } from 'react-i18next';
+import i18n from '../../i18n';
 import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, SegToggle } from '../../components/UI';
 import { METHODS } from '../../utils/methodDefaults';
-import { db as dexieDb } from '../../db/schema';
+import type { AppSettings } from '../../db/types';
+import css from './styles.module.css';
 
 function SettingRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="row row-between" style={{ gap: 16 }}>
-      <span style={{ fontSize: 13 }}>{label}</span>
+    <div className={`row row-between ${css.settingRow}`}>
+      <span className={css.settingLabel}>{label}</span>
       {children}
     </div>
   );
@@ -16,10 +19,21 @@ function SettingRow({ label, children }: { label: string; children: React.ReactN
 export function SettingsScreen() {
   const { state } = useApp();
   const db = useDb();
+  const { t } = useTranslation();
   const s = state.settings;
 
   const set = async (patch: Partial<typeof s>) => {
     await db.updateSettings(patch);
+  };
+
+  const handleLanguageChange = async (lang: string) => {
+    const l = lang as AppSettings['language'];
+    await set({ language: l });
+    if (l === 'auto') {
+      i18n.changeLanguage(navigator.language);
+    } else {
+      i18n.changeLanguage(l);
+    }
   };
 
   const handleExport = async () => {
@@ -40,24 +54,19 @@ export function SettingsScreen() {
       if (!file) return;
       const text = await file.text();
       try {
-        const data = JSON.parse(text);
-        if (confirm('Replace current data with import?')) {
-          await dexieDb.beans.clear(); await dexieDb.beans.bulkAdd(data.beans ?? []);
-          await dexieDb.equipment.clear(); await dexieDb.equipment.bulkAdd(data.equipment ?? []);
-          await dexieDb.recipes.clear(); await dexieDb.recipes.bulkAdd(data.recipes ?? []);
-          await dexieDb.extractions.clear(); await dexieDb.extractions.bulkAdd(data.extractions ?? []);
+        const data = JSON.parse(text) as Parameters<ReturnType<typeof useDb>['importAll']>[0];
+        if (confirm(t('settings.data.confirmImport'))) {
+          await db.importAll(data);
           window.location.reload();
         }
-      } catch { alert('Invalid JSON.'); }
+      } catch { alert(t('settings.data.invalidJson')); }
     };
     input.click();
   };
 
   const handleClear = async () => {
-    if (confirm('Reset all BrewLog data to seed? This cannot be undone.')) {
-      await dexieDb.beans.clear(); await dexieDb.equipment.clear();
-      await dexieDb.recipes.clear(); await dexieDb.extractions.clear();
-      await dexieDb.settings.clear();
+    if (confirm(t('settings.data.confirmClear'))) {
+      await db.clearAll();
       window.location.reload();
     }
   };
@@ -67,46 +76,82 @@ export function SettingsScreen() {
   return (
     <div>
       <div className="page-head">
-        <h1>Settings</h1>
-        <p>PREFERENCES &amp; DATA</p>
+        <h1>{t('settings.title')}</h1>
+        <p>{t('settings.subtitle')}</p>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
-        <div className="t-upper" style={{ marginBottom: 16 }}>Units</div>
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.units.title')}</div>
         <div className="col col-gap-16">
-          <SettingRow label="Weight"><SegToggle value={s.weightUnit} options={[['g','grams'],['oz','ounces']]} onChange={v => set({ weightUnit: v as 'g'|'oz' })} /></SettingRow>
-          <SettingRow label="Temperature"><SegToggle value={s.tempUnit} options={[['C','°C'],['F','°F']]} onChange={v => set({ tempUnit: v as 'C'|'F' })} /></SettingRow>
-          <SettingRow label="Volume"><SegToggle value={s.volumeUnit} options={[['ml','ml'],['oz','fl oz']]} onChange={v => set({ volumeUnit: v as 'ml'|'oz' })} /></SettingRow>
+          <SettingRow label={t('settings.units.weight')}><SegToggle value={s.weightUnit} options={[['g','grams'],['oz','ounces']]} onChange={v => set({ weightUnit: v as 'g'|'oz' })} /></SettingRow>
+          <SettingRow label={t('settings.units.temperature')}><SegToggle value={s.tempUnit} options={[['C','°C'],['F','°F']]} onChange={v => set({ tempUnit: v as 'C'|'F' })} /></SettingRow>
+          <SettingRow label={t('settings.units.volume')}><SegToggle value={s.volumeUnit} options={[['ml','ml'],['oz','fl oz']]} onChange={v => set({ volumeUnit: v as 'ml'|'oz' })} /></SettingRow>
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
-        <div className="t-upper" style={{ marginBottom: 16 }}>Defaults</div>
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.defaults.title')}</div>
         <div className="col col-gap-16">
-          <SettingRow label="Default method">
-            <select className="input-underline" style={{ minWidth: 140 }} value={s.defaultMethod} onChange={e => set({ defaultMethod: e.target.value })}>
-              {METHODS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+          <SettingRow label={t('settings.defaults.method')}>
+            <select className={`input-underline ${css.methodSelect}`} value={s.defaultMethod} onChange={e => set({ defaultMethod: e.target.value })}>
+              {METHODS.map(m => <option key={m.id} value={m.id}>{t(`methods.${m.id}`)}</option>)}
             </select>
           </SettingRow>
-          <SettingRow label="Rating scale">
+          <SettingRow label={t('settings.defaults.ratingScale')}>
             <SegToggle value={s.ratingScale} options={[['5','5 stars'],['10','1–10']]} onChange={v => set({ ratingScale: v as '5'|'10' })} />
           </SettingRow>
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
-        <div className="t-upper" style={{ marginBottom: 16 }}>Appearance</div>
-        <SettingRow label="Theme">
-          <SegToggle value={s.theme} options={[['system','System'],['light','Light'],['dark','Dark']]} onChange={v => set({ theme: v as 'system'|'light'|'dark' })} />
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.appearance.title')}</div>
+        <SettingRow label={t('settings.appearance.theme')}>
+          <SegToggle
+            value={s.theme}
+            options={[
+              ['system', t('settings.appearance.themes.system')],
+              ['light',  t('settings.appearance.themes.light')],
+              ['dark',   t('settings.appearance.themes.dark')],
+            ]}
+            onChange={v => set({ theme: v as 'system'|'light'|'dark' })}
+          />
+        </SettingRow>
+      </div>
+
+      <div className={`card ${css.cardMb}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.language.title')}</div>
+        <SettingRow label={t('settings.language.title')}>
+          <SegToggle
+            value={s.language ?? 'auto'}
+            options={[
+              ['auto', t('settings.language.options.auto')],
+              ['en',   t('settings.language.options.en')],
+              ['es',   t('settings.language.options.es')],
+              ['fr',   t('settings.language.options.fr')],
+            ]}
+            onChange={handleLanguageChange}
+          />
         </SettingRow>
       </div>
 
       <div className="card">
-        <div className="t-upper" style={{ marginBottom: 16 }}>Data</div>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.data.title')}</div>
         <div className="col col-gap-12">
-          <Button variant="ghost" full leftIcon="download" onClick={handleExport}>Export JSON</Button>
-          <Button variant="ghost" full leftIcon="upload" onClick={handleImport}>Import JSON</Button>
-          <Button variant="danger" full leftIcon="trash" onClick={handleClear}>Clear all data</Button>
+          <Button variant="ghost" full leftIcon="download" onClick={handleExport}>{t('settings.data.exportJson')}</Button>
+          <Button variant="ghost" full leftIcon="upload" onClick={handleImport}>{t('settings.data.importJson')}</Button>
+          <Button variant="danger" full leftIcon="trash" onClick={handleClear}>{t('settings.data.clearAll')}</Button>
+        </div>
+      </div>
+
+      <div className={`card ${css.cardMt}`}>
+        <div className={`t-upper ${css.sectionHead}`}>{t('settings.about.title')}</div>
+        <div className="col col-gap-12">
+          <SettingRow label={t('settings.about.version')}>
+            <span className="t-mono t-sec">v{__APP_VERSION__}</span>
+          </SettingRow>
+          <SettingRow label={t('settings.about.storage')}>
+            <span className="t-sec">{t('settings.about.storageValue')}</span>
+          </SettingRow>
         </div>
       </div>
     </div>

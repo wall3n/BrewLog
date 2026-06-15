@@ -1,126 +1,193 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApp } from '../../context/AppContext';
-import { fmtRelDate, fmtTime } from '../../utils/formatters';
-import { Stars, MethodBadge, StagList, Empty, DaysOffRoast, RoastDot } from '../../components/UI';
+import { useTranslation } from 'react-i18next';
+import { useDb } from '../../hooks/useDb';
+import { Stars, MethodBadge, Empty, RoastDot } from '../../components/UI';
 import { Icon } from '../../components/Icons';
+import { MONTHS, fmtRelDate } from '../../utils/formatters';
 import type { Extraction, Bean } from '../../db/types';
 
-function ExtractionRow({ extraction, onClick }: { extraction: Extraction; onClick: () => void }) {
-  const { state } = useApp();
-  const bean = state.beans.find(b => b.id === extraction.beanId);
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 5) return 'Late brew';
+  if (h < 12) return 'Good morning';
+  if (h < 17) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function weekRange(): string {
+  const now = new Date();
+  const start = new Date(Date.now() - 6 * 24 * 60 * 60 * 1000);
+  return `${MONTHS[start.getMonth()]} ${start.getDate()} – ${MONTHS[now.getMonth()]} ${now.getDate()}`;
+}
+
+function WeekStat({ value, unit, label }: { value: string | number; unit: string; label: string }) {
   return (
-    <div className="card card-tight card-hover" onClick={onClick} style={{ padding: '16px 20px' }}>
-      <div className="row row-between" style={{ alignItems: 'flex-start', gap: 12 }}>
-        <div className="col col-gap-8" style={{ flex: 1, minWidth: 0 }}>
-          <div className="row row-gap-8" style={{ flexWrap: 'wrap', gap: 8 }}>
-            <span className="t-upper">{fmtRelDate(extraction.createdAt)}</span>
-            <MethodBadge method={extraction.method} />
-          </div>
-          <div style={{ fontSize: 15, fontFamily: 'var(--serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {bean ? bean.name : 'Unknown bean'}
-          </div>
-          <div className="row row-gap-12" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-            <span className="t-mono">{extraction.dose}g → {extraction.yield}g</span>
-            <span className="t-ter">·</span>
-            <span className="t-mono t-acc">1:{extraction.ratio.toFixed(1)}</span>
-            <span className="t-ter">·</span>
-            <span className="t-mono">{fmtTime(extraction.timeS)}</span>
-          </div>
-        </div>
-        <div className="col" style={{ alignItems: 'flex-end', gap: 6 }}>
-          <Stars value={extraction.rating} size={14} />
-          {extraction.flag === 'dialled' && <span style={{ fontSize: 10, color: 'var(--success)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>✓ Dialled</span>}
-          {extraction.flag === 'adjust'  && <span style={{ fontSize: 10, color: 'var(--warning)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>! Adjust</span>}
-          {extraction.flag === 'fail'    && <span style={{ fontSize: 10, color: 'var(--danger)',  letterSpacing: '0.06em', textTransform: 'uppercase' }}>✗ Failure</span>}
-        </div>
+    <div className="wstat">
+      <div className="wv">
+        {value}
+        {unit && <span className="wu">{unit}</span>}
       </div>
+      <div className="wl">{label}</div>
     </div>
   );
 }
 
-function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
+function RankExtraction({
+  rank, extraction, beans, onClick,
+}: { rank: number; extraction: Extraction; beans: Bean[]; onClick: () => void }) {
+  const bean = beans.find(b => b.id === extraction.beanId);
   return (
-    <div className="card card-hover" onClick={onClick} style={{ padding: 20 }}>
-      <div className="row row-between" style={{ marginBottom: 12, alignItems: 'flex-start' }}>
-        <div className="col col-gap-4" style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--serif)', fontSize: 17, lineHeight: 1.2 }}>{bean.name}</div>
-          <div style={{ fontSize: 11, color: 'var(--text-secondary)', letterSpacing: '0.04em' }}>{bean.roaster}</div>
+    <div className="rank-row" onClick={onClick} role="button" tabIndex={0}
+      onKeyDown={e => e.key === 'Enter' && onClick()}>
+      <span className="rank-n">{rank}</span>
+      <div className="rank-main">
+        <div className="rank-title">{bean ? bean.name : 'Unknown bean'}</div>
+        <div className="rank-sub">
+          <MethodBadge method={extraction.method} />
+          <span className="t-mono t-acc">1:{extraction.ratio.toFixed(1)}</span>
+          <span className="t-ter">·</span>
+          <span className="t-mono t-sec">{fmtRelDate(extraction.createdAt)}</span>
         </div>
-        <RoastDot level={bean.roast} />
       </div>
-      <div className="row row-between" style={{ alignItems: 'flex-end' }}>
-        <div className="col col-gap-4">
-          <span className="t-upper">{bean.process}</span>
-          <span style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.05em' }}>{(bean.origin || '').toUpperCase()}</span>
+      <Stars value={extraction.rating} size={14} />
+    </div>
+  );
+}
+
+function RankBean({
+  rank, bean, count, onClick,
+}: { rank: number; bean: Bean; count: number; onClick: () => void }) {
+  return (
+    <div className="rank-row" onClick={onClick} role="button" tabIndex={0}
+      onKeyDown={e => e.key === 'Enter' && onClick()}>
+      <span className="rank-n">{rank}</span>
+      <div className="rank-main">
+        <div className="rank-title">{bean.name}</div>
+        <div className="rank-sub">
+          <RoastDot level={bean.roast} />
+          <span className="t-sec" style={{ fontSize: 11, letterSpacing: '0.04em' }}>{bean.roaster}</span>
         </div>
-        <DaysOffRoast iso={bean.roastedAt} />
+      </div>
+      <div className="rank-metric">
+        <span className="rm-v">{count}</span>
+        <span className="rm-l">{count === 1 ? 'brew' : 'brews'}</span>
       </div>
     </div>
   );
 }
 
 export function HomeScreen() {
-  const { state } = useApp();
+  const db = useDb();
   const navigate = useNavigate();
-  const { extractions, beans } = state;
+  const { t } = useTranslation();
 
-  const now = new Date();
-  const thisMonth = extractions.filter(e => {
-    const d = new Date(e.createdAt);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
-  const avgRating = thisMonth.length
-    ? (thisMonth.reduce((a, e) => a + (e.rating || 0), 0) / thisMonth.length).toFixed(1)
+  const [extractions, setExtractions] = useState<Extraction[]>([]);
+  const [beans, setBeans] = useState<Bean[]>([]);
+
+  useEffect(() => {
+    Promise.all([db.getAllExtractions(), db.getAllBeans()])
+      .then(([exts, bns]) => { setExtractions(exts); setBeans(bns); });
+  }, []);
+
+  const weekStart = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const week = extractions.filter(e => new Date(e.createdAt).getTime() >= weekStart);
+
+  const brews = week.length;
+  const rated = week.filter(e => e.rating > 0);
+  const avgRating = rated.length
+    ? (rated.reduce((a, e) => a + e.rating, 0) / rated.length).toFixed(1)
     : '—';
-  const activeBeans = beans.filter(b => b.status === 'active');
-  const recent = extractions.slice(0, 5);
+  const dialled = week.filter(e => e.flag === 'dialled').length;
+  const dialledPct = brews ? Math.round((dialled / brews) * 100) : 0;
+  const gramsUsed = week.reduce((a, e) => a + (e.dose || 0), 0);
+
+  const topExt = [...week]
+    .sort((a, b) => (b.rating - a.rating) || (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()))
+    .slice(0, 3);
+
+  const beanAgg: Record<number, { count: number; ratingSum: number; ratingN: number }> = {};
+  week.forEach(e => {
+    const g = beanAgg[e.beanId] ?? (beanAgg[e.beanId] = { count: 0, ratingSum: 0, ratingN: 0 });
+    g.count += 1;
+    if (e.rating > 0) { g.ratingSum += e.rating; g.ratingN += 1; }
+  });
+  const topBeans = Object.entries(beanAgg)
+    .map(([beanId, g]) => ({
+      bean: beans.find(b => b.id === Number(beanId)),
+      count: g.count,
+      avg: g.ratingN ? g.ratingSum / g.ratingN : 0,
+    }))
+    .filter((x): x is { bean: Bean; count: number; avg: number } => x.bean != null)
+    .sort((a, b) => (b.count - a.count) || (b.avg - a.avg))
+    .slice(0, 3);
 
   return (
-    <div>
-      <div className="page-head">
-        <h1>BrewLog</h1>
-        <p>YOUR EXTRACTION JOURNAL</p>
-      </div>
+    <div className="home-min">
+      <header className="home-hero">
+        <span className="t-upper">{weekRange()}</span>
+        <h1 className="h-display">{greeting()}.</h1>
+      </header>
 
-      <div className="card" style={{ marginBottom: 24 }}>
-        <div className="grid grid-3">
-          <div className="stat">
-            <div className="v">{extractions.length}</div>
-            <div className="l">Total extractions</div>
-          </div>
-          <div className="stat">
-            <div className="v">{avgRating}<span style={{ fontSize: 14, color: 'var(--text-tertiary)', marginLeft: 6 }}>/ 5</span></div>
-            <div className="l">Avg this month</div>
-          </div>
-          <div className="stat">
-            <div className="v">{activeBeans.length}</div>
-            <div className="l">Active beans</div>
-          </div>
+      <section className="home-block">
+        <div className="block-label">
+          <span className="t-upper">{t('home.thisWeek')}</span>
         </div>
-      </div>
+        <div className="week-stats">
+          <WeekStat value={brews} unit="" label={t('home.stats.brews')} />
+          <WeekStat value={avgRating} unit={rated.length ? '/5' : ''} label={t('home.stats.avgRating')} />
+          <WeekStat value={dialledPct} unit="%" label={t('home.stats.dialledIn')} />
+          <WeekStat value={gramsUsed} unit="g" label={t('home.stats.coffeeUsed')} />
+        </div>
+      </section>
 
-      <div className="section-head">
-        <h2>Recent</h2>
-        <button className="sidebar-link" style={{ width: 'auto', padding: '4px 8px', color: 'var(--accent)' }} onClick={() => navigate('/history')}>
-          See all <Icon name="chevronRight" size={14} />
-        </button>
-      </div>
-      <div className="col col-gap-12" style={{ marginBottom: 32 }}>
-        {recent.length === 0
-          ? <Empty icon="flask" title="No extractions yet" body="Tap the + to log your first one." />
-          : <StagList>{recent.map(e => <ExtractionRow key={e.id} extraction={e} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
-        }
-      </div>
+      <section className="home-block">
+        <div className="block-label">
+          <span className="t-upper">{t('home.topExtractions')}</span>
+          <button className="block-link" onClick={() => navigate('/history')}>
+            {t('home.seeAll')} <Icon name="chevronRight" size={13} />
+          </button>
+        </div>
+        {topExt.length === 0
+          ? <Empty icon="flask" title={t('home.noBrewsWeek')} body={t('home.noBrewsWeekBody')} />
+          : (
+            <div className="rank-list">
+              {topExt.map((e, i) => (
+                <RankExtraction
+                  key={e.id}
+                  rank={i + 1}
+                  extraction={e}
+                  beans={beans}
+                  onClick={() => navigate(`/history/${e.id}`)}
+                />
+              ))}
+            </div>
+          )}
+      </section>
 
-      <div className="section-head">
-        <h2>Active beans</h2>
-        <button className="sidebar-link" style={{ width: 'auto', padding: '4px 8px', color: 'var(--accent)' }} onClick={() => navigate('/beans')}>
-          All beans <Icon name="chevronRight" size={14} />
-        </button>
-      </div>
-      <div className="grid grid-2" style={{ marginBottom: 24 }}>
-        {activeBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)}
-      </div>
+      <section className="home-block">
+        <div className="block-label">
+          <span className="t-upper">{t('home.topBeans')}</span>
+          <button className="block-link" onClick={() => navigate('/beans')}>
+            {t('home.seeAll')} <Icon name="chevronRight" size={13} />
+          </button>
+        </div>
+        {topBeans.length === 0
+          ? <Empty icon="bean" title={t('home.noBeansWeek')} />
+          : (
+            <div className="rank-list">
+              {topBeans.map((x, i) => (
+                <RankBean
+                  key={x.bean.id}
+                  rank={i + 1}
+                  bean={x.bean}
+                  count={x.count}
+                  onClick={() => navigate(`/beans/${x.bean.id}`)}
+                />
+              ))}
+            </div>
+          )}
+      </section>
     </div>
   );
 }

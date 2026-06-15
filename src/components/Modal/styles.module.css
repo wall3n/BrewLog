@@ -1,0 +1,4 @@
+.header   { margin-bottom: 20px; }
+.title    { margin: 0; font-size: 22px; }
+.closeBtn { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px; }
+.footer   { margin-top: 20px; }

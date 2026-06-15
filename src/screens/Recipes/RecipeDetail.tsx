@@ -1,49 +1,65 @@
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useApp } from '../../context/AppContext';
+import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, MethodBadge, Empty } from '../../components/UI';
+import { Button, BackBar, MethodBadge, Empty, Sheet } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { RecipeForm } from './RecipeForm';
+import type { Recipe } from '../../db/types';
+import s from './styles.module.css';
+
 
 export function RecipeDetail() {
   const { id } = useParams<{ id: string }>();
-  const { state } = useApp();
   const db = useDb();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
-  const r = state.recipes.find(x => x.id === Number(id));
-  if (!r) return <div><BackBar onClick={() => navigate('/recipes')} label="Back to recipes" /><Empty icon="recipe" title="Recipe not found" /></div>;
+  const [r, setR] = useState<Recipe | null>(null);
+  const [notFound, setNotFound] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  useEffect(() => {
+    db.getRecipe(Number(id)).then(recipe => {
+      if (!recipe) setNotFound(true);
+      else setR(recipe);
+    });
+  }, [id]);
+
+  if (notFound) return <div><BackBar onClick={() => navigate('/recipes')} label={t('recipes.backToRecipes')} /><Empty icon="recipe" title={t('recipes.notFound')} /></div>;
+  if (!r) return null;
 
   return (
     <div>
-      <BackBar onClick={() => navigate('/recipes')} label="Back to recipes" />
-      <div className="page-head" style={{ marginBottom: 20 }}>
-        <div className="row row-gap-12" style={{ marginBottom: 6 }}>
+      <BackBar onClick={() => navigate('/recipes')} label={t('recipes.backToRecipes')} />
+      <div className={`page-head ${s.detailHead}`}>
+        <div className={`row row-gap-12 ${s.headRow}`}>
           <MethodBadge method={r.method} />
-          <span className="t-upper">{r.lastUsedAt ? `Last used ${fmtRelDate(r.lastUsedAt).toLowerCase()}` : 'Never used'}</span>
+          <span className="t-upper">{r.lastUsedAt ? t('recipes.lastUsed', { date: fmtRelDate(r.lastUsedAt).toLowerCase() }) : t('recipes.neverUsed')}</span>
         </div>
         <h1>{r.name}</h1>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
+      <div className={`card ${s.detailCard}`}>
         <div className="grid grid-3">
           {[
-            { v: `${r.dose}g`, l: 'Dose' },
-            { v: `${r.yield}g`, l: 'Yield' },
-            { v: `1:${r.ratio.toFixed(1)}`, l: 'Ratio', accent: true },
-            { v: fmtTime(r.time), l: 'Time' },
-            { v: `${r.temp}°C`, l: 'Temp' },
-          ].map(s => (
-            <div key={s.l} className="stat">
-              <div className="v t-mono" style={s.accent ? { color: 'var(--accent)' } : {}}>{s.v}</div>
-              <div className="l">{s.l}</div>
+            { v: `${r.dose}g`, l: t('recipes.fields.dose') },
+            { v: `${r.yield}g`, l: t('recipes.fields.yield') },
+            { v: `1:${r.ratio.toFixed(1)}`, l: t('recipes.fields.ratio'), accent: true },
+            { v: fmtTime(r.time), l: t('recipes.fields.time') },
+            { v: `${r.temp}°C`, l: t('recipes.fields.temp') },
+          ].map(item => (
+            <div key={item.l} className="stat">
+              <div className={`v t-mono${item.accent ? ` ${s.statAccent}` : ''}`}>{item.v}</div>
+              <div className="l">{item.l}</div>
             </div>
           ))}
         </div>
       </div>
 
       {r.stages?.length > 0 && (
-        <div className="card" style={{ marginBottom: 16 }}>
-          <div className="t-upper" style={{ marginBottom: 16 }}>Pour schedule</div>
+        <div className={`card ${s.detailCard}`}>
+          <div className={`t-upper ${s.pourLabel}`}>{t('recipes.pourSchedule')}</div>
           <div className="col col-gap-8">
             {r.stages.map((s, i) => (
               <div key={s.id} className="pour-stage">
@@ -57,12 +73,28 @@ export function RecipeDetail() {
       )}
 
       <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp } })}>
-        Start brew
+        {t('recipes.startBrew')}
       </Button>
-      <div style={{ height: 12 }} />
-      <Button variant="danger" leftIcon="trash" onClick={async () => {
-        if (confirm('Delete this recipe?')) { await db.deleteRecipe(r.id!); navigate('/recipes'); }
-      }}>Delete recipe</Button>
+      <div className={s.spacer12} />
+      <div className={s.actionRow}>
+        <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
+        <Button variant="danger" leftIcon="trash" onClick={async () => {
+          if (confirm(t('recipes.confirmDelete'))) { await db.deleteRecipe(r.id!); navigate('/recipes'); }
+        }}>{t('recipes.deleteRecipe')}</Button>
+      </div>
+
+      <Sheet open={editing} onClose={() => setEditing(false)} title={t('common.edit')}>
+        <RecipeForm
+          initial={r}
+          onSave={async (payload) => {
+            if (!r) return;
+            const updated = { ...r, ...payload, id: r.id! };
+            await db.updateRecipe(updated);
+            setR(updated);
+            setEditing(false);
+          }}
+        />
+      </Sheet>
     </div>
   );
 }

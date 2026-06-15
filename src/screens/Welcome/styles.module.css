@@ -1,0 +1,2 @@
+/* WelcomeModal and QuickSetupWizard use global .welcome-* and .wizard-* classes from global.css — no overrides needed */
+/* File exists to satisfy per-folder CSS module rule */

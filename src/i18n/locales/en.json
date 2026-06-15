@@ -1,0 +1,465 @@
+{
+  "app": {
+    "tagline": "YOUR EXTRACTION JOURNAL"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "add": "Add",
+    "edit": "Edit",
+    "back": "Back",
+    "confirm": "Confirm",
+    "export": "Export",
+    "import": "Import",
+    "loading": "Loading…",
+    "saving": "Saving…",
+    "remove": "Remove",
+    "noData": "No data yet",
+    "search": "Search",
+    "continue": "Continue",
+    "skip": "Skip",
+    "unknown": "Unknown",
+    "prev": "Prev",
+    "next": "Next",
+    "pageOf": "{{current}} / {{total}}",
+    "perPage": "Per page",
+    "filters": "Filters",
+    "addFilter": "Filter",
+    "filterBy": "Filter by"
+  },
+  "welcome": {
+    "quickSetup": "✦ Quick setup",
+    "startFresh": "Start fresh",
+    "demoData": "Demo data",
+    "tagline": "YOUR EXTRACTION JOURNAL",
+    "copy": "Track every pour. Dial in your perfect cup."
+  },
+  "wizard": {
+    "backLabel": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "step1": {
+      "title": "What do you brew most?",
+      "sub": "Sets your default method. Change any time in Settings."
+    },
+    "step2": {
+      "title": "Your units",
+      "sub": "Used across all measurements in the app.",
+      "weight": "Weight",
+      "weightG": "Grams (g)",
+      "weightOz": "Ounces (oz)",
+      "temperature": "Temperature"
+    },
+    "step3": {
+      "title": "Your current bean",
+      "sub": "Add the coffee you're brewing with right now.",
+      "beanName": "Bean name",
+      "beanNamePlaceholder": "e.g. Ethiopia Yirgacheffe",
+      "roaster": "Roaster",
+      "roasterPlaceholder": "e.g. Sample Roasters",
+      "roastLevel": "Roast level",
+      "roastLight": "Light",
+      "roastLightDesc": "Floral, fruity, bright",
+      "roastMedium": "Medium",
+      "roastMediumDesc": "Balanced, caramel, nutty",
+      "roastDark": "Dark",
+      "roastDarkDesc": "Bold, smoky, bittersweet"
+    },
+    "step4": {
+      "title": "Your equipment",
+      "sub": "Grinder, machine, scale — add what you use.",
+      "typePlaceholder": "Type…",
+      "namePlaceholder": "Name or model",
+      "addAnother": "+ Add another",
+      "skip": "Skip for now"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "history": "History",
+    "recipes": "Recipes",
+    "beans": "Beans",
+    "equipment": "Equipment",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "more": "More"
+  },
+  "methods": {
+    "espresso": "Espresso",
+    "french-press": "French Press",
+    "pour-over": "Pour Over",
+    "aeropress": "AeroPress",
+    "moka-pot": "Moka Pot",
+    "cold-brew": "Cold Brew",
+    "drip": "Drip",
+    "siphon": "Siphon",
+    "custom": "Custom"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "PREFERENCES & DATA",
+    "units": {
+      "title": "Units",
+      "weight": "Weight",
+      "temperature": "Temperature",
+      "volume": "Volume"
+    },
+    "defaults": {
+      "title": "Defaults",
+      "method": "Default method",
+      "ratingScale": "Rating scale"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "theme": "Theme",
+      "themes": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      }
+    },
+    "language": {
+      "title": "Language",
+      "options": {
+        "auto": "Auto",
+        "en": "English",
+        "es": "Español",
+        "fr": "Français"
+      }
+    },
+    "data": {
+      "title": "Data",
+      "exportJson": "Export JSON",
+      "importJson": "Import JSON",
+      "clearAll": "Clear all data",
+      "confirmClear": "Reset all BrewLog data to seed? This cannot be undone.",
+      "confirmImport": "Replace current data with import?",
+      "invalidJson": "Invalid JSON."
+    },
+    "about": {
+      "title": "About",
+      "version": "Version",
+      "storage": "Storage",
+      "storageValue": "Local"
+    }
+  },
+  "home": {
+    "title": "BrewLog",
+    "subtitle": "YOUR EXTRACTION JOURNAL",
+    "stats": {
+      "totalExtractions": "Total extractions",
+      "avgThisMonth": "Avg this month",
+      "activeBeans": "Active beans",
+      "brews": "Brews",
+      "avgRating": "Avg rating",
+      "dialledIn": "Dialled in",
+      "coffeeUsed": "Coffee used"
+    },
+    "thisWeek": "This week",
+    "topExtractions": "Top extractions",
+    "topBeans": "Top beans",
+    "recent": "Recent",
+    "seeAll": "All",
+    "activeBeans": "Active beans",
+    "allBeans": "All beans",
+    "noExtractions": "No extractions yet",
+    "noExtractionsBody": "Tap the + to log your first one.",
+    "noBrewsWeek": "Nothing brewed this week",
+    "noBrewsWeekBody": "Tap + to log an extraction.",
+    "noBeansWeek": "No beans used this week"
+  },
+  "history": {
+    "title": "History",
+    "subtitle_one": "{{count}} EXTRACTION",
+    "subtitle_other": "{{count}} EXTRACTIONS",
+    "shown": "{{count}} SHOWN",
+    "search": "Search bean, note, flavour…",
+    "filters": {
+      "allMethods": "All methods",
+      "anyFlag": "Any flag",
+      "anyRating": "Any rating"
+    },
+    "flags": {
+      "dialled": "Dialled",
+      "adjust": "Adjust",
+      "fail": "Failure"
+    },
+    "nothingMatches": "Nothing matches",
+    "loosenFilters": "Loosen your filters.",
+    "sortBy": "Sort: ",
+    "sorts": {
+      "dateDesc": "Newest first",
+      "dateAsc": "Oldest first",
+      "ratingDesc": "Highest rating",
+      "ratingAsc": "Lowest rating",
+      "timeDesc": "Longest time",
+      "timeAsc": "Shortest time",
+      "ratioDesc": "Highest ratio",
+      "ratioAsc": "Lowest ratio"
+    }
+  },
+  "extraction": {
+    "title": "Log extraction",
+    "step": "Step {{current}} of {{total}}",
+    "cancel": "Cancel",
+    "back": "Back",
+    "steps": {
+      "method": {
+        "title": "What are you brewing?",
+        "subtitle": "PICK A METHOD"
+      },
+      "bean": {
+        "title": "Choose your beans",
+        "search": "Search beans or roaster…",
+        "quickAdd": "Quick add bean"
+      },
+      "equipment": {
+        "title": "Your gear",
+        "subtitle": "MULTI-SELECT",
+        "grindSetting": "Grinder setting",
+        "grindSettingHint": "Click number, dial, or rotation depending on grinder",
+        "grindPlaceholder": "e.g. 2.3"
+      },
+      "parameters": {
+        "title": "Brew parameters",
+        "algorithmAssist": "Algorithm assist",
+        "refractometer": "I have a refractometer reading",
+        "yourEY": "Your EY",
+        "eyLabel": "Extraction Yield"
+      },
+      "timer": {
+        "title": "Brew timer",
+        "subtitle": "OPTIONAL",
+        "skip": "Skip →",
+        "start": "Start",
+        "pause": "Pause",
+        "reset": "Reset",
+        "useTime": "Use {{time}}",
+        "continueWithout": "Continue without timing"
+      },
+      "tasting": {
+        "title": "How did it taste?",
+        "subtitle": "THE FUN PART",
+        "outcome": "Outcome",
+        "overallRating": "Overall rating",
+        "flavourProfile": "Flavour profile",
+        "flavourNotes": "Flavour notes",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "What will you change next time?",
+        "customFlavour": "+ custom",
+        "customFlavourPrompt": "Custom flavour note:",
+        "save": "Save extraction",
+        "flags": {
+          "dialled": "Dialled in",
+          "adjust": "Adjust",
+          "fail": "Failure"
+        }
+      }
+    },
+    "fields": {
+      "dose": "Dose",
+      "yield": "Yield",
+      "ratio": "Ratio",
+      "grindSetting": "Grind setting",
+      "grind": "Grind",
+      "temperature": "Temperature",
+      "pressure": "Pressure",
+      "time": "Time",
+      "temp": "Temp",
+      "tds": "TDS",
+      "extractionTime": "Extraction time",
+      "tasting": "Tasting",
+      "notes": "Notes",
+      "rating": "Rating",
+      "acidity": "Acidity",
+      "sweetness": "Sweetness",
+      "bitterness": "Bitterness",
+      "body": "Body",
+      "balance": "Balance"
+    },
+    "flags": {
+      "dialled": "Dialled in",
+      "adjust": "Adjust",
+      "fail": "Failure"
+    },
+    "zones": {
+      "under": "UNDER-EXTRACTED",
+      "weak": "WEAK",
+      "ideal": "IDEAL ✓",
+      "strong": "STRONG",
+      "over": "OVER-EXTRACTED"
+    },
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "confirmDelete": "Delete this extraction?",
+    "notFound": "Extraction not found",
+    "backToHistory": "Back to history",
+    "unknownBean": "Unknown bean",
+    "equipmentSection": "Equipment"
+  },
+  "beans": {
+    "title": "Beans",
+    "total": "{{count}} TOTAL",
+    "add": "Add bean",
+    "tabs": {
+      "active": "Active",
+      "finished": "Finished",
+      "wishlist": "Wishlist"
+    },
+    "search": "Search bean, roaster, origin...",
+    "sortBy": "Sort: ",
+    "sorts": {
+      "nameAsc": "Name A–Z",
+      "nameDesc": "Name Z–A",
+      "roastedDesc": "Roast date (newest)",
+      "roastedAsc": "Roast date (oldest)",
+      "createdDesc": "Date added (newest)"
+    },
+    "filters": {
+      "roastAll": "All roasts",
+      "roastLight": "Light roast",
+      "roastMedium": "Medium roast",
+      "roastDark": "Dark roast"
+    },
+    "noActive": "No active beans",
+    "noFinished": "No finished beans",
+    "noWishlist": "No wishlist beans",
+    "noBeansBody": "Add a bean to get started.",
+    "noWishlistBody": "Add beans you want to try.",
+    "fields": {
+      "name": "Bean name",
+      "roaster": "Roaster",
+      "process": "Process",
+      "roastLevel": "Roast level",
+      "daysSinceRoast": "Days since roast",
+      "roastedAt": "Roast date",
+      "origin": "Origin",
+      "weight": "Weight remaining",
+      "status": "Status",
+      "notes": "Notes"
+    },
+    "roasts": {
+      "light": "light",
+      "medium": "medium",
+      "dark": "dark"
+    },
+    "daysOffRoast": "{{count}}d off roast",
+    "stats": {
+      "extractions": "Extractions",
+      "avgRating": "Avg rating",
+      "offRoast": "Off roast"
+    },
+    "diallingTable": "Dialling-in table",
+    "diallingHeaders": {
+      "date": "Date",
+      "grind": "Grind",
+      "ratio": "Ratio",
+      "time": "Time",
+      "rating": "Rating"
+    },
+    "notFound": "Bean not found",
+    "backToBeans": "Back to beans",
+    "confirmDelete": "Delete this bean?",
+    "delete": "Delete bean",
+    "saveName": "Untitled bean",
+    "saveBeanBtn": "Save bean"
+  },
+  "equipment": {
+    "title": "Equipment",
+    "items": "{{count}} ITEMS",
+    "addGear": "Add gear",
+    "search": "Search gear, model...",
+    "sortBy": "Sort: ",
+    "sorts": {
+      "nameAsc": "Name A–Z",
+      "nameDesc": "Name Z–A",
+      "usesDesc": "Most used",
+      "usesAsc": "Least used",
+      "createdDesc": "Date added (newest)"
+    },
+    "filters": {
+      "typeAll": "All types"
+    },
+    "noEquipment": "No equipment",
+    "noEquipmentBody": "Add your grinder, scale, and more.",
+    "types": {
+      "Grinder": "Grinder",
+      "Machine": "Machine",
+      "Scale": "Scale",
+      "Kettle": "Kettle",
+      "WDT": "WDT",
+      "Brewer": "Brewer",
+      "Other": "Other"
+    },
+    "fields": {
+      "type": "Type",
+      "name": "Name",
+      "model": "Model (optional)"
+    },
+    "uses": "{{count}} uses",
+    "save": "Save",
+    "addEquipment": "Add equipment",
+    "confirmDelete": "Delete {{name}}?"
+  },
+  "recipes": {
+    "title": "Recipes",
+    "saved": "{{count}} SAVED",
+    "shown": "{{count}} SHOWN",
+    "new": "New recipe",
+    "search": "Search recipe name...",
+    "sortDoseDesc": "Highest dose",
+    "sortYieldDesc": "Highest yield",
+    "sortCreatedDesc": "Date added (newest)",
+    "noRecipes": "No recipes",
+    "noRecipesBody": "Save a brew as a recipe to reuse parameters.",
+    "noMethodMatch": "No matches",
+    "noMethodMatchBody": "No recipes use this method. Try another filter.",
+    "used": "Used {{date}}",
+    "backToRecipes": "Back to recipes",
+    "notFound": "Recipe not found",
+    "neverUsed": "Never used",
+    "lastUsed": "Last used {{date}}",
+    "filterAll": "All",
+    "sortRecentlyUsed": "Recently used",
+    "sortName": "Name A–Z",
+    "sortFastest": "Fastest brew",
+    "fields": {
+      "dose": "Dose",
+      "yield": "Yield",
+      "ratio": "Ratio",
+      "time": "Time",
+      "temp": "Temp"
+    },
+    "form": {
+      "name": "Recipe name",
+      "namePlaceholder": "e.g. Morning V60",
+      "method": "Method",
+      "dose": "Dose",
+      "yield": "Yield",
+      "yieldAuto": "g · auto",
+      "ratio": "Ratio",
+      "brewTime": "Brew time",
+      "temperature": "Temperature",
+      "pourSchedule": "Pour schedule",
+      "pourScheduleHint": "Optional · add cumulative pour targets for a guided brew",
+      "addPour": "+ Add pour",
+      "save": "Save recipe"
+    },
+    "pourSchedule": "Pour schedule",
+    "startBrew": "Start brew",
+    "deleteRecipe": "Delete recipe",
+    "confirmDelete": "Delete this recipe?"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "OBSERVATIONS FROM THE LOGBOOK",
+    "totalExtractions": "Total extractions",
+    "ratingOverTime": "Rating over time",
+    "last": "LAST {{count}}",
+    "methodDistribution": "Method distribution",
+    "topBeans": "Top beans by rating",
+    "noRatings": "Need more rated extractions.",
+    "logFirst": "Log some extractions first."
+  }
+}

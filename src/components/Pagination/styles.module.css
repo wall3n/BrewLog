@@ -1,0 +1,39 @@
+.paginationWrapper {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.paginationContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pageBtn {
+  min-width: 90px;
+}
+
+.pageIndicator {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.perPageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.perPageLabel {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
+}

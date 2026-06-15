@@ -1,0 +1,465 @@
+{
+  "app": {
+    "tagline": "TU DIARIO DE EXTRACCIONES"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "add": "Agregar",
+    "edit": "Editar",
+    "back": "Atrás",
+    "confirm": "Confirmar",
+    "export": "Exportar",
+    "import": "Importar",
+    "loading": "Cargando…",
+    "saving": "Guardando…",
+    "remove": "Eliminar",
+    "noData": "Sin datos aún",
+    "search": "Buscar",
+    "continue": "Continuar",
+    "skip": "Omitir",
+    "unknown": "Desconocido",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "pageOf": "{{current}} / {{total}}",
+    "perPage": "Por página",
+    "filters": "Filtros",
+    "addFilter": "Filtrar",
+    "filterBy": "Filtrar por"
+  },
+  "welcome": {
+    "quickSetup": "✦ Configuración rápida",
+    "startFresh": "Empezar desde cero",
+    "demoData": "Datos de demo",
+    "tagline": "TU DIARIO DE EXTRACCIONES",
+    "copy": "Registra cada extracción. Perfecciona tu taza ideal."
+  },
+  "wizard": {
+    "backLabel": "Atrás",
+    "next": "Siguiente",
+    "finish": "Finalizar",
+    "step1": {
+      "title": "¿Qué preparas más?",
+      "sub": "Establece tu método por defecto. Cámbialo en Ajustes."
+    },
+    "step2": {
+      "title": "Tus unidades",
+      "sub": "Usadas en todas las medidas de la app.",
+      "weight": "Peso",
+      "weightG": "Gramos (g)",
+      "weightOz": "Onzas (oz)",
+      "temperature": "Temperatura"
+    },
+    "step3": {
+      "title": "Tu grano actual",
+      "sub": "Añade el café con el que estás preparando ahora.",
+      "beanName": "Nombre del grano",
+      "beanNamePlaceholder": "p.ej. Etiopía Yirgacheffe",
+      "roaster": "Tostador",
+      "roasterPlaceholder": "p.ej. Sample Roasters",
+      "roastLevel": "Nivel de tueste",
+      "roastLight": "Claro",
+      "roastLightDesc": "Floral, afrutado, brillante",
+      "roastMedium": "Medio",
+      "roastMediumDesc": "Equilibrado, caramelo, frutos secos",
+      "roastDark": "Oscuro",
+      "roastDarkDesc": "Intenso, ahumado, agridulce"
+    },
+    "step4": {
+      "title": "Tu equipo",
+      "sub": "Molino, máquina, báscula — añade lo que usas.",
+      "typePlaceholder": "Tipo…",
+      "namePlaceholder": "Nombre o modelo",
+      "addAnother": "+ Añadir otro",
+      "skip": "Omitir por ahora"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "history": "Historial",
+    "recipes": "Recetas",
+    "beans": "Cafés",
+    "equipment": "Equipo",
+    "analytics": "Análisis",
+    "settings": "Ajustes",
+    "more": "Más"
+  },
+  "methods": {
+    "espresso": "Espresso",
+    "french-press": "Prensa francesa",
+    "pour-over": "Vertido",
+    "aeropress": "AeroPress",
+    "moka-pot": "Moka",
+    "cold-brew": "Cold brew",
+    "drip": "Goteo",
+    "siphon": "Sifón",
+    "custom": "Personalizado"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "PREFERENCIAS Y DATOS",
+    "units": {
+      "title": "Unidades",
+      "weight": "Peso",
+      "temperature": "Temperatura",
+      "volume": "Volumen"
+    },
+    "defaults": {
+      "title": "Valores por defecto",
+      "method": "Método predeterminado",
+      "ratingScale": "Escala de valoración"
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "theme": "Tema",
+      "themes": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro"
+      }
+    },
+    "language": {
+      "title": "Idioma",
+      "options": {
+        "auto": "Auto",
+        "en": "English",
+        "es": "Español",
+        "fr": "Français"
+      }
+    },
+    "data": {
+      "title": "Datos",
+      "exportJson": "Exportar JSON",
+      "importJson": "Importar JSON",
+      "clearAll": "Borrar todos los datos",
+      "confirmClear": "¿Restablecer todos los datos de BrewLog? Esta acción no se puede deshacer.",
+      "confirmImport": "¿Reemplazar los datos actuales con la importación?",
+      "invalidJson": "JSON no válido."
+    },
+    "about": {
+      "title": "Acerca de",
+      "version": "Versión",
+      "storage": "Almacenamiento",
+      "storageValue": "Local"
+    }
+  },
+  "home": {
+    "title": "BrewLog",
+    "subtitle": "TU DIARIO DE EXTRACCIÓN",
+    "stats": {
+      "totalExtractions": "Extracciones totales",
+      "avgThisMonth": "Promedio este mes",
+      "activeBeans": "Cafés activos",
+      "brews": "Infusiones",
+      "avgRating": "Prom. valoración",
+      "dialledIn": "Calibrado",
+      "coffeeUsed": "Café usado"
+    },
+    "thisWeek": "Esta semana",
+    "topExtractions": "Mejores extracciones",
+    "topBeans": "Mejores cafés",
+    "recent": "Recientes",
+    "seeAll": "Ver todo",
+    "activeBeans": "Cafés activos",
+    "allBeans": "Todos los cafés",
+    "noExtractions": "Sin extracciones aún",
+    "noExtractionsBody": "Toca + para registrar la primera.",
+    "noBrewsWeek": "Nada preparado esta semana",
+    "noBrewsWeekBody": "Toca + para registrar una extracción.",
+    "noBeansWeek": "Sin cafés usados esta semana"
+  },
+  "history": {
+    "title": "Historial",
+    "subtitle_one": "{{count}} EXTRACCIÓN",
+    "subtitle_other": "{{count}} EXTRACCIONES",
+    "shown": "{{count}} MOSTRADAS",
+    "search": "Buscar café, nota, sabor…",
+    "filters": {
+      "allMethods": "Todos los métodos",
+      "anyFlag": "Cualquier estado",
+      "anyRating": "Cualquier valoración"
+    },
+    "flags": {
+      "dialled": "Calibrado",
+      "adjust": "Ajustar",
+      "fail": "Fallido"
+    },
+    "nothingMatches": "Sin resultados",
+    "loosenFilters": "Amplía los filtros.",
+    "sortBy": "Ordenar: ",
+    "sorts": {
+      "dateDesc": "Más reciente",
+      "dateAsc": "Más antiguo",
+      "ratingDesc": "Mayor valoración",
+      "ratingAsc": "Menor valoración",
+      "timeDesc": "Mayor tiempo",
+      "timeAsc": "Menor tiempo",
+      "ratioDesc": "Mayor ratio",
+      "ratioAsc": "Menor ratio"
+    }
+  },
+  "extraction": {
+    "title": "Registrar extracción",
+    "step": "Paso {{current}} de {{total}}",
+    "cancel": "Cancelar",
+    "back": "Atrás",
+    "steps": {
+      "method": {
+        "title": "¿Qué vas a preparar?",
+        "subtitle": "ELIGE UN MÉTODO"
+      },
+      "bean": {
+        "title": "Elige tu café",
+        "search": "Buscar café o tostador…",
+        "quickAdd": "Agregar café rápido"
+      },
+      "equipment": {
+        "title": "Tu equipamiento",
+        "subtitle": "SELECCIÓN MÚLTIPLE",
+        "grindSetting": "Ajuste de molino",
+        "grindSettingHint": "Número de clics, dial o rotaciones según el molino",
+        "grindPlaceholder": "p.ej. 2.3"
+      },
+      "parameters": {
+        "title": "Parámetros de preparación",
+        "algorithmAssist": "Asistente de algoritmo",
+        "refractometer": "Tengo una lectura de refractómetro",
+        "yourEY": "Tu rendimiento",
+        "eyLabel": "Rendimiento de extracción"
+      },
+      "timer": {
+        "title": "Temporizador",
+        "subtitle": "OPCIONAL",
+        "skip": "Omitir →",
+        "start": "Iniciar",
+        "pause": "Pausar",
+        "reset": "Reiniciar",
+        "useTime": "Usar {{time}}",
+        "continueWithout": "Continuar sin cronometrar"
+      },
+      "tasting": {
+        "title": "¿Cómo quedó?",
+        "subtitle": "LA PARTE DIVERTIDA",
+        "outcome": "Resultado",
+        "overallRating": "Valoración general",
+        "flavourProfile": "Perfil de sabor",
+        "flavourNotes": "Notas de sabor",
+        "notesLabel": "Notas",
+        "notesPlaceholder": "¿Qué cambiarías la próxima vez?",
+        "customFlavour": "+ personalizado",
+        "customFlavourPrompt": "Nota de sabor personalizada:",
+        "save": "Guardar extracción",
+        "flags": {
+          "dialled": "Calibrado",
+          "adjust": "Ajustar",
+          "fail": "Fallido"
+        }
+      }
+    },
+    "fields": {
+      "dose": "Dosis",
+      "yield": "Rendimiento",
+      "ratio": "Ratio",
+      "grindSetting": "Ajuste de molino",
+      "grind": "Molino",
+      "temperature": "Temperatura",
+      "pressure": "Presión",
+      "time": "Tiempo",
+      "temp": "Temp",
+      "tds": "Sólidos disueltos",
+      "extractionTime": "Tiempo de extracción",
+      "tasting": "Cata",
+      "notes": "Notas",
+      "rating": "Valoración",
+      "acidity": "Acidez",
+      "sweetness": "Dulzura",
+      "bitterness": "Amargor",
+      "body": "Cuerpo",
+      "balance": "Balance"
+    },
+    "flags": {
+      "dialled": "Calibrado",
+      "adjust": "Ajustar",
+      "fail": "Fallido"
+    },
+    "zones": {
+      "under": "SUBEXTRAÍDO",
+      "weak": "DÉBIL",
+      "ideal": "IDEAL ✓",
+      "strong": "FUERTE",
+      "over": "SOBREEXTRAÍDO"
+    },
+    "duplicate": "Duplicar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Eliminar esta extracción?",
+    "notFound": "Extracción no encontrada",
+    "backToHistory": "Volver al historial",
+    "unknownBean": "Café desconocido",
+    "equipmentSection": "Equipo"
+  },
+  "beans": {
+    "title": "Cafés",
+    "total": "{{count}} EN TOTAL",
+    "add": "Agregar café",
+    "tabs": {
+      "active": "Activo",
+      "finished": "Terminado",
+      "wishlist": "Lista de deseos"
+    },
+    "search": "Buscar café, tostador, origen...",
+    "sortBy": "Ordenar: ",
+    "sorts": {
+      "nameAsc": "Nombre A–Z",
+      "nameDesc": "Nombre Z–A",
+      "roastedDesc": "Fecha de tueste (reciente)",
+      "roastedAsc": "Fecha de tueste (antiguo)",
+      "createdDesc": "Fecha de agregado (reciente)"
+    },
+    "filters": {
+      "roastAll": "Todos los tuestes",
+      "roastLight": "Tueste claro",
+      "roastMedium": "Tueste medio",
+      "roastDark": "Tueste oscuro"
+    },
+    "noActive": "Sin cafés activos",
+    "noFinished": "Sin cafés terminados",
+    "noWishlist": "Sin cafés en lista de deseos",
+    "noBeansBody": "Agrega un café para comenzar.",
+    "noWishlistBody": "Agrega cafés que quieras probar.",
+    "fields": {
+      "name": "Nombre del café",
+      "roaster": "Tostador",
+      "process": "Proceso",
+      "roastLevel": "Nivel de tueste",
+      "daysSinceRoast": "Días desde el tueste",
+      "roastedAt": "Fecha de tueste",
+      "origin": "Origen",
+      "weight": "Peso restante",
+      "status": "Estado",
+      "notes": "Notas"
+    },
+    "roasts": {
+      "light": "claro",
+      "medium": "medio",
+      "dark": "oscuro"
+    },
+    "daysOffRoast": "{{count}}d desde tueste",
+    "stats": {
+      "extractions": "Extracciones",
+      "avgRating": "Valoración promedio",
+      "offRoast": "Desde tueste"
+    },
+    "diallingTable": "Tabla de calibración",
+    "diallingHeaders": {
+      "date": "Fecha",
+      "grind": "Molino",
+      "ratio": "Ratio",
+      "time": "Tiempo",
+      "rating": "Valoración"
+    },
+    "notFound": "Café no encontrado",
+    "backToBeans": "Volver a cafés",
+    "confirmDelete": "¿Eliminar este café?",
+    "delete": "Eliminar café",
+    "saveName": "Café sin nombre",
+    "saveBeanBtn": "Guardar café"
+  },
+  "equipment": {
+    "title": "Equipo",
+    "items": "{{count}} ELEMENTOS",
+    "addGear": "Agregar equipo",
+    "search": "Buscar equipo, modelo...",
+    "sortBy": "Ordenar: ",
+    "sorts": {
+      "nameAsc": "Nombre A–Z",
+      "nameDesc": "Nombre Z–A",
+      "usesDesc": "Más usado",
+      "usesAsc": "Menos usado",
+      "createdDesc": "Fecha de agregado (reciente)"
+    },
+    "filters": {
+      "typeAll": "Todos los tipos"
+    },
+    "noEquipment": "Sin equipo",
+    "noEquipmentBody": "Agrega tu molino, báscula y más.",
+    "types": {
+      "Grinder": "Molino",
+      "Machine": "Máquina",
+      "Scale": "Báscula",
+      "Kettle": "Hervidor",
+      "WDT": "WDT",
+      "Brewer": "Cafetera",
+      "Other": "Otro"
+    },
+    "fields": {
+      "type": "Tipo",
+      "name": "Nombre",
+      "model": "Modelo (opcional)"
+    },
+    "uses": "{{count}} usos",
+    "save": "Guardar",
+    "addEquipment": "Agregar equipo",
+    "confirmDelete": "¿Eliminar {{name}}?"
+  },
+  "recipes": {
+    "title": "Recetas",
+    "saved": "{{count}} GUARDADAS",
+    "shown": "{{count}} MOSTRADAS",
+    "new": "Nueva receta",
+    "search": "Buscar nombre de receta...",
+    "sortDoseDesc": "Mayor dosis",
+    "sortYieldDesc": "Mayor rendimiento",
+    "sortCreatedDesc": "Fecha de agregado (reciente)",
+    "noRecipes": "Sin recetas",
+    "noRecipesBody": "Guarda una preparación como receta para reutilizar parámetros.",
+    "noMethodMatch": "Sin resultados",
+    "noMethodMatchBody": "Ninguna receta usa este método. Prueba otro filtro.",
+    "used": "Usado {{date}}",
+    "backToRecipes": "Volver a recetas",
+    "notFound": "Receta no encontrada",
+    "neverUsed": "Nunca usada",
+    "lastUsed": "Última vez {{date}}",
+    "filterAll": "Todas",
+    "sortRecentlyUsed": "Usadas recientemente",
+    "sortName": "Nombre A–Z",
+    "sortFastest": "Más rápida",
+    "fields": {
+      "dose": "Dosis",
+      "yield": "Rendimiento",
+      "ratio": "Ratio",
+      "time": "Tiempo",
+      "temp": "Temp"
+    },
+    "form": {
+      "name": "Nombre de la receta",
+      "namePlaceholder": "ej. V60 de mañana",
+      "method": "Método",
+      "dose": "Dosis",
+      "yield": "Rendimiento",
+      "yieldAuto": "g · auto",
+      "ratio": "Ratio",
+      "brewTime": "Tiempo de extracción",
+      "temperature": "Temperatura",
+      "pourSchedule": "Plan de vertidos",
+      "pourScheduleHint": "Opcional · añade objetivos acumulativos de vertido",
+      "addPour": "+ Añadir vertido",
+      "save": "Guardar receta"
+    },
+    "pourSchedule": "Calendario de vertidos",
+    "startBrew": "Iniciar extracción",
+    "deleteRecipe": "Eliminar receta",
+    "confirmDelete": "¿Eliminar esta receta?"
+  },
+  "analytics": {
+    "title": "Análisis",
+    "subtitle": "OBSERVACIONES DEL DIARIO",
+    "totalExtractions": "Extracciones totales",
+    "ratingOverTime": "Valoración en el tiempo",
+    "last": "ÚLTIMAS {{count}}",
+    "methodDistribution": "Distribución por método",
+    "topBeans": "Mejores cafés por valoración",
+    "noRatings": "Se necesitan más extracciones valoradas.",
+    "logFirst": "Registra algunas extracciones primero."
+  }
+}

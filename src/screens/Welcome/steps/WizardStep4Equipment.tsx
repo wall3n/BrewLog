@@ -1,4 +1,6 @@
+import { useTranslation } from 'react-i18next';
 import type { WizardData } from '../QuickSetupWizard';
+import css from './styles.module.css';
 
 interface Props {
   data: WizardData;
@@ -9,6 +11,8 @@ interface Props {
 const EQUIPMENT_TYPES = ['Grinder', 'Machine', 'Scale', 'Kettle', 'Other'];
 
 export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
+  const { t } = useTranslation();
+
   function updateRow(index: number, field: 'type' | 'name', value: string) {
     const updated = data.equipment.map((eq, i) =>
       i === index ? { ...eq, [field]: value } : eq
@@ -26,8 +30,8 @@ export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
 
   return (
     <div className="wizard-step">
-      <h2 className="wizard-step-title">Your equipment</h2>
-      <p className="wizard-step-sub">Grinder, machine, scale — add what you use.</p>
+      <h2 className="wizard-step-title">{t('wizard.step4.title')}</h2>
+      <p className="wizard-step-sub">{t('wizard.step4.sub')}</p>
 
       <div className="wizard-eq-list">
         {data.equipment.map((eq, i) => (
@@ -37,26 +41,26 @@ export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
               value={eq.type}
               onChange={e => updateRow(i, 'type', e.target.value)}
             >
-              <option value="">Type…</option>
-              {EQUIPMENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              <option value="">{t('wizard.step4.typePlaceholder')}</option>
+              {EQUIPMENT_TYPES.map(ty => <option key={ty} value={ty}>{ty}</option>)}
             </select>
             <input
               className="wizard-eq-input"
-              placeholder="Name or model"
+              placeholder={t('wizard.step4.namePlaceholder')}
               value={eq.name}
               onChange={e => updateRow(i, 'name', e.target.value)}
             />
             {data.equipment.length > 1 && (
-              <button className="wizard-eq-remove" onClick={() => removeRow(i)} aria-label="Remove">×</button>
+              <button className="wizard-eq-remove" onClick={() => removeRow(i)} aria-label={t('common.remove')}>×</button>
             )}
           </div>
         ))}
       </div>
 
-      <button className="wizard-add-link" onClick={addRow}>+ Add another</button>
+      <button className="wizard-add-link" onClick={addRow}>{t('wizard.step4.addAnother')}</button>
 
-      <div style={{ marginTop: 24, textAlign: 'center' }}>
-        <button className="wizard-skip-link" onClick={onSkip}>Skip for now</button>
+      <div className={css.skipWrap}>
+        <button className="wizard-skip-link" onClick={onSkip}>{t('wizard.step4.skip')}</button>
       </div>
     </div>
   );

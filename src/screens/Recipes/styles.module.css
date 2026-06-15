@@ -1,0 +1,16 @@
+.pageRow      { align-items: flex-end; margin-bottom: 24px; }
+.pageHead     { margin-bottom: 0; }
+.recipeCard   { align-items: flex-start; }
+.recipeLeft   { flex: 1; }
+.recipeName   { font-family: var(--serif); font-size: 22px; }
+.recipeMeta   { font-size: 12px; }
+
+/* RecipeDetail */
+.detailHead   { margin-bottom: 20px; }
+.headRow      { margin-bottom: 6px; }
+.detailCard   { margin-bottom: 16px; }
+.pourLabel    { margin-bottom: 16px; }
+.statAccent   { color: var(--accent); }
+.spacer12     { height: 12px; }
+.actionRow    { display: flex; gap: 12px; }
+
