@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
@@ -24,39 +24,36 @@ export function RecipesScreen() {
   const itemsPerPage = 10;
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => { db.getAllRecipes().then(setRecipes); }, [db]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [recipesTotalCount, setRecipesTotalCount] = useState(0);
+  const [recipeMethods, setRecipeMethods] = useState<string[]>([]);
 
-  const usedMethods = METHODS.filter(m => recipes.some(r => r.method === m.id));
+  const loadRecipes = useCallback(() => {
+    db.getRecipesPage({
+      method,
+      q,
+      sort,
+      page,
+      limit: itemsPerPage
+    }).then(({ items, total }) => {
+      setRecipes(items);
+      setTotalCount(total);
+    });
 
-  let list = recipes.filter(r => {
-    if (method !== 'all' && r.method !== method) return false;
-    if (q && !r.name.toLowerCase().includes(q.toLowerCase())) return false;
-    return true;
-  });
+    db.getRecipesTotalCount().then(setRecipesTotalCount);
+    db.getRecipeMethods().then(setRecipeMethods);
+  }, [db, method, q, sort, page]);
 
-  list = [...list].sort((a, b) => {
-    if (sort === 'name') return a.name.localeCompare(b.name);
-    if (sort === 'fastest') return (a.time || 0) - (b.time || 0);
-    if (sort === 'doseDesc') return (b.dose || 0) - (a.dose || 0);
-    if (sort === 'yieldDesc') return (b.yield || 0) - (a.yield || 0);
-    if (sort === 'createdDesc') {
-      const ca = new Date(a.createdAt).getTime();
-      const cb = new Date(b.createdAt).getTime();
-      return cb - ca;
-    }
-    // 'recent'
-    const ax = a.lastUsedAt ? new Date(a.lastUsedAt).getTime() : 0;
-    const bx = b.lastUsedAt ? new Date(b.lastUsedAt).getTime() : 0;
-    return bx - ax;
-  });
+  useEffect(() => {
+    loadRecipes();
+  }, [loadRecipes]);
 
-  const totalPages = Math.ceil(list.length / itemsPerPage);
-  const paginatedRecipes = list.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const usedMethods = METHODS.filter(m => recipeMethods.includes(m.id));
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   async function handleSave(payload: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>) {
     await db.addRecipe(payload);
-    const updated = await db.getAllRecipes();
-    setRecipes(updated);
+    await loadRecipes();
     setCreating(false);
   }
 
@@ -98,8 +95,8 @@ export function RecipesScreen() {
         <div className={`page-head ${s.pageHead}`}>
           <h1>{t('recipes.title')}</h1>
           <p>
-            {t('recipes.saved', { count: recipes.length })}
-            {(method !== 'all' || q) && ` · ${t('recipes.shown', { count: list.length })}`}
+            {t('recipes.saved', { count: recipesTotalCount })}
+            {(method !== 'all' || q) && ` · ${t('recipes.shown', { count: totalCount })}`}
           </p>
         </div>
         <Button variant="primary" leftIcon="plus" onClick={() => setCreating(true)}>
@@ -148,14 +145,14 @@ export function RecipesScreen() {
       </div>
 
       <div className="col col-gap-12">
-        {recipes.length === 0 ? (
+        {recipesTotalCount === 0 ? (
           <Empty icon="recipe" title={t('recipes.noRecipes')} body={t('recipes.noRecipesBody')} />
-        ) : list.length === 0 ? (
+        ) : totalCount === 0 ? (
           <Empty icon="filter" title={t('recipes.noMethodMatch')} body={t('recipes.noMethodMatchBody')} />
         ) : (
           <>
             <StagList>
-              {paginatedRecipes.map(r => (
+              {recipes.map(r => (
                 <div key={r.id} className="card card-hover" onClick={() => navigate(`/recipes/${r.id}`)}>
                   <div className={`row row-between ${s.recipeCard}`}>
                     <div className={`col col-gap-8 ${s.recipeLeft}`}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
@@ -59,53 +59,37 @@ export function HistoryScreen() {
   const itemsPerPage = 10;
   const [showFilters, setShowFilters] = useState(false);
 
+  const [totalCount, setTotalCount] = useState(0);
+  const [extractionsTotalCount, setExtractionsTotalCount] = useState(0);
+  const [methods, setMethods] = useState<string[]>([]);
+
   useEffect(() => {
-    Promise.all([db.getAllExtractions(), db.getAllBeans()])
-      .then(([exts, bns]) => { setExtractions(exts); setBeans(bns); });
+    db.getAllBeans().then(setBeans);
   }, [db]);
 
-  const filtered = extractions.filter(e => {
-    const bean = beans.find(b => b.id === e.beanId);
-    const text = `${bean?.name ?? ''} ${bean?.roaster ?? ''} ${e.notes ?? ''} ${(e.flavours ?? []).join(' ')}`.toLowerCase();
-    if (q && !text.includes(q.toLowerCase())) return false;
-    if (methodFilter !== 'all' && e.method !== methodFilter) return false;
-    if (flagFilter !== 'all' && e.flag !== flagFilter) return false;
-    if (ratingFilter > 0 && (e.rating ?? 0) < ratingFilter) return false;
-    return true;
-  });
+  const loadExtractions = useCallback(() => {
+    db.getExtractionsPage({
+      q,
+      methodFilter,
+      flagFilter,
+      ratingFilter,
+      sort,
+      page,
+      limit: itemsPerPage
+    }).then(({ items, total }) => {
+      setExtractions(items);
+      setTotalCount(total);
+    });
 
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === 'dateDesc') {
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    }
-    if (sort === 'dateAsc') {
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    }
-    if (sort === 'ratingDesc') {
-      return (b.rating ?? 0) - (a.rating ?? 0);
-    }
-    if (sort === 'ratingAsc') {
-      return (a.rating ?? 0) - (b.rating ?? 0);
-    }
-    if (sort === 'timeDesc') {
-      return (b.timeS ?? 0) - (a.timeS ?? 0);
-    }
-    if (sort === 'timeAsc') {
-      return (a.timeS ?? 0) - (b.timeS ?? 0);
-    }
-    if (sort === 'ratioDesc') {
-      return (b.ratio ?? 0) - (a.ratio ?? 0);
-    }
-    if (sort === 'ratioAsc') {
-      return (a.ratio ?? 0) - (b.ratio ?? 0);
-    }
-    return 0;
-  });
+    db.getExtractionsTotalCount().then(setExtractionsTotalCount);
+    db.getExtractionMethods().then(setMethods);
+  }, [db, q, methodFilter, flagFilter, ratingFilter, sort, page]);
 
-  const totalPages = Math.ceil(sorted.length / itemsPerPage);
-  const paginatedExtractions = sorted.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  useEffect(() => {
+    loadExtractions();
+  }, [loadExtractions]);
 
-  const methods = ['all', ...new Set(extractions.map(e => e.method))];
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   const handleQChange = (val: string) => { setQ(val); setPage(1); };
   const handleMethodChange = (val: string) => { setMethodFilter(val); setPage(1); };
@@ -180,7 +164,7 @@ export function HistoryScreen() {
     <div>
       <div className="page-head">
         <h1>{t('history.title')}</h1>
-        <p>{t('history.subtitle', { count: extractions.length })} · {t('history.shown', { count: filtered.length })}</p>
+        <p>{t('history.subtitle', { count: extractionsTotalCount })} · {t('history.shown', { count: totalCount })}</p>
       </div>
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
@@ -221,9 +205,9 @@ export function HistoryScreen() {
       </div>
 
       <div className="col col-gap-12">
-        {paginatedExtractions.length === 0
+        {extractions.length === 0
           ? <Empty icon="history" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />
-          : <StagList>{paginatedExtractions.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
+          : <StagList>{extractions.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
         }
       </div>
 

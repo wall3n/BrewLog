@@ -72,6 +72,9 @@ export function BeansScreen() {
   const [tab, setTab] = useState<'active'|'finished'|'wishlist'>('active');
   const [adding, setAdding] = useState(false);
   const [beans, setBeans] = useState<Bean[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [beansTotalCount, setBeansTotalCount] = useState(0);
+  const [tabCounts, setTabCounts] = useState<{ active: number; finished: number; wishlist: number }>({ active: 0, finished: 0, wishlist: 0 });
 
   const [q, setQ] = useState('');
   const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
@@ -80,51 +83,35 @@ export function BeansScreen() {
   const itemsPerPage = 10;
   const [showFilters, setShowFilters] = useState(false);
 
-  const loadBeans = useCallback(() => db.getAllBeans().then(setBeans), [db]);
+  const loadBeans = useCallback(() => {
+    db.getBeansPage({
+      status: tab,
+      q,
+      roastFilter,
+      sort,
+      page,
+      limit: itemsPerPage
+    }).then(({ items, total }) => {
+      setBeans(items);
+      setTotalCount(total);
+    });
+
+    Promise.all([
+      db.getBeansCountByStatus('active'),
+      db.getBeansCountByStatus('finished'),
+      db.getBeansCountByStatus('wishlist'),
+      db.getBeansTotalCount()
+    ]).then(([active, finished, wishlist, totalAll]) => {
+      setTabCounts({ active, finished, wishlist });
+      setBeansTotalCount(totalAll);
+    });
+  }, [db, tab, q, roastFilter, sort, page]);
+
   useEffect(() => {
     loadBeans();
   }, [loadBeans]);
 
-  const filtered = beans.filter(b => {
-    if (b.status !== tab) return false;
-    
-    if (roastFilter !== 'all' && b.roast !== roastFilter) return false;
-    
-    if (q) {
-      const query = q.toLowerCase();
-      const matchName = b.name.toLowerCase().includes(query);
-      const matchRoaster = b.roaster.toLowerCase().includes(query);
-      const matchOrigin = (b.origin ?? '').toLowerCase().includes(query);
-      const matchProcess = (b.process ?? '').toLowerCase().includes(query);
-      const matchNotes = (b.notes ?? '').toLowerCase().includes(query);
-      if (!matchName && !matchRoaster && !matchOrigin && !matchProcess && !matchNotes) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === 'nameAsc') return a.name.localeCompare(b.name);
-    if (sort === 'nameDesc') return b.name.localeCompare(a.name);
-    if (sort === 'roastedDesc') {
-      const da = a.roastedAt ? new Date(a.roastedAt).getTime() : 0;
-      const db = b.roastedAt ? new Date(b.roastedAt).getTime() : 0;
-      return db - da;
-    }
-    if (sort === 'roastedAsc') {
-      const da = a.roastedAt ? new Date(a.roastedAt).getTime() : 0;
-      const db = b.roastedAt ? new Date(b.roastedAt).getTime() : 0;
-      return da - db;
-    }
-    // createdDesc
-    const ca = new Date(a.createdAt).getTime();
-    const cb = new Date(b.createdAt).getTime();
-    return cb - ca;
-  });
-
-  const totalPages = Math.ceil(sorted.length / itemsPerPage);
-  const paginatedBeans = sorted.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   const noBeansTitle = tab === 'active' ? t('beans.noActive') : tab === 'finished' ? t('beans.noFinished') : t('beans.noWishlist');
   const noBeansBody = tab === 'wishlist' ? t('beans.noWishlistBody') : t('beans.noBeansBody');
@@ -165,8 +152,8 @@ export function BeansScreen() {
         <div className="page-head">
           <h1>{t('beans.title')}</h1>
           <p>
-            {t('beans.total', { count: beans.length })}
-            {(q || roastFilter !== 'all') && ` · ${t('history.shown', { count: sorted.length })}`}
+            {t('beans.total', { count: beansTotalCount })}
+            {(q || roastFilter !== 'all') && ` · ${t('history.shown', { count: totalCount })}`}
           </p>
         </div>
         <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('beans.add')}</Button>
@@ -174,7 +161,7 @@ export function BeansScreen() {
       <div className="tabs">
         {(['active', 'finished', 'wishlist'] as const).map(k => (
           <button key={k} className={tab === k ? 'active' : ''} onClick={() => handleTabChange(k)}>
-            {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{beans.filter(b => b.status === k).length}</span>
+            {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{tabCounts[k]}</span>
           </button>
         ))}
       </div>
@@ -220,9 +207,9 @@ export function BeansScreen() {
 
 
       <div className="grid grid-2">
-        {paginatedBeans.length === 0
+        {beans.length === 0
           ? <div className={s.gridEmpty}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
-          : paginatedBeans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
+          : beans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
         }
       </div>
 

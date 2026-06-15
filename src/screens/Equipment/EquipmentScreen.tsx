@@ -36,6 +36,8 @@ export function EquipmentScreen() {
   const { t } = useTranslation();
   const [adding, setAdding] = useState(false);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [equipmentTotalCount, setEquipmentTotalCount] = useState(0);
 
   const [q, setQ] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
@@ -44,39 +46,26 @@ export function EquipmentScreen() {
   const itemsPerPage = 10;
   const [showFilters, setShowFilters] = useState(false);
 
-  const loadEquipment = useCallback(() => db.getAllEquipment().then(setEquipment), [db]);
+  const loadEquipment = useCallback(() => {
+    db.getEquipmentPage({
+      typeFilter,
+      q,
+      sort,
+      page,
+      limit: itemsPerPage
+    }).then(({ items, total }) => {
+      setEquipment(items);
+      setTotalCount(total);
+    });
+
+    db.getEquipmentTotalCount().then(setEquipmentTotalCount);
+  }, [db, typeFilter, q, sort, page]);
+
   useEffect(() => {
     loadEquipment();
   }, [loadEquipment]);
 
-  const filtered = equipment.filter(e => {
-    if (typeFilter !== 'all' && e.type !== typeFilter) return false;
-    
-    if (q) {
-      const query = q.toLowerCase();
-      const matchName = e.name.toLowerCase().includes(query);
-      const matchModel = (e.model ?? '').toLowerCase().includes(query);
-      const matchNotes = (e.notes ?? '').toLowerCase().includes(query);
-      if (!matchName && !matchModel && !matchNotes) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === 'nameAsc') return a.name.localeCompare(b.name);
-    if (sort === 'nameDesc') return b.name.localeCompare(a.name);
-    if (sort === 'usesDesc') return (b.usage ?? 0) - (a.usage ?? 0);
-    if (sort === 'usesAsc') return (a.usage ?? 0) - (b.usage ?? 0);
-    // default createdDesc
-    const ca = new Date(a.createdAt).getTime();
-    const cb = new Date(b.createdAt).getTime();
-    return cb - ca;
-  });
-
-  const totalPages = Math.ceil(sorted.length / itemsPerPage);
-  const paginatedEquipment = sorted.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   const activeFilters = [];
   if (typeFilter !== 'all') {
@@ -110,8 +99,8 @@ export function EquipmentScreen() {
         <div className={`page-head ${s.pageHead}`}>
           <h1>{t('equipment.title')}</h1>
           <p>
-            {t('equipment.items', { count: equipment.length })}
-            {(q || typeFilter !== 'all') && ` · ${t('history.shown', { count: sorted.length })}`}
+            {t('equipment.items', { count: equipmentTotalCount })}
+            {(q || typeFilter !== 'all') && ` · ${t('history.shown', { count: totalCount })}`}
           </p>
         </div>
         <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('equipment.addGear')}</Button>
@@ -156,13 +145,13 @@ export function EquipmentScreen() {
         </select>
       </div>
 
-      {equipment.length === 0
+      {equipmentTotalCount === 0
         ? <Empty icon="equipment" title={t('equipment.noEquipment')} body={t('equipment.noEquipmentBody')} />
-        : paginatedEquipment.length === 0
+        : equipment.length === 0
         ? <Empty icon="filter" title={t('recipes.noMethodMatch')} body={t('history.loosenFilters')} />
         : (
           <div className="col col-gap-8">
-            {paginatedEquipment.map(item => (
+            {equipment.map(item => (
               <div key={item.id} className={`card card-tight ${s.itemCard}`}>
                 <div className="col col-gap-4">
                   <div className="row row-gap-8">
