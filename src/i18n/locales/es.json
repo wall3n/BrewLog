@@ -134,7 +134,7 @@
       "title": "Acerca de",
       "version": "Versión",
       "storage": "Almacenamiento",
-      "storageValue": "Solo local · IndexedDB"
+      "storageValue": "Local"
     }
   },
   "home": {
