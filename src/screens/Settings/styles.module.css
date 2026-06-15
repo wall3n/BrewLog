@@ -1,0 +1,6 @@
+.settingRow   { gap: 16px; }
+.settingLabel { font-size: 13px; }
+.cardMb       { margin-bottom: 16px; }
+.sectionHead  { margin-bottom: 16px; }
+.methodSelect { min-width: 140px; }
+.cardMt       { margin-top: 16px; }
