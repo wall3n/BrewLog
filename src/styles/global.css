@@ -145,7 +145,7 @@ input:focus, textarea:focus, select:focus { outline: none; }
   .page-head h1 { font-size: 30px; }
   .timer { font-size: 72px; }
   .grid-3 { grid-template-columns: repeat(2, 1fr); }
-  .fab { bottom: 84px; }
+  .fab { bottom: calc(84px + env(safe-area-inset-bottom)); }
 }
 @media (min-width: 1024px) {
   .fab { bottom: 32px; }
