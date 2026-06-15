@@ -83,7 +83,7 @@ export function StepTasting({ draft, update, onSave }: Props) {
         </Field>
       </div>
 
-      <Button full size="lg" onClick={onSave}>{t('extraction.steps.tasting.save')}</Button>
+      <Button full size="lg" onClick={onSave}>{draft.isEditing ? t('common.save') : t('extraction.steps.tasting.save')}</Button>
     </div>
   );
 }

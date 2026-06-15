@@ -333,6 +333,7 @@
       "process": "Traitement",
       "roastLevel": "Niveau de torréfaction",
       "daysSinceRoast": "Jours depuis la torréfaction",
+      "roastedAt": "Date de torréfaction",
       "origin": "Origine",
       "weight": "Poids restant",
       "status": "Statut",

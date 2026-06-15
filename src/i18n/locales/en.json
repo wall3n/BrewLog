@@ -333,6 +333,7 @@
       "process": "Process",
       "roastLevel": "Roast level",
       "daysSinceRoast": "Days since roast",
+      "roastedAt": "Roast date",
       "origin": "Origin",
       "weight": "Weight remaining",
       "status": "Status",

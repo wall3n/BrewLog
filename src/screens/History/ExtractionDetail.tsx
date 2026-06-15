@@ -145,6 +145,7 @@ export function ExtractionDetail() {
       )}
 
       <div className={`row row-gap-12 ${s.actionRow}`}>
+        <Button variant="ghost" full leftIcon="edit" onClick={() => navigate('/log', { state: { ...ext, isEditing: true } })}>{t('common.edit')}</Button>
         <Button variant="ghost" full leftIcon="copy" onClick={() => navigate('/log', { state: ext })}>{t('extraction.duplicate')}</Button>
         <Button variant="danger" leftIcon="trash" onClick={async () => {
           if (confirm(t('extraction.confirmDelete'))) {

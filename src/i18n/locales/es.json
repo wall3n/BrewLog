@@ -333,6 +333,7 @@
       "process": "Proceso",
       "roastLevel": "Nivel de tueste",
       "daysSinceRoast": "Días desde el tueste",
+      "roastedAt": "Fecha de tueste",
       "origin": "Origen",
       "weight": "Peso restante",
       "status": "Estado",

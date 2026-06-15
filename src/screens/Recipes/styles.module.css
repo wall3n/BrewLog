@@ -12,3 +12,5 @@
 .pourLabel    { margin-bottom: 16px; }
 .statAccent   { color: var(--accent); }
 .spacer12     { height: 12px; }
+.actionRow    { display: flex; gap: 12px; }
+

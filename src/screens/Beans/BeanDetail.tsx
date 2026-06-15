@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, RoastDot, Empty } from '../../components/UI';
+import { Button, BackBar, RoastDot, Empty, Sheet } from '../../components/UI';
 import { daysSince, fmtRelDate, fmtTime } from '../../utils/formatters';
 import type { Bean, Extraction } from '../../db/types';
+import { BeanForm } from './BeanForm';
 import s from './styles.module.css';
+
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -25,6 +27,7 @@ export function BeanDetail() {
   const [bean, setBean] = useState<Bean | null>(null);
   const [extractions, setExtractions] = useState<Extraction[]>([]);
   const [notFound, setNotFound] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -111,9 +114,23 @@ export function BeanDetail() {
         </div>
       )}
 
-      <Button variant="danger" leftIcon="trash" onClick={async () => {
-        if (confirm(t('beans.confirmDelete'))) { await db.deleteBean(bean.id!); navigate('/beans'); }
-      }}>{t('beans.delete')}</Button>
+      <div className={s.actionRow}>
+        <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
+        <Button variant="danger" leftIcon="trash" onClick={async () => {
+          if (confirm(t('beans.confirmDelete'))) { await db.deleteBean(bean.id!); navigate('/beans'); }
+        }}>{t('beans.delete')}</Button>
+      </div>
+
+      <Sheet open={editing} onClose={() => setEditing(false)} title={t('common.edit')}>
+        <BeanForm
+          initial={bean}
+          onSave={async (payload) => {
+            await db.updateBean({ ...bean, ...payload });
+            setBean({ ...bean, ...payload });
+            setEditing(false);
+          }}
+        />
+      </Sheet>
     </div>
   );
 }
