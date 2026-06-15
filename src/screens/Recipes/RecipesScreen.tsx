@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { Button, StagList, Empty, MethodBadge } from '../../components/UI';
 import { Icon } from '../../components/Icons';
@@ -7,19 +8,20 @@ import { fmtRelDate, fmtTime } from '../../utils/formatters';
 export function RecipesScreen() {
   const { state } = useApp();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div>
       <div className="row row-between" style={{ alignItems: 'flex-end', marginBottom: 24 }}>
         <div className="page-head" style={{ marginBottom: 0 }}>
-          <h1>Recipes</h1>
-          <p>{state.recipes.length} SAVED</p>
+          <h1>{t('recipes.title')}</h1>
+          <p>{t('recipes.saved', { count: state.recipes.length })}</p>
         </div>
-        <Button variant="ghost" leftIcon="plus" onClick={() => alert('Recipe editor: save from Log flow Step 4.')}>New recipe</Button>
+        <Button variant="ghost" leftIcon="plus" onClick={() => alert('Recipe editor: save from Log flow Step 4.')}>{t('recipes.new')}</Button>
       </div>
       <div className="col col-gap-12">
         {state.recipes.length === 0
-          ? <Empty icon="recipe" title="No recipes" body="Save a brew as a recipe to reuse parameters." />
+          ? <Empty icon="recipe" title={t('recipes.noRecipes')} body={t('recipes.noRecipesBody')} />
           : (
             <StagList>
               {state.recipes.map(r => (
@@ -28,7 +30,7 @@ export function RecipesScreen() {
                     <div className="col col-gap-8" style={{ flex: 1 }}>
                       <div className="row row-gap-12">
                         <MethodBadge method={r.method} />
-                        <span className="t-upper">Used {r.lastUsedAt ? fmtRelDate(r.lastUsedAt) : '—'}</span>
+                        <span className="t-upper">{t('recipes.used', { date: r.lastUsedAt ? fmtRelDate(r.lastUsedAt) : '—' })}</span>
                       </div>
                       <div style={{ fontFamily: 'var(--serif)', fontSize: 22 }}>{r.name}</div>
                       <div className="row row-gap-16" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>

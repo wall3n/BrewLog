@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, ProgressBar } from '../../components/UI';
@@ -42,6 +43,7 @@ export function LogExtractionScreen() {
   const prefill = location.state as Partial<Extraction> | null;
   const { state } = useApp();
   const db = useDb();
+  const { t } = useTranslation();
 
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<WizardDraft>(() => ({
@@ -80,9 +82,9 @@ export function LogExtractionScreen() {
       <div className="row row-between" style={{ marginBottom: 24 }}>
         <Button variant="ghost" style={{ padding: '6px 10px' }} onClick={() => step === 1 ? navigate('/') : setStep(step - 1)}>
           <Icon name="arrowLeft" size={16} />
-          <span>{step === 1 ? 'Cancel' : 'Back'}</span>
+          <span>{step === 1 ? t('extraction.cancel') : t('extraction.back')}</span>
         </Button>
-        <span className="t-upper">Step {step} of {TOTAL}</span>
+        <span className="t-upper">{t('extraction.step', { current: step, total: TOTAL })}</span>
       </div>
       <div style={{ marginBottom: 32 }}>
         <ProgressBar value={step} max={TOTAL} />

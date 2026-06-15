@@ -1,33 +1,11 @@
 import { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from './context/AppContext';
 import { Icon } from './components/Icons';
 import { FAB } from './components/UI';
 import { WelcomeModal } from './screens/Welcome/WelcomeModal';
-
-const NAV_ITEMS = [
-  { path: '/',          label: 'Home',      icon: 'home' },
-  { path: '/history',   label: 'History',   icon: 'history' },
-  { path: '/recipes',   label: 'Recipes',   icon: 'recipe' },
-  { path: '/beans',     label: 'Beans',     icon: 'bean' },
-  { path: '/equipment', label: 'Equipment', icon: 'equipment' },
-  { path: '/analytics', label: 'Analytics', icon: 'chart' },
-  { path: '/settings',  label: 'Settings',  icon: 'settings' },
-];
-
-const MOBILE_NAV = [
-  { path: '/',          label: 'Home',      icon: 'home' },
-  { path: '/history',   label: 'History',   icon: 'history' },
-  { path: '/beans',     label: 'Beans',     icon: 'bean' },
-  { path: '/settings',  label: 'Settings',  icon: 'settings' },
-];
-
-const MORE_ITEMS = [
-  { path: '/recipes',   label: 'Recipes',   icon: 'recipe' },
-  { path: '/equipment', label: 'Equipment', icon: 'equipment' },
-  { path: '/analytics', label: 'Analytics', icon: 'chart' },
-];
 
 function ThemeApplier() {
   const { state } = useApp();
@@ -46,8 +24,32 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = useApp();
+  const { t } = useTranslation();
   const [showMore, setShowMore] = useState(false);
   const isLog = location.pathname === '/log';
+
+  const NAV_ITEMS = [
+    { path: '/',          label: t('nav.home'),      icon: 'home' },
+    { path: '/history',   label: t('nav.history'),   icon: 'history' },
+    { path: '/recipes',   label: t('nav.recipes'),   icon: 'recipe' },
+    { path: '/beans',     label: t('nav.beans'),     icon: 'bean' },
+    { path: '/equipment', label: t('nav.equipment'), icon: 'equipment' },
+    { path: '/analytics', label: t('nav.analytics'), icon: 'chart' },
+    { path: '/settings',  label: t('nav.settings'),  icon: 'settings' },
+  ];
+
+  const MOBILE_NAV = [
+    { path: '/',          label: t('nav.home'),     icon: 'home' },
+    { path: '/history',   label: t('nav.history'),  icon: 'history' },
+    { path: '/beans',     label: t('nav.beans'),    icon: 'bean' },
+    { path: '/settings',  label: t('nav.settings'), icon: 'settings' },
+  ];
+
+  const MORE_ITEMS = [
+    { path: '/recipes',   label: t('nav.recipes'),   icon: 'recipe' },
+    { path: '/equipment', label: t('nav.equipment'), icon: 'equipment' },
+    { path: '/analytics', label: t('nav.analytics'), icon: 'chart' },
+  ];
 
   function isActive(path: string): boolean {
     if (path === '/') return location.pathname === '/';
@@ -102,7 +104,7 @@ export default function App() {
           ))}
           <button className={isMoreActive ? 'active' : ''} onClick={() => setShowMore(true)}>
             <Icon name="more" size={20} />
-            <span>More</span>
+            <span>{t('nav.more')}</span>
           </button>
         </nav>
 

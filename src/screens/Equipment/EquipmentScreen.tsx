@@ -1,24 +1,31 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { useDb } from '../../hooks/useDb';
 import { Button, Sheet, Field, Input, Tag, Empty } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 
 function QuickAddEquipment({ onSave }: { onSave: (p: { type: string; name: string; model?: string }) => void }) {
+  const { t } = useTranslation();
+  const TYPE_KEYS = ['Grinder','Machine','Scale','Kettle','WDT','Brewer','Other'] as const;
   const [type, setType] = useState('Grinder');
   const [name, setName] = useState('');
   const [model, setModel] = useState('');
-  const TYPES = ['Grinder','Machine','Scale','Kettle','WDT','Brewer','Other'];
+
   return (
     <div className="col col-gap-16">
-      <Field label="Type">
+      <Field label={t('equipment.fields.type')}>
         <div className="row row-wrap row-gap-8">
-          {TYPES.map(t => <Tag key={t} active={type === t} onClick={() => setType(t)}>{t}</Tag>)}
+          {TYPE_KEYS.map(tk => (
+            <Tag key={tk} active={type === tk} onClick={() => setType(tk)}>
+              {t(`equipment.types.${tk}`, { defaultValue: tk })}
+            </Tag>
+          ))}
         </div>
       </Field>
-      <Field label="Name"><Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. DF64 Gen 2" /></Field>
-      <Field label="Model (optional)"><Input value={model} onChange={e => setModel(e.target.value)} placeholder="e.g. SSP MP burrs" /></Field>
-      <Button full onClick={() => onSave({ type, name: name || 'Unnamed', model: model || undefined })} disabled={!name}>Save</Button>
+      <Field label={t('equipment.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. DF64 Gen 2" /></Field>
+      <Field label={t('equipment.fields.model')}><Input value={model} onChange={e => setModel(e.target.value)} placeholder="e.g. SSP MP burrs" /></Field>
+      <Button full onClick={() => onSave({ type, name: name || 'Unnamed', model: model || undefined })} disabled={!name}>{t('equipment.save')}</Button>
     </div>
   );
 }
@@ -26,6 +33,7 @@ function QuickAddEquipment({ onSave }: { onSave: (p: { type: string; name: strin
 export function EquipmentScreen() {
   const { state } = useApp();
   const db = useDb();
+  const { t } = useTranslation();
   const [adding, setAdding] = useState(false);
 
   const groups: Record<string, typeof state.equipment> = {};
@@ -35,19 +43,19 @@ export function EquipmentScreen() {
     <div>
       <div className="row row-between" style={{ alignItems: 'flex-end', marginBottom: 24 }}>
         <div className="page-head" style={{ marginBottom: 0 }}>
-          <h1>Equipment</h1>
-          <p>{state.equipment.length} ITEMS</p>
+          <h1>{t('equipment.title')}</h1>
+          <p>{t('equipment.items', { count: state.equipment.length })}</p>
         </div>
-        <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>Add gear</Button>
+        <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('equipment.addGear')}</Button>
       </div>
 
       {state.equipment.length === 0
-        ? <Empty icon="equipment" title="No equipment" body="Add your grinder, scale, and more." />
+        ? <Empty icon="equipment" title={t('equipment.noEquipment')} body={t('equipment.noEquipmentBody')} />
         : (
           <div className="col col-gap-32">
             {Object.entries(groups).map(([type, items]) => (
               <div key={type}>
-                <div className="t-upper" style={{ marginBottom: 12 }}>{type}</div>
+                <div className="t-upper" style={{ marginBottom: 12 }}>{t(`equipment.types.${type}`, { defaultValue: type })}</div>
                 <div className="col col-gap-8">
                   {items.map(item => (
                     <div key={item.id} className="card card-tight" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -57,9 +65,9 @@ export function EquipmentScreen() {
                         {item.notes && <span style={{ fontSize: 11, color: 'var(--text-tertiary)', fontStyle: 'italic' }}>{item.notes}</span>}
                       </div>
                       <div className="row row-gap-12">
-                        <span className="t-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{item.usage ?? 0} uses</span>
+                        <span className="t-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{t('equipment.uses', { count: item.usage ?? 0 })}</span>
                         <button type="button" onClick={async () => {
-                          if (confirm(`Delete ${item.name}?`)) await db.deleteEquipment(item.id!);
+                          if (confirm(t('equipment.confirmDelete', { name: item.name }))) await db.deleteEquipment(item.id!);
                         }} style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', padding: 4 }}>
                           <Icon name="trash" size={14} />
                         </button>
@@ -73,7 +81,7 @@ export function EquipmentScreen() {
         )
       }
 
-      <Sheet open={adding} onClose={() => setAdding(false)} title="Add equipment">
+      <Sheet open={adding} onClose={() => setAdding(false)} title={t('equipment.addEquipment')}>
         <QuickAddEquipment onSave={async (payload) => { await db.addEquipment({ ...payload, usage: 0 }); setAdding(false); }} />
       </Sheet>
     </div>

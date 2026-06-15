@@ -35,11 +35,11 @@ export function getTargets(method: string): Record<string, string> {
   }
 }
 
-export function extractionZone(ey: number): { label: string; color: string; position: number } {
+export function extractionZone(ey: number): { labelKey: string; color: string; position: number } {
   const pos = Math.max(0, Math.min(100, ((ey - 12) / 16) * 100));
-  if (ey < 16) return { label: 'UNDER-EXTRACTED', color: 'var(--danger)', position: pos };
-  if (ey < 18) return { label: 'WEAK', color: 'var(--warning)', position: pos };
-  if (ey <= 22) return { label: 'IDEAL ✓', color: 'var(--success)', position: pos };
-  if (ey <= 24) return { label: 'STRONG', color: 'var(--warning)', position: pos };
-  return { label: 'OVER-EXTRACTED', color: 'var(--danger)', position: pos };
+  if (ey < 16) return { labelKey: 'under', color: 'var(--danger)', position: pos };
+  if (ey < 18) return { labelKey: 'weak', color: 'var(--warning)', position: pos };
+  if (ey <= 22) return { labelKey: 'ideal', color: 'var(--success)', position: pos };
+  if (ey <= 24) return { labelKey: 'strong', color: 'var(--warning)', position: pos };
+  return { labelKey: 'over', color: 'var(--danger)', position: pos };
 }

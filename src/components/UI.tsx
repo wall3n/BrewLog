@@ -1,4 +1,5 @@
 import type { ReactNode, InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Icon } from './Icons';
 import { daysSince, roastBucket } from '../utils/formatters';
 import { methodById } from '../utils/methodDefaults';
@@ -104,10 +105,11 @@ export function Tag({ active, onClick, children, subtle }: TagProps) {
 // MethodBadge
 export function MethodBadge({ method }: { method: string }) {
   const m = methodById(method);
+  const { t } = useTranslation();
   return (
     <span className="method-badge">
       <Icon name={m.icon} size={11} />
-      {m.name}
+      {t(`methods.${method}`, { defaultValue: m.name })}
     </span>
   );
 }
@@ -149,9 +151,10 @@ export function RoastDot({ level }: { level: string }) {
 // DaysOffRoast
 export function DaysOffRoast({ iso }: { iso?: string }) {
   const d = daysSince(iso);
+  const { t } = useTranslation();
   if (d == null) return <span className="t-ter t-mono">—</span>;
   const bucket = roastBucket(d);
-  return <span className={`days-pill ${bucket}`}>{d}d off roast</span>;
+  return <span className={`days-pill ${bucket}`}>{t('beans.daysOffRoast', { count: d })}</span>;
 }
 
 // Empty state

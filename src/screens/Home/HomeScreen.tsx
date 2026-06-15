@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../context/AppContext';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { Stars, MethodBadge, StagList, Empty, DaysOffRoast, RoastDot } from '../../components/UI';
@@ -7,6 +8,7 @@ import type { Extraction, Bean } from '../../db/types';
 
 function ExtractionRow({ extraction, onClick }: { extraction: Extraction; onClick: () => void }) {
   const { state } = useApp();
+  const { t } = useTranslation();
   const bean = state.beans.find(b => b.id === extraction.beanId);
   return (
     <div className="card card-tight card-hover" onClick={onClick} style={{ padding: '16px 20px' }}>
@@ -17,7 +19,7 @@ function ExtractionRow({ extraction, onClick }: { extraction: Extraction; onClic
             <MethodBadge method={extraction.method} />
           </div>
           <div style={{ fontSize: 15, fontFamily: 'var(--serif)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {bean ? bean.name : 'Unknown bean'}
+            {bean ? bean.name : t('extraction.unknownBean')}
           </div>
           <div className="row row-gap-12" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
             <span className="t-mono">{extraction.dose}g → {extraction.yield}g</span>
@@ -29,9 +31,9 @@ function ExtractionRow({ extraction, onClick }: { extraction: Extraction; onClic
         </div>
         <div className="col" style={{ alignItems: 'flex-end', gap: 6 }}>
           <Stars value={extraction.rating} size={14} />
-          {extraction.flag === 'dialled' && <span style={{ fontSize: 10, color: 'var(--success)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>✓ Dialled</span>}
-          {extraction.flag === 'adjust'  && <span style={{ fontSize: 10, color: 'var(--warning)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>! Adjust</span>}
-          {extraction.flag === 'fail'    && <span style={{ fontSize: 10, color: 'var(--danger)',  letterSpacing: '0.06em', textTransform: 'uppercase' }}>✗ Failure</span>}
+          {extraction.flag === 'dialled' && <span style={{ fontSize: 10, color: 'var(--success)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>✓ {t('history.flags.dialled')}</span>}
+          {extraction.flag === 'adjust'  && <span style={{ fontSize: 10, color: 'var(--warning)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>! {t('history.flags.adjust')}</span>}
+          {extraction.flag === 'fail'    && <span style={{ fontSize: 10, color: 'var(--danger)',  letterSpacing: '0.06em', textTransform: 'uppercase' }}>✗ {t('history.flags.fail')}</span>}
         </div>
       </div>
     </div>
@@ -62,6 +64,7 @@ function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
 export function HomeScreen() {
   const { state } = useApp();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { extractions, beans } = state;
 
   const now = new Date();
@@ -78,44 +81,44 @@ export function HomeScreen() {
   return (
     <div>
       <div className="page-head">
-        <h1>BrewLog</h1>
-        <p>YOUR EXTRACTION JOURNAL</p>
+        <h1>{t('home.title')}</h1>
+        <p>{t('home.subtitle')}</p>
       </div>
 
       <div className="card" style={{ marginBottom: 24 }}>
         <div className="grid grid-3">
           <div className="stat">
             <div className="v">{extractions.length}</div>
-            <div className="l">Total extractions</div>
+            <div className="l">{t('home.stats.totalExtractions')}</div>
           </div>
           <div className="stat">
             <div className="v">{avgRating}<span style={{ fontSize: 14, color: 'var(--text-tertiary)', marginLeft: 6 }}>/ 5</span></div>
-            <div className="l">Avg this month</div>
+            <div className="l">{t('home.stats.avgThisMonth')}</div>
           </div>
           <div className="stat">
             <div className="v">{activeBeans.length}</div>
-            <div className="l">Active beans</div>
+            <div className="l">{t('home.stats.activeBeans')}</div>
           </div>
         </div>
       </div>
 
       <div className="section-head">
-        <h2>Recent</h2>
+        <h2>{t('home.recent')}</h2>
         <button className="sidebar-link" style={{ width: 'auto', padding: '4px 8px', color: 'var(--accent)' }} onClick={() => navigate('/history')}>
-          See all <Icon name="chevronRight" size={14} />
+          {t('home.seeAll')} <Icon name="chevronRight" size={14} />
         </button>
       </div>
       <div className="col col-gap-12" style={{ marginBottom: 32 }}>
         {recent.length === 0
-          ? <Empty icon="flask" title="No extractions yet" body="Tap the + to log your first one." />
+          ? <Empty icon="flask" title={t('home.noExtractions')} body={t('home.noExtractionsBody')} />
           : <StagList>{recent.map(e => <ExtractionRow key={e.id} extraction={e} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
         }
       </div>
 
       <div className="section-head">
-        <h2>Active beans</h2>
+        <h2>{t('home.activeBeans')}</h2>
         <button className="sidebar-link" style={{ width: 'auto', padding: '4px 8px', color: 'var(--accent)' }} onClick={() => navigate('/beans')}>
-          All beans <Icon name="chevronRight" size={14} />
+          {t('home.allBeans')} <Icon name="chevronRight" size={14} />
         </button>
       </div>
       <div className="grid grid-2" style={{ marginBottom: 24 }}>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../../context/AppContext';
 import { Button, Field, Input } from '../../../components/UI';
 import { Icon } from '../../../components/Icons';
@@ -7,6 +8,7 @@ interface Props { draft: WizardDraft; update: (p: Partial<WizardDraft>) => void;
 
 export function StepEquipment({ draft, update, onNext }: Props) {
   const { state } = useApp();
+  const { t } = useTranslation();
   const eq = state.equipment;
 
   const groups: Record<string, typeof eq> = {};
@@ -25,14 +27,14 @@ export function StepEquipment({ draft, update, onNext }: Props) {
     <div>
       <div className="step-meta" style={{ marginBottom: 20 }}>
         <div className="col col-gap-4">
-          <h2 className="h-display" style={{ fontSize: 28, margin: 0 }}>Your gear</h2>
-          <span className="t-sec" style={{ fontSize: 12 }}>MULTI-SELECT</span>
+          <h2 className="h-display" style={{ fontSize: 28, margin: 0 }}>{t('extraction.steps.equipment.title')}</h2>
+          <span className="t-sec" style={{ fontSize: 12 }}>{t('extraction.steps.equipment.subtitle')}</span>
         </div>
       </div>
       <div className="col col-gap-24" style={{ marginBottom: 24 }}>
         {Object.entries(groups).map(([type, items]) => (
           <div key={type}>
-            <div className="t-upper" style={{ marginBottom: 8 }}>{type}</div>
+            <div className="t-upper" style={{ marginBottom: 8 }}>{t(`equipment.types.${type}`, { defaultValue: type })}</div>
             <div className="col col-gap-8">
               {items.map(item => {
                 const sel = draft.equipmentIds.includes(item.id!);
@@ -54,12 +56,12 @@ export function StepEquipment({ draft, update, onNext }: Props) {
       </div>
       {hasGrinder && (
         <div style={{ marginBottom: 24 }}>
-          <Field label="Grinder setting" hint="Click number, dial, or rotation depending on grinder">
-            <Input value={draft.grindSetting} onChange={e => update({ grindSetting: e.target.value })} placeholder="e.g. 2.3" />
+          <Field label={t('extraction.steps.equipment.grindSetting')} hint={t('extraction.steps.equipment.grindSettingHint')}>
+            <Input value={draft.grindSetting} onChange={e => update({ grindSetting: e.target.value })} placeholder={t('extraction.steps.equipment.grindPlaceholder')} />
           </Field>
         </div>
       )}
-      <Button full size="lg" onClick={onNext} rightIcon="arrowRight">Continue</Button>
+      <Button full size="lg" onClick={onNext} rightIcon="arrowRight">{t('common.continue')}</Button>
     </div>
   );
 }
