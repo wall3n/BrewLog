@@ -1,11 +1,12 @@
 import type { ReactNode, InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import s from './styles.module.css';
 
 interface FieldProps { label?: string; hint?: string; right?: ReactNode; children: ReactNode; }
 export function Field({ label, hint, children, right }: FieldProps) {
   return (
     <div className="field">
       {(label || right) && (
-        <div className="row row-between" style={{ alignItems: 'baseline' }}>
+        <div className={`row row-between ${s.fieldHeader}`}>
           {label && <span className="field-label">{label}</span>}
           {right}
         </div>

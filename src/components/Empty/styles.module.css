@@ -1,0 +1,4 @@
+.root  { text-align: center; padding: 40px; }
+.icon  { color: var(--text-tertiary); margin-bottom: 12px; }
+.title { font-size: 18px; margin-bottom: 4px; }
+.body  { font-size: 12px; }
