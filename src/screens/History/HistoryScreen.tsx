@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Button, StagList, Empty, Stars, MethodBadge, Pagination, FilterBar } from '../../components/UI';
+import { StagList, Empty, Stars, MethodBadge, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { methodById } from '../../utils/methodDefaults';
@@ -59,7 +59,7 @@ export function HistoryScreen() {
   const [sort, setSort] = useState<'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'>('dateDesc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [showFilters, setShowFilters] = useState(false);
+
 
   const [totalCount, setTotalCount] = useState(0);
   const [extractionsTotalCount, setExtractionsTotalCount] = useState(0);
@@ -160,8 +160,6 @@ export function HistoryScreen() {
     }
   ];
 
-  const activeFiltersCount = activeFilters.length;
-
   return (
     <div>
       <div className="page-head">
@@ -173,22 +171,10 @@ export function HistoryScreen() {
           <Icon name="search" size={16} className="t-ter" />
           <input placeholder={t('history.search')} value={inputQ} onChange={e => handleQChange(e.target.value)} />
         </div>
-        <Button
-          variant="ghost"
-          leftIcon="filter"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {t('common.filters')}
-          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
-        </Button>
       </div>
 
-      <div className="row row-between mb-4">
-        {showFilters ? (
-          <FilterBar activeFilters={activeFilters} categories={categories} />
-        ) : (
-          <div />
-        )}
+      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
+        <FilterBar activeFilters={activeFilters} categories={categories} />
         <select
           className="input-underline"
           value={sort}
