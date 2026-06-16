@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
+import { useDebounce } from '../../hooks/useDebounce';
 import { Button, StagList, Empty, Stars, MethodBadge, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
@@ -49,7 +50,8 @@ export function HistoryScreen() {
 
   const [extractions, setExtractions] = useState<Extraction[]>([]);
   const [beans, setBeans] = useState<Bean[]>([]);
-  const [q, setQ] = useState('');
+  const [inputQ, setInputQ] = useState('');
+  const q = useDebounce(inputQ, 500);
   const [methodFilter, setMethodFilter] = useState('all');
   const [flagFilter, setFlagFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState(0);
@@ -91,7 +93,7 @@ export function HistoryScreen() {
 
   const totalPages = Math.ceil(totalCount / itemsPerPage);
 
-  const handleQChange = (val: string) => { setQ(val); setPage(1); };
+  const handleQChange = (val: string) => { setInputQ(val); setPage(1); };
   const handleMethodChange = (val: string) => { setMethodFilter(val); setPage(1); };
   const handleFlagChange = (val: string) => { setFlagFilter(val); setPage(1); };
   const handleRatingChange = (val: number) => { setRatingFilter(val); setPage(1); };
@@ -169,7 +171,7 @@ export function HistoryScreen() {
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
           <Icon name="search" size={16} className="t-ter" />
-          <input placeholder={t('history.search')} value={q} onChange={e => handleQChange(e.target.value)} />
+          <input placeholder={t('history.search')} value={inputQ} onChange={e => handleQChange(e.target.value)} />
         </div>
         <Button
           variant="ghost"
