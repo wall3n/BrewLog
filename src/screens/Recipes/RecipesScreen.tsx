@@ -24,7 +24,7 @@ export function RecipesScreen() {
   const [sort, setSort] = useState<'recent' | 'name' | 'fastest' | 'doseDesc' | 'yieldDesc' | 'createdDesc'>('recent');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [showFilters, setShowFilters] = useState(false);
+
 
   const [totalCount, setTotalCount] = useState(0);
   const [recipesTotalCount, setRecipesTotalCount] = useState(0);
@@ -89,8 +89,6 @@ export function RecipesScreen() {
     }
   ];
 
-  const activeFiltersCount = activeFilters.length;
-
   return (
     <div>
       <div className={`row row-between ${s.pageRow}`}>
@@ -109,28 +107,16 @@ export function RecipesScreen() {
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
           <Icon name="search" size={16} className="t-ter" />
-          <input 
-            placeholder={t('recipes.search')} 
+          <input
+            placeholder={t('recipes.search')}
             value={inputQ}
             onChange={e => { setInputQ(e.target.value); setPage(1); }}
           />
         </div>
-        <Button
-          variant="ghost"
-          leftIcon="filter"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {t('common.filters')}
-          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
-        </Button>
       </div>
 
-      <div className="row row-between mb-4">
-        {showFilters ? (
-          <FilterBar activeFilters={activeFilters} categories={categories} />
-        ) : (
-          <div />
-        )}
+      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
+        <FilterBar activeFilters={activeFilters} categories={categories} />
         <select
           className="input-underline"
           value={sort}

@@ -83,7 +83,7 @@ export function BeansScreen() {
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [showFilters, setShowFilters] = useState(false);
+
 
   const loadBeans = useCallback(() => {
     db.getBeansPage({
@@ -146,7 +146,6 @@ export function BeansScreen() {
     }
   ];
 
-  const activeFiltersCount = activeFilters.length;
 
   return (
     <div>
@@ -171,28 +170,16 @@ export function BeansScreen() {
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
           <Icon name="search" size={16} className="t-ter" />
-          <input 
-            placeholder={t('beans.search')} 
+          <input
+            placeholder={t('beans.search')}
             value={inputQ}
             onChange={e => { setInputQ(e.target.value); setPage(1); }}
           />
         </div>
-        <Button
-          variant="ghost"
-          leftIcon="filter"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {t('common.filters')}
-          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
-        </Button>
       </div>
 
-      <div className="row row-between mb-4">
-        {showFilters ? (
-          <FilterBar activeFilters={activeFilters} categories={categories} />
-        ) : (
-          <div />
-        )}
+      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
+        <FilterBar activeFilters={activeFilters} categories={categories} />
         <select
           className="input-underline"
           value={sort}
