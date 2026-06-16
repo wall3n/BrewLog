@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
+import { useDebounce } from '../../hooks/useDebounce';
 import { Button, StagList, Empty, MethodBadge, Sheet, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
@@ -18,7 +19,8 @@ export function RecipesScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [creating, setCreating] = useState(false);
   const [method, setMethod] = useState('all');
-  const [q, setQ] = useState('');
+  const [inputQ, setInputQ] = useState('');
+  const q = useDebounce(inputQ, 500);
   const [sort, setSort] = useState<'recent' | 'name' | 'fastest' | 'doseDesc' | 'yieldDesc' | 'createdDesc'>('recent');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -109,8 +111,8 @@ export function RecipesScreen() {
           <Icon name="search" size={16} className="t-ter" />
           <input 
             placeholder={t('recipes.search')} 
-            value={q} 
-            onChange={e => { setQ(e.target.value); setPage(1); }} 
+            value={inputQ}
+            onChange={e => { setInputQ(e.target.value); setPage(1); }}
           />
         </div>
         <Button

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
+import { useDebounce } from '../../hooks/useDebounce';
 import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import type { Bean } from '../../db/types';
@@ -76,7 +77,8 @@ export function BeansScreen() {
   const [beansTotalCount, setBeansTotalCount] = useState(0);
   const [tabCounts, setTabCounts] = useState<{ active: number; finished: number; wishlist: number }>({ active: 0, finished: 0, wishlist: 0 });
 
-  const [q, setQ] = useState('');
+  const [inputQ, setInputQ] = useState('');
+  const q = useDebounce(inputQ, 500);
   const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
@@ -171,8 +173,8 @@ export function BeansScreen() {
           <Icon name="search" size={16} className="t-ter" />
           <input 
             placeholder={t('beans.search')} 
-            value={q} 
-            onChange={e => { setQ(e.target.value); setPage(1); }} 
+            value={inputQ}
+            onChange={e => { setInputQ(e.target.value); setPage(1); }}
           />
         </div>
         <Button
