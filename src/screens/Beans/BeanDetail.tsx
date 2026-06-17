@@ -53,7 +53,7 @@ export function BeanDetail() {
       <div className="page-head mb-5">
         <div className="row row-gap-12 mb-[6px]">
           <RoastDot level={bean.roast} />
-          <span className="t-upper">{bean.process} · {bean.roast}</span>
+          <span className="t-upper">{bean.process} · {t(`beans.roasts.${bean.roast}`, { defaultValue: bean.roast })}</span>
         </div>
         <h1>{bean.name}</h1>
         <p>{bean.roaster}</p>
@@ -81,7 +81,7 @@ export function BeanDetail() {
           <DetailRow label={t('beans.fields.origin')} value={bean.origin ?? '—'} />
           <DetailRow label={t('beans.fields.process')} value={bean.process ?? '—'} />
           <DetailRow label={t('beans.fields.weight')} value={bean.weightG != null ? `${bean.weightG} g` : '—'} />
-          <DetailRow label={t('beans.fields.status')} value={(bean.status ?? '').toUpperCase()} />
+          <DetailRow label={t('beans.fields.status')} value={t(`beans.tabs.${bean.status ?? 'active'}`).toUpperCase()} />
         </div>
         {bean.notes && (
           <>

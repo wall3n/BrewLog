@@ -15,6 +15,8 @@
     "loading": "Chargement…",
     "saving": "Enregistrement…",
     "remove": "Supprimer",
+    "removeFilter": "Supprimer le filtre",
+    "removePour": "Supprimer le versement",
     "noData": "Aucune donnée",
     "search": "Rechercher",
     "continue": "Continuer",
@@ -26,7 +28,12 @@
     "perPage": "Par page",
     "filters": "Filtres",
     "addFilter": "Filtrer",
-    "filterBy": "Filtrer par"
+    "filterBy": "Filtrer par",
+    "newExtraction": "Nouvelle extraction",
+    "starRating": "{{count}} étoile",
+    "today": "AUJOURD'HUI",
+    "yesterday": "HIER",
+    "daysAgo": "IL Y A {{count}}J"
   },
   "welcome": {
     "quickSetup": "✦ Configuration rapide",
@@ -103,7 +110,12 @@
       "title": "Unités",
       "weight": "Poids",
       "temperature": "Température",
-      "volume": "Volume"
+      "volume": "Volume",
+      "grams": "grammes",
+      "ounces": "onces",
+      "flOz": "fl oz",
+      "fiveStars": "5 étoiles",
+      "oneToTen": "1–10"
     },
     "defaults": {
       "title": "Valeurs par défaut",
@@ -147,6 +159,14 @@
   "home": {
     "title": "BrewLog",
     "subtitle": "VOTRE JOURNAL D'EXTRACTION",
+    "greetings": {
+      "lateBrew": "Café nocturne",
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    },
+    "brewCount_one": "{{count}} infusion",
+    "brewCount_other": "{{count}} infusions",
     "stats": {
       "totalExtractions": "Extractions totales",
       "avgThisMonth": "Moy. ce mois",
@@ -339,6 +359,20 @@
       "status": "Statut",
       "notes": "Notes"
     },
+    "placeholders": {
+      "name": "ex. Éthiopie Yirgacheffe",
+      "roaster": "ex. Sample Roasters",
+      "origin": "ex. Sidama",
+      "weight": "ex. 250",
+      "notes": "Notes de dégustation, profil de torréfaction, etc."
+    },
+    "processes": {
+      "washed": "Lavé",
+      "natural": "Naturel",
+      "honey": "Honey",
+      "anaerobic": "Anaerobique naturel",
+      "other": "Autre"
+    },
     "roasts": {
       "light": "clair",
       "medium": "moyen",
@@ -397,6 +431,11 @@
       "name": "Nom",
       "model": "Modèle (optionnel)"
     },
+    "placeholders": {
+      "name": "ex. DF64 Gen 2",
+      "model": "ex. Meules SSP MP"
+    },
+    "unnamed": "Sans nom",
     "uses": "{{count}} utilisations",
     "save": "Enregistrer",
     "addEquipment": "Ajouter du matériel",
@@ -444,8 +483,13 @@
       "pourSchedule": "Programme de versements",
       "pourScheduleHint": "Optionnel · ajoutez des objectifs de versement cumulatifs",
       "addPour": "+ Ajouter un versement",
-      "save": "Enregistrer la recette"
+      "save": "Enregistrer la recette",
+      "pourLabel": "Versement {{number}}",
+      "labelPlaceholder": "Étiquette",
+      "defaultName": "Recette {{method}}"
     },
+    "pourCount_one": "{{count}} versement",
+    "pourCount_other": "{{count}} versements",
     "pourSchedule": "Programme de versements",
     "startBrew": "Démarrer l'infusion",
     "deleteRecipe": "Supprimer la recette",

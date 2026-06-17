@@ -50,7 +50,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
     const last = stages[stages.length - 1];
     setStages([...stages, {
       id: uid(),
-      label: `Pour ${stages.length + 1}`,
+      label: t('recipes.form.pourLabel', { number: stages.length + 1 }),
       timeS: last ? last.timeS + 45 : 0,
       weightG: last ? last.weightG + 60 : 60,
     }]);
@@ -66,7 +66,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
 
   function handleSave() {
     onSave({
-      name: name.trim() || `${methodById(method).name} recipe`,
+      name: name.trim() || t('recipes.form.defaultName', { method: t(`methods.${method}`) }),
       method,
       dose,
       ratio,
@@ -92,7 +92,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
         <div className="row row-wrap row-gap-8" style={{ gap: 8 }}>
           {METHODS.map(m => (
             <Tag key={m.id} active={method === m.id} onClick={() => pickMethod(m.id)}>
-              {m.name}
+              {t(`methods.${m.id}`)}
             </Tag>
           ))}
         </div>
@@ -152,7 +152,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
                   style={{ textAlign: 'left' }}
                   value={s.label}
                   onChange={e => updateStage(s.id, { label: e.target.value })}
-                  placeholder="Label"
+                  placeholder={t('recipes.form.labelPlaceholder')}
                 />
                 <input
                   className="stage-mini-input"
@@ -170,7 +170,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
                   onChange={e => updateStage(s.id, { weightG: parseFloat(e.target.value) || 0 })}
                   placeholder="g"
                 />
-                <button className="icon-btn" onClick={() => removeStage(s.id)} aria-label="Remove pour">
+                <button className="icon-btn" onClick={() => removeStage(s.id)} aria-label={t('common.removePour')}>
                   <Icon name="x" size={15} />
                 </button>
               </div>

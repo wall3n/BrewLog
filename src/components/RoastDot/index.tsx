@@ -2,7 +2,8 @@ import { useTranslation } from 'react-i18next';
 import { daysSince, roastBucket } from '../../utils/formatters';
 
 export function RoastDot({ level }: { level: string }) {
-  return <span className={`roast-dot ${level}`} title={level} />;
+  const { t } = useTranslation();
+  return <span className={`roast-dot ${level}`} title={t(`beans.roasts.${level}`, { defaultValue: level })} />;
 }
 
 export function DaysOffRoast({ iso }: { iso?: string }) {

@@ -22,7 +22,7 @@ export function WizardStep1Method({ data, onChange }: Props) {
             onClick={() => onChange({ method: m.id })}
           >
             <Icon name={m.icon} size={28} />
-            <span>{m.name}</span>
+            <span>{t(`methods.${m.id}`, { defaultValue: m.name })}</span>
           </button>
         ))}
       </div>
