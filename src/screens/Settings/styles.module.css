@@ -1,5 +1,5 @@
-.settingRow   { gap: 16px; }
-.settingLabel { font-size: 13px; }
+.settingRow   { gap: 16px; flex-wrap: wrap; }
+.settingLabel { font-size: 13px; flex-shrink: 0; }
 .cardMb       { margin-bottom: 16px; }
 .sectionHead  { margin-bottom: 16px; }
 .methodSelect { min-width: 140px; }
