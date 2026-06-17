@@ -205,6 +205,13 @@
       "adjust": "Ajustar",
       "fail": "Fallido"
     },
+    "groups": {
+      "thisWeek": "Esta semana",
+      "lastWeek": "Semana pasada",
+      "earlier": "Anteriores",
+      "count_one": "{{count}} EXTRACCIÓN",
+      "count_other": "{{count}} EXTRACCIONES"
+    },
     "nothingMatches": "Sin resultados",
     "loosenFilters": "Amplía los filtros.",
     "sortBy": "Ordenar: ",
