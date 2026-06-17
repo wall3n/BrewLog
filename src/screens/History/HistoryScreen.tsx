@@ -1,46 +1,75 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { StagList, Empty, Stars, MethodBadge, Pagination, FilterBar } from '../../components/UI';
+import { Empty, Stars, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
-import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { fmtRelDate, fmtTime, daysSince } from '../../utils/formatters';
 import { methodById } from '../../utils/methodDefaults';
 import type { Extraction, Bean } from '../../db/types';
 import s from './styles.module.css';
 
-export function ExtractionRow({ extraction, beans, onClick }: { extraction: Extraction; beans: readonly Bean[]; onClick: () => void }) {
+interface DateBucket {
+  key: string;
+  label: string;
+  items: Extraction[];
+}
+
+function HistoryRow({ extraction, beans, onClick }: { extraction: Extraction; beans: readonly Bean[]; onClick: () => void }) {
   const { t } = useTranslation();
   const bean = beans.find(b => b.id === extraction.beanId);
+  const method = methodById(extraction.method);
+  const flagClass = extraction.flag === 'dialled' ? s.flagDialled
+    : extraction.flag === 'adjust' ? s.flagAdjust
+    : extraction.flag === 'fail' ? s.flagFail
+    : '';
+
   return (
-    <div className={`card card-tight card-hover ${s.extractionCard}`} onClick={onClick}>
-      <div className={`row row-between ${s.cardContent}`}>
-        <div className={`col col-gap-8 ${s.cardLeft}`}>
-          <div className="row row-gap-8">
-            <span className="t-upper">{fmtRelDate(extraction.createdAt)}</span>
-            <MethodBadge method={extraction.method} />
-          </div>
-          <div className={s.beanName}>
-            {bean?.name ?? t('extraction.unknownBean')}
-          </div>
-          <div className={`row row-gap-12 t-sec ${s.metaRow}`}>
-            <span className="t-mono">{extraction.dose}g → {extraction.yield}g</span>
-            <span className="t-ter">·</span>
-            <span className="t-mono t-acc">1:{extraction.ratio.toFixed(1)}</span>
-            <span className="t-ter">·</span>
-            <span className="t-mono">{fmtTime(extraction.timeS)}</span>
-          </div>
+    <div
+      className={`${s.histRow} ${flagClass}`}
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); onClick(); } }}
+    >
+      <div className={s.histDate}>
+        <span className={s.dateRel}>{fmtRelDate(extraction.createdAt)}</span>
+        <span className={s.dateMethod}>{method?.name ?? extraction.method}</span>
+      </div>
+      <div className={s.histMain}>
+        <div className={s.histBean}>{bean?.name ?? t('extraction.unknownBean')}</div>
+        <div className={s.histMetrics}>
+          <span>{extraction.dose}g → {extraction.yield}g</span>
+          <span className={s.metricSep}>·</span>
+          <span style={{ color: 'var(--accent)' }}>1:{extraction.ratio.toFixed(1)}</span>
+          <span className={s.metricSep}>·</span>
+          <span>{fmtTime(extraction.timeS)}</span>
         </div>
-        <div className={`col ${s.cardRight}`}>
-          <Stars value={extraction.rating} size={14} />
-          {extraction.flag === 'dialled' && <span className={`${s.flagLabel} ${s.flagDialled}`}>✓ {t('history.flags.dialled')}</span>}
-          {extraction.flag === 'adjust'  && <span className={`${s.flagLabel} ${s.flagAdjust}`}>! {t('history.flags.adjust')}</span>}
-          {extraction.flag === 'fail'    && <span className={`${s.flagLabel} ${s.flagFail}`}>✗ {t('history.flags.fail')}</span>}
-        </div>
+      </div>
+      <div className={s.histAside}>
+        <Stars value={extraction.rating} size={14} />
+        {extraction.flag === 'dialled' && <span className={`${s.histFlagTag} ${s.histFlagDialled}`}>✓ {t('history.flags.dialled')}</span>}
+        {extraction.flag === 'adjust'  && <span className={`${s.histFlagTag} ${s.histFlagAdjust}`}>! {t('history.flags.adjust')}</span>}
+        {extraction.flag === 'fail'    && <span className={`${s.histFlagTag} ${s.histFlagFail}`}>✗ {t('history.flags.fail')}</span>}
       </div>
     </div>
   );
+}
+
+function groupByDate(extractions: Extraction[], t: (key: string) => string): DateBucket[] {
+  const buckets: DateBucket[] = [
+    { key: 'week', label: t('history.groups.thisWeek'), items: [] },
+    { key: 'last', label: t('history.groups.lastWeek'), items: [] },
+    { key: 'older', label: t('history.groups.earlier'), items: [] },
+  ];
+  for (const e of extractions) {
+    const d = daysSince(e.createdAt);
+    if (d !== null && d < 7) buckets[0].items.push(e);
+    else if (d !== null && d < 14) buckets[1].items.push(e);
+    else buckets[2].items.push(e);
+  }
+  return buckets.filter(b => b.items.length > 0);
 }
 
 export function HistoryScreen() {
@@ -59,7 +88,6 @@ export function HistoryScreen() {
   const [sort, setSort] = useState<'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'>('dateDesc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
 
   const [totalCount, setTotalCount] = useState(0);
   const [extractionsTotalCount, setExtractionsTotalCount] = useState(0);
@@ -97,6 +125,8 @@ export function HistoryScreen() {
   const handleMethodChange = (val: string) => { setMethodFilter(val); setPage(1); };
   const handleFlagChange = (val: string) => { setFlagFilter(val); setPage(1); };
   const handleRatingChange = (val: number) => { setRatingFilter(val); setPage(1); };
+
+  const groups = useMemo(() => groupByDate(extractions, t), [extractions, t]);
 
   const activeFilters = [];
   if (methodFilter !== 'all') {
@@ -166,6 +196,7 @@ export function HistoryScreen() {
         <h1>{t('history.title')}</h1>
         <p>{t('history.subtitle', { count: extractionsTotalCount })} · {t('history.shown', { count: totalCount })}</p>
       </div>
+
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
           <Icon name="search" size={16} className="t-ter" />
@@ -178,7 +209,7 @@ export function HistoryScreen() {
         <select
           className="input-underline"
           value={sort}
-          onChange={e => { setSort(e.target.value as 'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'); setPage(1); }}
+          onChange={e => { setSort(e.target.value as typeof sort); setPage(1); }}
           style={{ width: 'auto', padding: '6px 4px', fontSize: 12, color: 'var(--text-secondary)', flexShrink: 0 }}
         >
           <option value="dateDesc">{t('history.sorts.dateDesc')}</option>
@@ -192,12 +223,26 @@ export function HistoryScreen() {
         </select>
       </div>
 
-      <div className="col col-gap-12">
-        {extractions.length === 0
-          ? <Empty icon="history" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />
-          : <StagList>{extractions.map(e => <ExtractionRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />)}</StagList>
-        }
-      </div>
+      {extractions.length === 0
+        ? <Empty icon="history" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />
+        : (
+          <div className={s.histGroups}>
+            {groups.map(g => (
+              <div key={g.key} className={s.histGroup}>
+                <div className={s.histGroupHead}>
+                  <span className={s.groupLabel}>{g.label}</span>
+                  <span className={s.groupCount}>
+                    {t('history.groups.count', { count: g.items.length })}
+                  </span>
+                </div>
+                {g.items.map(e => (
+                  <HistoryRow key={e.id} extraction={e} beans={beans} onClick={() => navigate(`/history/${e.id}`)} />
+                ))}
+              </div>
+            ))}
+          </div>
+        )
+      }
 
       <Pagination
         currentPage={page}
@@ -212,4 +257,3 @@ export function HistoryScreen() {
     </div>
   );
 }
-
