@@ -3,7 +3,7 @@
   flex-wrap: wrap;
   gap: 8px;
   align-items: center;
-  margin-bottom: 16px;
+  flex: 1;
   position: relative;
 }
 
@@ -32,9 +32,7 @@
   padding: 0;
   line-height: 1;
 }
-.removeBtn:hover {
-  color: var(--text-primary);
-}
+@media (hover: hover) { .removeBtn:hover { color: var(--text-primary); } }
 
 .dropdownContainer {
   position: relative;
@@ -94,9 +92,7 @@
   letter-spacing: 0.05em;
   width: 100%;
 }
-.backBtn:hover {
-  color: var(--text-primary);
-}
+@media (hover: hover) { .backBtn:hover { color: var(--text-primary); } }
 
 .menuItem {
   width: 100%;
@@ -113,10 +109,7 @@
   align-items: center;
   justify-content: space-between;
 }
-.menuItem:hover {
-  background: var(--bg-surface);
-  color: var(--text-primary);
-}
+@media (hover: hover) { .menuItem:hover { background: var(--bg-surface); color: var(--text-primary); } }
 
 .optionList {
   max-height: 200px;

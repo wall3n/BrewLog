@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
+import { useDebounce } from '../../hooks/useDebounce';
 import { Button, StagList, Empty, MethodBadge, Sheet, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
@@ -18,11 +19,12 @@ export function RecipesScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [creating, setCreating] = useState(false);
   const [method, setMethod] = useState('all');
-  const [q, setQ] = useState('');
+  const [inputQ, setInputQ] = useState('');
+  const q = useDebounce(inputQ, 500);
   const [sort, setSort] = useState<'recent' | 'name' | 'fastest' | 'doseDesc' | 'yieldDesc' | 'createdDesc'>('recent');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [showFilters, setShowFilters] = useState(false);
+
 
   const [totalCount, setTotalCount] = useState(0);
   const [recipesTotalCount, setRecipesTotalCount] = useState(0);
@@ -64,10 +66,9 @@ export function RecipesScreen() {
 
   const activeFilters = [];
   if (method !== 'all') {
-    const mName = usedMethods.find(m => m.id === method)?.name || method;
     activeFilters.push({
       id: 'method',
-      label: `${t('recipes.form.method')}: ${mName}`,
+      label: `${t('recipes.form.method')}: ${t(`methods.${method}`)}`,
       onRemove: () => handleMethodChange('all')
     });
   }
@@ -81,13 +82,11 @@ export function RecipesScreen() {
         { value: 'all', label: t('recipes.filterAll') },
         ...usedMethods.map(m => ({
           value: m.id,
-          label: m.name
+          label: t(`methods.${m.id}`)
         }))
       ]
     }
   ];
-
-  const activeFiltersCount = activeFilters.length;
 
   return (
     <div>
@@ -107,28 +106,16 @@ export function RecipesScreen() {
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
           <Icon name="search" size={16} className="t-ter" />
-          <input 
-            placeholder={t('recipes.search')} 
-            value={q} 
-            onChange={e => { setQ(e.target.value); setPage(1); }} 
+          <input
+            placeholder={t('recipes.search')}
+            value={inputQ}
+            onChange={e => { setInputQ(e.target.value); setPage(1); }}
           />
         </div>
-        <Button
-          variant="ghost"
-          leftIcon="filter"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {t('common.filters')}
-          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
-        </Button>
       </div>
 
-      <div className="row row-between mb-4">
-        {showFilters ? (
-          <FilterBar activeFilters={activeFilters} categories={categories} />
-        ) : (
-          <div />
-        )}
+      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
+        <FilterBar activeFilters={activeFilters} categories={categories} />
         <select
           className="input-underline"
           value={sort}
@@ -169,7 +156,7 @@ export function RecipesScreen() {
                         <span className="t-mono">{fmtTime(r.time)}</span>
                         <span className="t-mono">{r.temp}°C</span>
                         {r.stages && r.stages.length > 0 && (
-                          <span className="t-mono t-ter">{r.stages.length} pours</span>
+                          <span className="t-mono t-ter">{t('recipes.pourCount', { count: r.stages.length })}</span>
                         )}
                       </div>
                     </div>

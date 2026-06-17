@@ -15,6 +15,8 @@
     "loading": "Cargando…",
     "saving": "Guardando…",
     "remove": "Eliminar",
+    "removeFilter": "Eliminar filtro",
+    "removePour": "Eliminar vertido",
     "noData": "Sin datos aún",
     "search": "Buscar",
     "continue": "Continuar",
@@ -26,7 +28,12 @@
     "perPage": "Por página",
     "filters": "Filtros",
     "addFilter": "Filtrar",
-    "filterBy": "Filtrar por"
+    "filterBy": "Filtrar por",
+    "newExtraction": "Nueva extracción",
+    "starRating": "{{count}} estrella",
+    "today": "HOY",
+    "yesterday": "AYER",
+    "daysAgo": "HACE {{count}}D"
   },
   "welcome": {
     "quickSetup": "✦ Configuración rápida",
@@ -103,7 +110,12 @@
       "title": "Unidades",
       "weight": "Peso",
       "temperature": "Temperatura",
-      "volume": "Volumen"
+      "volume": "Volumen",
+      "grams": "gramos",
+      "ounces": "onzas",
+      "flOz": "fl oz",
+      "fiveStars": "5 estrellas",
+      "oneToTen": "1–10"
     },
     "defaults": {
       "title": "Valores por defecto",
@@ -147,6 +159,14 @@
   "home": {
     "title": "BrewLog",
     "subtitle": "TU DIARIO DE EXTRACCIÓN",
+    "greetings": {
+      "lateBrew": "Café nocturno",
+      "morning": "Buenos días",
+      "afternoon": "Buenas tardes",
+      "evening": "Buenas noches"
+    },
+    "brewCount_one": "{{count}} infusión",
+    "brewCount_other": "{{count}} infusiones",
     "stats": {
       "totalExtractions": "Extracciones totales",
       "avgThisMonth": "Promedio este mes",
@@ -184,6 +204,13 @@
       "dialled": "Calibrado",
       "adjust": "Ajustar",
       "fail": "Fallido"
+    },
+    "groups": {
+      "thisWeek": "Esta semana",
+      "lastWeek": "Semana pasada",
+      "earlier": "Anteriores",
+      "count_one": "{{count}} EXTRACCIÓN",
+      "count_other": "{{count}} EXTRACCIONES"
     },
     "nothingMatches": "Sin resultados",
     "loosenFilters": "Amplía los filtros.",
@@ -339,6 +366,20 @@
       "status": "Estado",
       "notes": "Notas"
     },
+    "placeholders": {
+      "name": "p.ej. Etiopía Yirgacheffe",
+      "roaster": "p.ej. Sample Roasters",
+      "origin": "p.ej. Sidama",
+      "weight": "p.ej. 250",
+      "notes": "Notas de cata, perfil de tueste, etc."
+    },
+    "processes": {
+      "washed": "Lavado",
+      "natural": "Natural",
+      "honey": "Honey",
+      "anaerobic": "Anaeróbico natural",
+      "other": "Otro"
+    },
     "roasts": {
       "light": "claro",
       "medium": "medio",
@@ -397,6 +438,11 @@
       "name": "Nombre",
       "model": "Modelo (opcional)"
     },
+    "placeholders": {
+      "name": "p.ej. DF64 Gen 2",
+      "model": "p.ej. Fresas SSP MP"
+    },
+    "unnamed": "Sin nombre",
     "uses": "{{count}} usos",
     "save": "Guardar",
     "addEquipment": "Agregar equipo",
@@ -444,8 +490,13 @@
       "pourSchedule": "Plan de vertidos",
       "pourScheduleHint": "Opcional · añade objetivos acumulativos de vertido",
       "addPour": "+ Añadir vertido",
-      "save": "Guardar receta"
+      "save": "Guardar receta",
+      "pourLabel": "Vertido {{number}}",
+      "labelPlaceholder": "Etiqueta",
+      "defaultName": "Receta de {{method}}"
     },
+    "pourCount_one": "{{count}} vertido",
+    "pourCount_other": "{{count}} vertidos",
     "pourSchedule": "Calendario de vertidos",
     "startBrew": "Iniciar extracción",
     "deleteRecipe": "Eliminar receta",

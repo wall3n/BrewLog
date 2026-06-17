@@ -46,7 +46,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         <Input
           value={name}
           onChange={e => setName(e.target.value)}
-          placeholder="e.g. Ethiopia Yirgacheffe"
+          placeholder={t('beans.placeholders.name')}
         />
       </Field>
 
@@ -54,7 +54,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         <Input
           value={roaster}
           onChange={e => setRoaster(e.target.value)}
-          placeholder="e.g. Sample Roasters"
+          placeholder={t('beans.placeholders.roaster')}
         />
       </Field>
 
@@ -63,7 +63,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
           <Input
             value={origin}
             onChange={e => setOrigin(e.target.value)}
-            placeholder="e.g. Sidama"
+            placeholder={t('beans.placeholders.origin')}
           />
         </Field>
         <Field label={t('beans.fields.process')}>
@@ -72,8 +72,14 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
             value={process}
             onChange={e => setProcess(e.target.value)}
           >
-            {['Washed', 'Natural', 'Honey', 'Anaerobic Natural', 'Other'].map(p => (
-              <option key={p} value={p}>{p}</option>
+            {[
+              { value: 'Washed', key: 'washed' },
+              { value: 'Natural', key: 'natural' },
+              { value: 'Honey', key: 'honey' },
+              { value: 'Anaerobic Natural', key: 'anaerobic' },
+              { value: 'Other', key: 'other' },
+            ].map(p => (
+              <option key={p.value} value={p.value}>{t(`beans.processes.${p.key}`)}</option>
             ))}
           </select>
         </Field>
@@ -101,13 +107,13 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
             type="number"
             value={weightG}
             onChange={e => setWeightG(e.target.value)}
-            placeholder="e.g. 250"
+            placeholder={t('beans.placeholders.weight')}
           />
         </Field>
       </div>
 
       <div className="grid grid-2">
-        <Field label={t('beans.fields.roastedAt') || 'Roast date'}>
+        <Field label={t('beans.fields.roastedAt')}>
           <Input
             type="date"
             value={roastedAt}
@@ -134,7 +140,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         <Textarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
-          placeholder="Tasting notes, roast profile, etc."
+          placeholder={t('beans.placeholders.notes')}
         />
       </Field>
 

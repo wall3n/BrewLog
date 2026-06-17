@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
+import { useDebounce } from '../../hooks/useDebounce';
 import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, FilterBar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import type { Bean } from '../../db/types';
@@ -38,12 +39,18 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
 
   return (
     <div className="col col-gap-16">
-      <Field label={t('beans.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Yirgacheffe Konga" /></Field>
-      <Field label={t('beans.fields.roaster')}><Input value={roaster} onChange={e => setRoaster(e.target.value)} placeholder="e.g. Sample Roasters" /></Field>
+      <Field label={t('beans.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder={t('beans.placeholders.name')} /></Field>
+      <Field label={t('beans.fields.roaster')}><Input value={roaster} onChange={e => setRoaster(e.target.value)} placeholder={t('beans.placeholders.roaster')} /></Field>
       <div className="grid grid-2">
         <Field label={t('beans.fields.process')}>
           <select className="input-underline" value={process} onChange={e => setProcess(e.target.value)}>
-            {['Washed','Natural','Honey','Anaerobic Natural','Other'].map(p => <option key={p}>{p}</option>)}
+            {[
+              { value: 'Washed', key: 'washed' },
+              { value: 'Natural', key: 'natural' },
+              { value: 'Honey', key: 'honey' },
+              { value: 'Anaerobic Natural', key: 'anaerobic' },
+              { value: 'Other', key: 'other' },
+            ].map(p => <option key={p.value} value={p.value}>{t(`beans.processes.${p.key}`)}</option>)}
           </select>
         </Field>
         <Field label={t('beans.fields.roastLevel')}>
@@ -76,12 +83,13 @@ export function BeansScreen() {
   const [beansTotalCount, setBeansTotalCount] = useState(0);
   const [tabCounts, setTabCounts] = useState<{ active: number; finished: number; wishlist: number }>({ active: 0, finished: 0, wishlist: 0 });
 
-  const [q, setQ] = useState('');
+  const [inputQ, setInputQ] = useState('');
+  const q = useDebounce(inputQ, 500);
   const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [showFilters, setShowFilters] = useState(false);
+
 
   const loadBeans = useCallback(() => {
     db.getBeansPage({
@@ -144,7 +152,6 @@ export function BeansScreen() {
     }
   ];
 
-  const activeFiltersCount = activeFilters.length;
 
   return (
     <div>
@@ -169,28 +176,16 @@ export function BeansScreen() {
       <div className="row row-gap-8 mb-4">
         <div className="search-bar flex-1">
           <Icon name="search" size={16} className="t-ter" />
-          <input 
-            placeholder={t('beans.search')} 
-            value={q} 
-            onChange={e => { setQ(e.target.value); setPage(1); }} 
+          <input
+            placeholder={t('beans.search')}
+            value={inputQ}
+            onChange={e => { setInputQ(e.target.value); setPage(1); }}
           />
         </div>
-        <Button
-          variant="ghost"
-          leftIcon="filter"
-          onClick={() => setShowFilters(!showFilters)}
-        >
-          {t('common.filters')}
-          {activeFiltersCount > 0 ? ` (${activeFiltersCount})` : ''}
-        </Button>
       </div>
 
-      <div className="row row-between mb-4">
-        {showFilters ? (
-          <FilterBar activeFilters={activeFilters} categories={categories} />
-        ) : (
-          <div />
-        )}
+      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
+        <FilterBar activeFilters={activeFilters} categories={categories} />
         <select
           className="input-underline"
           value={sort}

@@ -7,4 +7,4 @@
 .itemNotes      { font-size: 11px; font-style: italic; }
 .usageCount     { font-size: 11px; }
 .deleteBtn      { background: transparent; border: none; color: var(--text-tertiary); cursor: pointer; padding: 4px; }
-.deleteBtn:hover { color: var(--danger); }
+@media (hover: hover) { .deleteBtn:hover { color: var(--danger); } }

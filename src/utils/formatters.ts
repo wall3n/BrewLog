@@ -1,3 +1,5 @@
+import i18n from '../i18n';
+
 export const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 export function daysSince(iso: string | undefined): number | null {
@@ -16,14 +18,15 @@ export function roastBucket(days: number | null): 'green' | 'amber' | 'red' {
 
 export function fmtDate(iso: string): string {
   const d = new Date(iso);
-  return `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+  const locale = i18n.language || 'en';
+  return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(d);
 }
 
 export function fmtRelDate(iso: string): string {
   const days = daysSince(iso);
-  if (days === 0) return 'TODAY';
-  if (days === 1) return 'YESTERDAY';
-  if (days !== null && days < 7) return `${days}D AGO`;
+  if (days === 0) return i18n.t('common.today');
+  if (days === 1) return i18n.t('common.yesterday');
+  if (days !== null && days < 7) return i18n.t('common.daysAgo', { count: days });
   return fmtDate(iso).toUpperCase();
 }
 

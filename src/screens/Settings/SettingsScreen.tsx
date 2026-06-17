@@ -83,9 +83,9 @@ export function SettingsScreen() {
       <div className={`card ${css.cardMb}`}>
         <div className={`t-upper ${css.sectionHead}`}>{t('settings.units.title')}</div>
         <div className="col col-gap-16">
-          <SettingRow label={t('settings.units.weight')}><SegToggle value={s.weightUnit} options={[['g','grams'],['oz','ounces']]} onChange={v => set({ weightUnit: v as 'g'|'oz' })} /></SettingRow>
+          <SettingRow label={t('settings.units.weight')}><SegToggle value={s.weightUnit} options={[['g',t('settings.units.grams')],['oz',t('settings.units.ounces')]]} onChange={v => set({ weightUnit: v as 'g'|'oz' })} /></SettingRow>
           <SettingRow label={t('settings.units.temperature')}><SegToggle value={s.tempUnit} options={[['C','°C'],['F','°F']]} onChange={v => set({ tempUnit: v as 'C'|'F' })} /></SettingRow>
-          <SettingRow label={t('settings.units.volume')}><SegToggle value={s.volumeUnit} options={[['ml','ml'],['oz','fl oz']]} onChange={v => set({ volumeUnit: v as 'ml'|'oz' })} /></SettingRow>
+          <SettingRow label={t('settings.units.volume')}><SegToggle value={s.volumeUnit} options={[['ml','ml'],['oz',t('settings.units.flOz')]]} onChange={v => set({ volumeUnit: v as 'ml'|'oz' })} /></SettingRow>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ export function SettingsScreen() {
             </select>
           </SettingRow>
           <SettingRow label={t('settings.defaults.ratingScale')}>
-            <SegToggle value={s.ratingScale} options={[['5','5 stars'],['10','1–10']]} onChange={v => set({ ratingScale: v as '5'|'10' })} />
+            <SegToggle value={s.ratingScale} options={[['5',t('settings.units.fiveStars')],['10',t('settings.units.oneToTen')]]} onChange={v => set({ ratingScale: v as '5'|'10' })} />
           </SettingRow>
         </div>
       </div>
