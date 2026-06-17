@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-06-17
+
+### Added
+- **History Grouped Ledger**: Redesigned history list as a grouped ledger layout for better readability and date-based organization.
+- **Search & Filter Debounce**: Added debounce to all search inputs and filter controls across list screens to reduce rendering congestion.
+
+### Fixed
+- **Touch Device Hover States**: Disabled hover effects on touch devices to prevent sticky hover states on mobile.
+- **Modal Centering on Mobile**: Centered modal dialogs on mobile instead of bottom-sheet positioning for consistent cross-device UX.
+- **Missing Translation Keys**: Replaced all remaining hardcoded strings with proper i18n translation keys.
+- **Filter UI Cleanup**: Removed extra animation and redundant button from filter controls.
+- **Language Toggle Overflow**: Fixed language toggle overflowing its container on mobile Settings screen.
+
+### Changed
+- **README Documentation**: Updated README with latest project information.
+
+---
+
 ## [0.1.0] - 2026-06-15
 
 ### Added
