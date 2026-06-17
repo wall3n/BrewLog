@@ -55,10 +55,9 @@ export function Pagination({
         <div className={`row row-center ${s.perPageContainer}`}>
           <span className={`t-mono t-sec ${s.perPageLabel}`}>{t('common.perPage')}</span>
           <select
-            className="input-underline"
+            className={`input-underline ${s.perPageSelect}`}
             value={itemsPerPage}
             onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
-            style={{ width: 'auto', padding: '4px 8px', fontSize: 12, color: 'var(--text-secondary)', marginLeft: '8px' }}
           >
             {[5, 10, 20].map((opt) => (
               <option key={opt} value={opt}>
