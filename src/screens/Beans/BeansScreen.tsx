@@ -39,12 +39,18 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
 
   return (
     <div className="col col-gap-16">
-      <Field label={t('beans.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Yirgacheffe Konga" /></Field>
-      <Field label={t('beans.fields.roaster')}><Input value={roaster} onChange={e => setRoaster(e.target.value)} placeholder="e.g. Sample Roasters" /></Field>
+      <Field label={t('beans.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder={t('beans.placeholders.name')} /></Field>
+      <Field label={t('beans.fields.roaster')}><Input value={roaster} onChange={e => setRoaster(e.target.value)} placeholder={t('beans.placeholders.roaster')} /></Field>
       <div className="grid grid-2">
         <Field label={t('beans.fields.process')}>
           <select className="input-underline" value={process} onChange={e => setProcess(e.target.value)}>
-            {['Washed','Natural','Honey','Anaerobic Natural','Other'].map(p => <option key={p}>{p}</option>)}
+            {[
+              { value: 'Washed', key: 'washed' },
+              { value: 'Natural', key: 'natural' },
+              { value: 'Honey', key: 'honey' },
+              { value: 'Anaerobic Natural', key: 'anaerobic' },
+              { value: 'Other', key: 'other' },
+            ].map(p => <option key={p.value} value={p.value}>{t(`beans.processes.${p.key}`)}</option>)}
           </select>
         </Field>
         <Field label={t('beans.fields.roastLevel')}>

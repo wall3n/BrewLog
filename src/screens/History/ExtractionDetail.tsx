@@ -137,7 +137,7 @@ export function ExtractionDetail() {
             {equipment.map(e => (
               <div key={e.id} className="row row-between">
                 <span className={s.eqItemName}>{e.name}</span>
-                <span className={`t-mono t-sec ${s.eqItemType}`}>{e.type}</span>
+                <span className={`t-mono t-sec ${s.eqItemType}`}>{t(`equipment.types.${e.type}`, { defaultValue: e.type })}</span>
               </div>
             ))}
           </div>

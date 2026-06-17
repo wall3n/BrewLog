@@ -42,7 +42,7 @@ export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
               onChange={e => updateRow(i, 'type', e.target.value)}
             >
               <option value="">{t('wizard.step4.typePlaceholder')}</option>
-              {EQUIPMENT_TYPES.map(ty => <option key={ty} value={ty}>{ty}</option>)}
+              {EQUIPMENT_TYPES.map(ty => <option key={ty} value={ty}>{t(`equipment.types.${ty}`, { defaultValue: ty })}</option>)}
             </select>
             <input
               className="wizard-eq-input"

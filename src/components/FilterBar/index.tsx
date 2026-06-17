@@ -48,7 +48,7 @@ export function FilterBar({ activeFilters, categories }: FilterBarProps) {
       {activeFilters.map(filter => (
         <span key={filter.id} className={s.activeTag}>
           {filter.label}
-          <button type="button" onClick={filter.onRemove} className={s.removeBtn} aria-label="Remove filter">
+          <button type="button" onClick={filter.onRemove} className={s.removeBtn} aria-label={t('common.removeFilter')}>
             <Icon name="x" size={12} />
           </button>
         </span>

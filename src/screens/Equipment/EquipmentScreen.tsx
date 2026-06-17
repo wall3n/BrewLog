@@ -25,9 +25,9 @@ function QuickAddEquipment({ onSave }: { onSave: (p: { type: string; name: strin
           ))}
         </div>
       </Field>
-      <Field label={t('equipment.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. DF64 Gen 2" /></Field>
-      <Field label={t('equipment.fields.model')}><Input value={model} onChange={e => setModel(e.target.value)} placeholder="e.g. SSP MP burrs" /></Field>
-      <Button full onClick={() => onSave({ type, name: name || 'Unnamed', model: model || undefined })} disabled={!name}>{t('equipment.save')}</Button>
+      <Field label={t('equipment.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder={t('equipment.placeholders.name')} /></Field>
+      <Field label={t('equipment.fields.model')}><Input value={model} onChange={e => setModel(e.target.value)} placeholder={t('equipment.placeholders.model')} /></Field>
+      <Button full onClick={() => onSave({ type, name: name || t('equipment.unnamed'), model: model || undefined })} disabled={!name}>{t('equipment.save')}</Button>
     </div>
   );
 }

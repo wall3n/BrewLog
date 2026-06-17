@@ -15,6 +15,8 @@
     "loading": "Loading…",
     "saving": "Saving…",
     "remove": "Remove",
+    "removeFilter": "Remove filter",
+    "removePour": "Remove pour",
     "noData": "No data yet",
     "search": "Search",
     "continue": "Continue",
@@ -26,7 +28,12 @@
     "perPage": "Per page",
     "filters": "Filters",
     "addFilter": "Filter",
-    "filterBy": "Filter by"
+    "filterBy": "Filter by",
+    "newExtraction": "New extraction",
+    "starRating": "{{count}} star",
+    "today": "TODAY",
+    "yesterday": "YESTERDAY",
+    "daysAgo": "{{count}}D AGO"
   },
   "welcome": {
     "quickSetup": "✦ Quick setup",
@@ -103,7 +110,12 @@
       "title": "Units",
       "weight": "Weight",
       "temperature": "Temperature",
-      "volume": "Volume"
+      "volume": "Volume",
+      "grams": "grams",
+      "ounces": "ounces",
+      "flOz": "fl oz",
+      "fiveStars": "5 stars",
+      "oneToTen": "1–10"
     },
     "defaults": {
       "title": "Defaults",
@@ -147,6 +159,14 @@
   "home": {
     "title": "BrewLog",
     "subtitle": "YOUR EXTRACTION JOURNAL",
+    "greetings": {
+      "lateBrew": "Late brew",
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "brewCount_one": "{{count}} brew",
+    "brewCount_other": "{{count}} brews",
     "stats": {
       "totalExtractions": "Total extractions",
       "avgThisMonth": "Avg this month",
@@ -339,6 +359,20 @@
       "status": "Status",
       "notes": "Notes"
     },
+    "placeholders": {
+      "name": "e.g. Ethiopia Yirgacheffe",
+      "roaster": "e.g. Sample Roasters",
+      "origin": "e.g. Sidama",
+      "weight": "e.g. 250",
+      "notes": "Tasting notes, roast profile, etc."
+    },
+    "processes": {
+      "washed": "Washed",
+      "natural": "Natural",
+      "honey": "Honey",
+      "anaerobic": "Anaerobic Natural",
+      "other": "Other"
+    },
     "roasts": {
       "light": "light",
       "medium": "medium",
@@ -397,6 +431,11 @@
       "name": "Name",
       "model": "Model (optional)"
     },
+    "placeholders": {
+      "name": "e.g. DF64 Gen 2",
+      "model": "e.g. SSP MP burrs"
+    },
+    "unnamed": "Unnamed",
     "uses": "{{count}} uses",
     "save": "Save",
     "addEquipment": "Add equipment",
@@ -444,8 +483,13 @@
       "pourSchedule": "Pour schedule",
       "pourScheduleHint": "Optional · add cumulative pour targets for a guided brew",
       "addPour": "+ Add pour",
-      "save": "Save recipe"
+      "save": "Save recipe",
+      "pourLabel": "Pour {{number}}",
+      "labelPlaceholder": "Label",
+      "defaultName": "{{method}} recipe"
     },
+    "pourCount_one": "{{count}} pour",
+    "pourCount_other": "{{count}} pours",
     "pourSchedule": "Pour schedule",
     "startBrew": "Start brew",
     "deleteRecipe": "Delete recipe",

@@ -66,10 +66,9 @@ export function RecipesScreen() {
 
   const activeFilters = [];
   if (method !== 'all') {
-    const mName = usedMethods.find(m => m.id === method)?.name || method;
     activeFilters.push({
       id: 'method',
-      label: `${t('recipes.form.method')}: ${mName}`,
+      label: `${t('recipes.form.method')}: ${t(`methods.${method}`)}`,
       onRemove: () => handleMethodChange('all')
     });
   }
@@ -83,7 +82,7 @@ export function RecipesScreen() {
         { value: 'all', label: t('recipes.filterAll') },
         ...usedMethods.map(m => ({
           value: m.id,
-          label: m.name
+          label: t(`methods.${m.id}`)
         }))
       ]
     }
@@ -157,7 +156,7 @@ export function RecipesScreen() {
                         <span className="t-mono">{fmtTime(r.time)}</span>
                         <span className="t-mono">{r.temp}°C</span>
                         {r.stages && r.stages.length > 0 && (
-                          <span className="t-mono t-ter">{r.stages.length} pours</span>
+                          <span className="t-mono t-ter">{t('recipes.pourCount', { count: r.stages.length })}</span>
                         )}
                       </div>
                     </div>
