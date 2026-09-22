@@ -511,6 +511,37 @@
     "methodDistribution": "Method distribution",
     "topBeans": "Top beans by rating",
     "noRatings": "Need more rated extractions.",
-    "logFirst": "Log some extractions first."
+    "logFirst": "Log some extractions first.",
+    "controlChart": {
+      "title": "SCA brewing control chart",
+      "eyAxis": "Extraction yield",
+      "tooltip": "EY {{ey}}% · TDS {{tds}}%",
+      "empty": "Log a filter brew with a TDS reading to see it here.",
+      "note": "Filter brews only. The shaded box is the SCA ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds."
+    },
+    "zones": {
+      "ideal": "Ideal",
+      "under": "Under-extracted",
+      "over": "Over-extracted",
+      "weak": "Weak",
+      "strong": "Strong",
+      "underdeveloped": "Under-extracted and weak"
+    },
+    "drivers": {
+      "title": "What moves your rating",
+      "empty": "Rate at least {{min}} brews of one method to see this.",
+      "positive": "Higher {{param}} gave better ratings.",
+      "negative": "Lower {{param}} gave better ratings.",
+      "weak": "No parameter has a clear link to your rating yet.",
+      "sample": "Based on {{n}} rated brews",
+      "params": { "dose": "Dose", "ratio": "Ratio", "timeS": "Time", "temp": "Temperature", "grind": "Grind" }
+    },
+    "timeline": {
+      "title": "Dial-in timeline",
+      "empty": "Log 2 or more brews of one bean to see its timeline.",
+      "time": "Time",
+      "grind": "Grind",
+      "brew": "Brew {{n}}"
+    }
   }
 }

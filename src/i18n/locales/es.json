@@ -511,6 +511,37 @@
     "methodDistribution": "Distribución por método",
     "topBeans": "Mejores cafés por valoración",
     "noRatings": "Se necesitan más extracciones valoradas.",
-    "logFirst": "Registra algunas extracciones primero."
+    "logFirst": "Registra algunas extracciones primero.",
+    "controlChart": {
+      "title": "Carta de control SCA",
+      "eyAxis": "Rendimiento de extracción",
+      "tooltip": "EY {{ey}}% · TDS {{tds}}%",
+      "empty": "Registra un filtro con lectura de TDS para verlo aquí.",
+      "note": "Solo filtros. La zona sombreada es la zona ideal SCA. BrewLog resta 2 g de agua por gramo de café por el poso húmedo."
+    },
+    "zones": {
+      "ideal": "Ideal",
+      "under": "Subextraído",
+      "over": "Sobreextraído",
+      "weak": "Débil",
+      "strong": "Fuerte",
+      "underdeveloped": "Subextraído y débil"
+    },
+    "drivers": {
+      "title": "Qué mueve tu valoración",
+      "empty": "Valora al menos {{min}} extracciones de un método para ver esto.",
+      "positive": "Más {{param}} dio mejores valoraciones.",
+      "negative": "Menos {{param}} dio mejores valoraciones.",
+      "weak": "Ningún parámetro tiene aún una relación clara con tu valoración.",
+      "sample": "Basado en {{n}} extracciones valoradas",
+      "params": { "dose": "Dosis", "ratio": "Ratio", "timeS": "Tiempo", "temp": "Temperatura", "grind": "Molienda" }
+    },
+    "timeline": {
+      "title": "Evolución del ajuste",
+      "empty": "Registra 2 o más extracciones de un café para ver su evolución.",
+      "time": "Tiempo",
+      "grind": "Molienda",
+      "brew": "Extracción {{n}}"
+    }
   }
 }

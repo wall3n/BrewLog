@@ -511,6 +511,37 @@
     "methodDistribution": "Répartition par méthode",
     "topBeans": "Meilleurs cafés par note",
     "noRatings": "Plus d'extractions notées nécessaires.",
-    "logFirst": "Enregistrez d'abord quelques extractions."
+    "logFirst": "Enregistrez d'abord quelques extractions.",
+    "controlChart": {
+      "title": "Diagramme de contrôle SCA",
+      "eyAxis": "Rendement d’extraction",
+      "tooltip": "EY {{ey}}% · TDS {{tds}}%",
+      "empty": "Enregistrez un filtre avec une mesure TDS pour le voir ici.",
+      "note": "Filtres uniquement. La zone ombrée est la zone idéale SCA. BrewLog retire 2 g d’eau par gramme de café pour le marc humide."
+    },
+    "zones": {
+      "ideal": "Idéal",
+      "under": "Sous-extrait",
+      "over": "Sur-extrait",
+      "weak": "Faible",
+      "strong": "Fort",
+      "underdeveloped": "Sous-extrait et faible"
+    },
+    "drivers": {
+      "title": "Ce qui influence votre note",
+      "empty": "Notez au moins {{min}} extractions d’une méthode pour voir ceci.",
+      "positive": "Plus de {{param}} a donné de meilleures notes.",
+      "negative": "Moins de {{param}} a donné de meilleures notes.",
+      "weak": "Aucun paramètre n’a encore de lien clair avec votre note.",
+      "sample": "Basé sur {{n}} extractions notées",
+      "params": { "dose": "Dose", "ratio": "Ratio", "timeS": "Temps", "temp": "Température", "grind": "Mouture" }
+    },
+    "timeline": {
+      "title": "Évolution du réglage",
+      "empty": "Enregistrez 2 extractions ou plus d’un café pour voir son évolution.",
+      "time": "Temps",
+      "grind": "Mouture",
+      "brew": "Extraction {{n}}"
+    }
   }
 }
