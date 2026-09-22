@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../../hooks/useDb';
 import { useTimer } from '../../../hooks/useTimer';
-import { Button } from '../../../components/UI';
+import { Button, Tag } from '../../../components/UI';
 import { fmtTime } from '../../../utils/formatters';
+import { pickDefaultRecipe, sortStages, getStageProgress } from '../../../utils/brewStages';
+import { GuidedBrew } from '../GuidedBrew';
 import type { WizardDraft } from '../index';
 import type { Recipe } from '../../../db/types';
 import css from './styles.module.css';
@@ -14,17 +16,29 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
   const db = useDb();
   const { t } = useTranslation();
   const { seconds, display, isRunning, start, pause, reset } = useTimer();
-  const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [guided, setGuided] = useState(false);
 
   useEffect(() => {
-    db.getAllRecipes().then(all => setRecipe(all.find(r => r.method === draft.method)));
+    db.getAllRecipes().then(all => {
+      const forMethod = all.filter(r => r.method === draft.method);
+      setRecipes(forMethod);
+      const initial = pickDefaultRecipe(forMethod, draft.method, draft.recipeId);
+      update({ recipeId: initial?.id ?? null });
+    });
+    // Load once per method. `update` and `db` change on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.method]);
 
-  const stages = recipe?.stages ?? [];
-  const activeStageIdx = stages.findIndex((s, i) => {
-    const next = stages[i + 1];
-    return seconds >= s.timeS && (!next || seconds < next.timeS);
-  });
+  const recipe = recipes.find(r => r.id === draft.recipeId);
+  const stages = useMemo(() => sortStages(recipe?.stages ?? []), [recipe]);
+  const activeStageIdx = getStageProgress(stages, seconds).activeIndex;
+
+  const finishGuided = (timeS: number): void => {
+    setGuided(false);
+    update({ timeS, recipeId: recipe?.id ?? null });
+    onNext();
+  };
 
   return (
     <div>
@@ -35,6 +49,24 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
         </div>
         <button type="button" className="skip" onClick={onSkip}>{t('extraction.steps.timer.skip')}</button>
       </div>
+
+      {recipes.length > 0 && (
+        <div className={css.recipePicker}>
+          <div className="t-upper" aria-hidden="true">{t('guidedBrew.recipe')}</div>
+          <div className={`scroll-x ${css.recipeChips}`} role="group" aria-label={t('guidedBrew.recipe')}>
+            {recipes.map(r => (
+              <Tag key={r.id} active={r.id === draft.recipeId} onClick={() => update({ recipeId: r.id ?? null })}>{r.name}</Tag>
+            ))}
+            <Tag subtle active={draft.recipeId === null} onClick={() => update({ recipeId: null })}>{t('guidedBrew.noRecipe')}</Tag>
+          </div>
+        </div>
+      )}
+
+      {recipe && stages.length > 0 && (
+        <div className={css.guidedBtn}>
+          <Button full size="lg" leftIcon="play" onClick={() => setGuided(true)}>{t('guidedBrew.open')}</Button>
+        </div>
+      )}
 
       <div className={`card ${css.timerCard}`}>
         <div className="timer">{display}</div>
@@ -50,9 +82,9 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
         </div>
       </div>
 
-      {stages.length > 0 && (
+      {recipe && stages.length > 0 && (
         <div className={`col col-gap-8 ${css.recipeMb}`}>
-          <div className={`t-upper ${css.recipeTitle}`}>{recipe!.name}</div>
+          <div className={`t-upper ${css.recipeTitle}`}>{recipe.name}</div>
           {stages.map((s, i) => (
             <div key={s.id} className={`pour-stage ${i === activeStageIdx ? 'active' : ''}`}>
               <span className="pn">{i + 1}</span>
@@ -64,6 +96,10 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
       )}
 
       <Button full size="lg" variant="ghost" onClick={onNext}>{t('extraction.steps.timer.continueWithout')}</Button>
+
+      {guided && recipe && (
+        <GuidedBrew recipe={recipe} onDone={finishGuided} onClose={() => setGuided(false)} />
+      )}
     </div>
   );
 }

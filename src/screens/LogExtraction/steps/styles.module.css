@@ -47,6 +47,11 @@
 .timerControls { justify-content: center; margin-top: 24px; }
 .recipeMb      { margin-bottom: 24px; }
 .recipeTitle   { margin-bottom: 4px; }
+.recipePicker { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.recipeChips  { margin: -4px -16px 0; padding: 4px 16px; scroll-padding-inline: 16px; }
+.recipeChips :global(.tag) { min-height: 36px; padding: 6px 14px; }
+.recipeChips :global(.tag):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.guidedBtn    { margin-bottom: 16px; }
 
 /* StepTasting */
 .outcomeMb     { margin-bottom: 12px; }
