@@ -20,6 +20,7 @@ export interface WizardDraft {
   createdAt?: string;
   method: string;
   beanId: number | null;
+  recipeId: number | null;
   equipmentIds: number[];
   grindSetting: string;
   dose: number;
@@ -56,6 +57,7 @@ export function LogExtractionScreen() {
     createdAt: prefill?.createdAt,
     method: prefill?.method ?? state.settings?.defaultMethod ?? 'espresso',
     beanId: prefill?.beanId ?? state.activeBeans.find(b => b.status === 'active')?.id ?? null,
+    recipeId: prefill?.recipeId ?? null,
     equipmentIds: prefill?.equipmentIds ?? [],
     grindSetting: prefill?.grindSetting ?? '',
     dose: prefill?.dose ?? 18,
@@ -82,10 +84,12 @@ export function LogExtractionScreen() {
   const onSave = async () => {
     if (!draft.beanId) return;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { showTds, isEditing, id, createdAt, ...payload } = draft;
+    const { showTds, isEditing, id, createdAt, recipeId, ...payload } = draft;
+    const recipeField = recipeId != null ? { recipeId } : {};
     if (isEditing && id) {
       await db.updateExtraction({
         ...payload,
+        ...recipeField,
         beanId: draft.beanId,
         id,
         createdAt: createdAt!,
@@ -93,7 +97,8 @@ export function LogExtractionScreen() {
       });
       navigate(`/history/${id}`);
     } else {
-      await db.addExtraction({ ...payload, beanId: draft.beanId });
+      await db.addExtraction({ ...payload, ...recipeField, beanId: draft.beanId });
+      if (recipeId != null) await db.updateRecipe({ id: recipeId, lastUsedAt: new Date().toISOString() });
       navigate('/');
     }
   };

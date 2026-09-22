@@ -50,6 +50,7 @@ export interface Extraction {
   id?: number;
   method: string;
   beanId: number;
+  recipeId?: number;
   equipmentIds: number[];
   grindSetting?: string;
   dose: number;
