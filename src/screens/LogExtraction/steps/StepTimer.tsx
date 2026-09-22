@@ -23,7 +23,10 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
     db.getAllRecipes().then(all => {
       const forMethod = all.filter(r => r.method === draft.method);
       setRecipes(forMethod);
-      const initial = pickDefaultRecipe(forMethod, draft.method, draft.recipeId);
+      // An edit keeps the brew's own recipe. A default would silently link a recipe to old data.
+      const initial = draft.isEditing
+        ? forMethod.find(r => r.id === draft.recipeId)
+        : pickDefaultRecipe(forMethod, draft.method, draft.recipeId);
       update({ recipeId: initial?.id ?? null });
     });
     // Load once per method. `update` and `db` change on every render.
