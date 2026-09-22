@@ -14,5 +14,6 @@ export { FAB } from './FAB';
 export { SegToggle } from './SegToggle';
 export { Pagination } from './Pagination';
 export { FilterBar } from './FilterBar';
+export { ShareActions } from './ShareActions';
 
 

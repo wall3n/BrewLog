@@ -502,6 +502,27 @@
     "deleteRecipe": "Delete recipe",
     "confirmDelete": "Delete this recipe?"
   },
+  "share": {
+    "image": "Share image",
+    "link": "Share link",
+    "preparing": "Preparing image…",
+    "copied": "Link copied.",
+    "downloaded": "Image saved.",
+    "failed": "Could not share. Try again.",
+    "recipeSubtitle": "Recipe",
+    "import": {
+      "open": "Import",
+      "title": "Import recipe",
+      "pasteLabel": "Recipe link",
+      "paste": "Paste a BrewLog recipe link",
+      "go": "Open",
+      "invalid": "This recipe link is not valid.",
+      "invalidBody": "Ask the sender for a new link.",
+      "from": "Shared recipe",
+      "save": "Save recipe",
+      "failed": "Could not save the recipe. Try again."
+    }
+  },
   "analytics": {
     "title": "Analytics",
     "subtitle": "OBSERVATIONS FROM THE LOGBOOK",

@@ -502,6 +502,27 @@
     "deleteRecipe": "Eliminar receta",
     "confirmDelete": "¿Eliminar esta receta?"
   },
+  "share": {
+    "image": "Compartir imagen",
+    "link": "Compartir enlace",
+    "preparing": "Preparando imagen…",
+    "copied": "Enlace copiado.",
+    "downloaded": "Imagen guardada.",
+    "failed": "No se pudo compartir. Inténtalo de nuevo.",
+    "recipeSubtitle": "Receta",
+    "import": {
+      "open": "Importar",
+      "title": "Importar receta",
+      "pasteLabel": "Enlace de la receta",
+      "paste": "Pega un enlace de receta de BrewLog",
+      "go": "Abrir",
+      "invalid": "Este enlace de receta no es válido.",
+      "invalidBody": "Pide un enlace nuevo a quien te lo envió.",
+      "from": "Receta compartida",
+      "save": "Guardar receta",
+      "failed": "No se pudo guardar la receta. Inténtalo de nuevo."
+    }
+  },
   "analytics": {
     "title": "Análisis",
     "subtitle": "OBSERVACIONES DEL DIARIO",
