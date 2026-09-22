@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, FilterBar } from '../../components/UI';
+import { Button, Sheet, Empty, RoastDot, Field, Input, Slider, Pagination, FilterBar, StockMeter, FreshnessBadge } from '../../components/UI';
+import { useApp } from '../../context/AppContext';
+import { beanStockView, type BeanUsage } from '../../utils/beanStock';
 import { Icon } from '../../components/Icons';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
-function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
+function BeanCard({ bean, usage, fallbackMethod, onClick }: { bean: Bean; usage: BeanUsage | undefined; fallbackMethod: string; onClick: () => void }) {
+  const stock = beanStockView(bean, usage, fallbackMethod, new Date());
   return (
     <div className={`card card-hover ${s.beanCardPad}`} onClick={onClick}>
       <div className={`row row-between ${s.beanCardHeader}`}>
@@ -23,8 +26,13 @@ function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
           <span className="t-upper">{bean.process}</span>
           <span className={`t-ter ${s.beanOrigin}`}>{(bean.origin ?? '').toUpperCase()}</span>
         </div>
-        <DaysOffRoast iso={bean.roastedAt} />
+        <FreshnessBadge freshness={stock.freshness} />
       </div>
+      {bean.weightG != null && (
+        <div className={s.beanCardStock}>
+          <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow} />
+        </div>
+      )}
     </div>
   );
 }
@@ -89,6 +97,8 @@ export function BeansScreen() {
   const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const { state } = useApp();
+  const [usage, setUsage] = useState<Map<number, BeanUsage>>(new Map());
 
 
   const loadBeans = useCallback(() => {
@@ -99,9 +109,12 @@ export function BeansScreen() {
       sort,
       page,
       limit: itemsPerPage
-    }).then(({ items, total }) => {
+    }).then(async ({ items, total }) => {
+      // Load usage first so the cards never render with the fallback dose.
+      const pageUsage = await db.getBeanUsage(items.map(b => b.id!));
       setBeans(items);
       setTotalCount(total);
+      setUsage(pageUsage);
     });
 
     Promise.all([
@@ -204,7 +217,7 @@ export function BeansScreen() {
       <div className="grid grid-2">
         {beans.length === 0
           ? <div className={s.gridEmpty}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
-          : beans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
+          : beans.map(b => <BeanCard key={b.id} bean={b} usage={usage.get(b.id!)} fallbackMethod={state.settings.defaultMethod} onClick={() => navigate(`/beans/${b.id}`)} />)
         }
       </div>
 

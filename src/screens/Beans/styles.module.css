@@ -5,7 +5,7 @@
 .beanRoaster     { font-size: 11px; letter-spacing: 0.04em; }
 .beanOrigin      { font-size: 10px; letter-spacing: 0.05em; }
 .beanCardPad     { padding: 20px; }
-.beanCardBottom  { align-items: flex-end; }
+.beanCardBottom  { align-items: flex-end; flex-wrap: wrap; gap: 8px 12px; }
 
 /* BeansScreen */
 .pageRow         { align-items: flex-end; margin-bottom: 24px; }
@@ -31,3 +31,4 @@
 .emptyBanner     { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-color: var(--warning); }
 .emptyText       { flex: 1 1 160px; font-size: 13px; color: var(--warning); }
 .stockBlock      { align-items: flex-start; }
+.beanCardStock   { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }

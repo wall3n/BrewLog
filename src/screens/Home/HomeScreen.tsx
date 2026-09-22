@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Stars, MethodBadge, Empty, RoastDot } from '../../components/UI';
+import { Stars, MethodBadge, Empty, RoastDot, StockMeter } from '../../components/UI';
+import { useApp } from '../../context/AppContext';
+import { beanStockView, summariseUsage } from '../../utils/beanStock';
+import s from './styles.module.css';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate } from '../../utils/formatters';
 import i18n from '../../i18n';
@@ -86,6 +89,7 @@ export function HomeScreen() {
   const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { state } = useApp();
 
   const [extractions, setExtractions] = useState<Extraction[]>([]);
   const [beans, setBeans] = useState<Bean[]>([]);
@@ -127,12 +131,36 @@ export function HomeScreen() {
     .sort((a, b) => (b.count - a.count) || (b.avg - a.avg))
     .slice(0, 3);
 
+  const usageByBean = summariseUsage(extractions);
+  const runningLow = beans
+    .filter(b => b.status === 'active' && b.weightG != null)
+    .map(b => ({ bean: b, stock: beanStockView(b, usageByBean.get(b.id!), state.settings.defaultMethod, new Date()) }))
+    .filter(x => x.stock.isLow);
+
   return (
     <div className="home-min">
       <header className="home-hero">
         <span className="t-upper">{weekRange()}</span>
         <h1 className="h-display">{t(greetingKey())}.</h1>
       </header>
+
+      {runningLow.length > 0 && (
+        <section className="home-block">
+          <div className="block-label">
+            <span className="t-upper">{t('home.runningLow')}</span>
+          </div>
+          <div className="rank-list">
+            {runningLow.map(({ bean, stock }) => (
+              <button key={bean.id} type="button" className={`rank-row ${s.lowRow}`} onClick={() => navigate(`/beans/${bean.id}`)}>
+                <div className={`rank-main ${s.lowMain}`}>
+                  <div className="rank-title">{bean.name}</div>
+                  <StockMeter weightG={bean.weightG ?? 0} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow />
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="home-block">
         <div className="block-label">

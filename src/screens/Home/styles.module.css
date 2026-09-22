@@ -1,2 +1,6 @@
 /* Home screen styles — weekly dashboard */
 /* Most layout uses global rank-row / week-stats / home-min classes from global.css */
+
+/* Running low — reuses the global rank-row list, with a stock meter under the name */
+.lowRow  { align-items: stretch; }
+.lowMain { gap: 10px; }
