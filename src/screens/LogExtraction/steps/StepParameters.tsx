@@ -4,6 +4,7 @@ import { Button, Field, Input, Slider } from '../../../components/UI';
 import { Icon } from '../../../components/Icons';
 import { methodById, getTargets, extractionZone } from '../../../utils/methodDefaults';
 import { fmtTime } from '../../../utils/formatters';
+import { brewEY } from '../../../utils/scaChart';
 import type { WizardDraft } from '../index';
 import css from './styles.module.css';
 
@@ -13,9 +14,7 @@ function AlgorithmAssist({ draft }: { draft: WizardDraft }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(true);
   const targets = getTargets(draft.method);
-  const ey = draft.tds && draft.dose && draft.yield
-    ? ((draft.tds / 100) * draft.yield / draft.dose * 100)
-    : null;
+  const ey = draft.tds ? brewEY(draft.method, draft.dose, draft.yield, draft.tds) : null;
   const zone = ey !== null ? extractionZone(ey) : null;
 
   return (

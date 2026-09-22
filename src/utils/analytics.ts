@@ -1,8 +1,7 @@
 import type { Extraction } from '../db/types';
-import { calculateEY, getSCAZone, type SCAZone } from './scaChart';
+import { brewEY, beverageWeight as beverageWeightOf, getSCAZone, isFilterMethod, type SCAZone } from './scaChart';
 
-// Spent filter grounds keep about 2 g of water for each gram of coffee.
-export const ABSORPTION_G_PER_G = 2;
+export { ABSORPTION_G_PER_G } from './scaChart';
 export const MIN_DRIVER_SAMPLES = 5;
 export const DRIVER_THRESHOLD = 0.3;
 
@@ -36,20 +35,20 @@ const round = (value: number, digits: number): number => {
 
 // The SCA chart is for brewed coffee at filter strength. Espresso, moka and cold brew concentrate are off its scale.
 export function onControlChart(method: string): boolean {
-  return method !== 'espresso' && method !== 'moka-pot' && method !== 'cold-brew';
+  return isFilterMethod(method);
 }
 
 // For filter methods, BrewLog stores the water poured as "yield". The cup weighs less.
 export function beverageWeight(e: Pick<Extraction, 'method' | 'dose' | 'yield'>): number {
-  return onControlChart(e.method) ? e.yield - ABSORPTION_G_PER_G * e.dose : e.yield;
+  return beverageWeightOf(e.method, e.dose, e.yield);
 }
 
 export function toControlPoints(extractions: readonly Extraction[]): readonly ControlPoint[] {
   return extractions.flatMap(e => {
-    if (e.id == null || !onControlChart(e.method) || e.tds == null || e.tds <= 0 || e.dose <= 0) return [];
-    const beverage = beverageWeight(e);
-    if (beverage <= 0) return [];
-    const ey = round(calculateEY(e.dose, beverage, e.tds), 1);
+    if (e.id == null || !onControlChart(e.method) || e.tds == null) return [];
+    const raw = brewEY(e.method, e.dose, e.yield, e.tds);
+    if (raw === null) return [];
+    const ey = round(raw, 1);
     return [{ id: e.id, ey, tds: e.tds, zone: getSCAZone(ey, e.tds), rating: e.rating, createdAt: e.createdAt }];
   });
 }
