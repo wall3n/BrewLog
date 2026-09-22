@@ -179,6 +179,7 @@
     "thisWeek": "Esta semana",
     "topExtractions": "Mejores extracciones",
     "topBeans": "Mejores cafés",
+    "runningLow": "Se acaba",
     "recent": "Recientes",
     "seeAll": "Ver todo",
     "activeBeans": "Cafés activos",
@@ -398,6 +399,21 @@
       "ratio": "Ratio",
       "time": "Tiempo",
       "rating": "Valoración"
+    },
+    "stock": {
+      "remaining": "Quedan {{weight}} g",
+      "servingsLeft_one": "≈ {{count}} extracción restante",
+      "servingsLeft_other": "≈ {{count}} extracciones restantes",
+      "empty": "Esta bolsa está vacía.",
+      "markFinished": "Marcar como terminado"
+    },
+    "freshness": {
+      "resting_one": "En reposo · óptimo en {{count}} día",
+      "resting_other": "En reposo · óptimo en {{count}} días",
+      "peak_one": "Óptimo · queda {{count}} día",
+      "peak_other": "Óptimo · quedan {{count}} días",
+      "fading": "Pasado de punto",
+      "stale": "Rancio"
     },
     "notFound": "Café no encontrado",
     "backToBeans": "Volver a cafés",

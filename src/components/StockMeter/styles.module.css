@@ -1,0 +1,9 @@
+/* StockMeter — remaining weight, brews left, and the bag bar */
+.meter    { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.labels   { display: flex; align-items: baseline; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; }
+.weight   { font-size: 12px; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.servings { font-size: 11px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+/* Low stock: the count and the bar both switch to the warning colour */
+.isLow .servings                 { color: var(--warning); }
+.isLow :global(.progress-fill)   { background: var(--warning); }

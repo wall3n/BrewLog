@@ -14,5 +14,7 @@ export { FAB } from './FAB';
 export { SegToggle } from './SegToggle';
 export { Pagination } from './Pagination';
 export { FilterBar } from './FilterBar';
+export { StockMeter } from './StockMeter';
+export { FreshnessBadge } from './FreshnessBadge';
 
 
