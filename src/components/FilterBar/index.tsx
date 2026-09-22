@@ -49,7 +49,7 @@ export function FilterBar({ activeFilters, categories }: FilterBarProps) {
         <span key={filter.id} className={s.activeTag}>
           {filter.label}
           <button type="button" onClick={filter.onRemove} className={s.removeBtn} aria-label={t('common.removeFilter')}>
-            <Icon name="x" size={12} />
+            <Icon name="x" size={14} />
           </button>
         </span>
       ))}
@@ -57,14 +57,15 @@ export function FilterBar({ activeFilters, categories }: FilterBarProps) {
       <div className={s.dropdownContainer}>
         <button
           type="button"
-          className="tag active"
+          className={`tag ${s.trigger}`}
+          aria-expanded={showDropdown}
           onClick={() => {
             setShowDropdown(!showDropdown);
             setMenuState('root');
           }}
         >
-          <Icon name="plus" size={12} />
-          {t('common.addFilter', { defaultValue: 'Filter' })}
+          <Icon name="filter" size={15} />
+          {t('common.addFilter')}
         </button>
 
         {showDropdown && (
@@ -74,7 +75,7 @@ export function FilterBar({ activeFilters, categories }: FilterBarProps) {
               {menuState === 'root' ? (
                 <>
                   <div className={s.menuHeader}>
-                    {t('common.filterBy', { defaultValue: 'Filter by' })}
+                    {t('common.filterBy')}
                   </div>
                   {categories.map(category => (
                     <button
@@ -84,7 +85,7 @@ export function FilterBar({ activeFilters, categories }: FilterBarProps) {
                       onClick={() => handleCategoryClick(category.id)}
                     >
                       <span>{category.label}</span>
-                      <Icon name="chevronRight" size={12} className="t-ter" />
+                      <Icon name="chevronRight" size={14} className="t-ter" />
                     </button>
                   ))}
                 </>
@@ -97,7 +98,7 @@ export function FilterBar({ activeFilters, categories }: FilterBarProps) {
                         className={s.backBtn}
                         onClick={() => setMenuState('root')}
                       >
-                        <Icon name="arrowLeft" size={12} style={{ marginRight: 4 }} />
+                        <Icon name="arrowLeft" size={14} />
                         {currentCategory.label}
                       </button>
                     </div>

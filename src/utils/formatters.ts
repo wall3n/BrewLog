@@ -27,7 +27,7 @@ export function fmtRelDate(iso: string): string {
   if (days === 0) return i18n.t('common.today');
   if (days === 1) return i18n.t('common.yesterday');
   if (days !== null && days < 7) return i18n.t('common.daysAgo', { count: days });
-  return fmtDate(iso).toUpperCase();
+  return fmtDate(iso);
 }
 
 export function fmtTime(s: number): string {

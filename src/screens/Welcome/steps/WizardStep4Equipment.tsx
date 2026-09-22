@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { Icon } from '../../../components/Icons';
 import type { WizardData } from '../QuickSetupWizard';
 import css from './styles.module.css';
 
@@ -37,7 +38,7 @@ export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
         {data.equipment.map((eq, i) => (
           <div key={i} className="wizard-eq-row">
             <select
-              className="wizard-eq-select"
+              className="input-underline wizard-eq-select"
               value={eq.type}
               onChange={e => updateRow(i, 'type', e.target.value)}
             >
@@ -45,13 +46,13 @@ export function WizardStep4Equipment({ data, onChange, onSkip }: Props) {
               {EQUIPMENT_TYPES.map(ty => <option key={ty} value={ty}>{t(`equipment.types.${ty}`, { defaultValue: ty })}</option>)}
             </select>
             <input
-              className="wizard-eq-input"
+              className="input-underline wizard-eq-input"
               placeholder={t('wizard.step4.namePlaceholder')}
               value={eq.name}
               onChange={e => updateRow(i, 'name', e.target.value)}
             />
             {data.equipment.length > 1 && (
-              <button className="wizard-eq-remove" onClick={() => removeRow(i)} aria-label={t('common.remove')}>×</button>
+              <button type="button" className="wizard-eq-remove" onClick={() => removeRow(i)} aria-label={t('common.remove')}><Icon name="x" size={18} /></button>
             )}
           </div>
         ))}

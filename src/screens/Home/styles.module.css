@@ -1,6 +1,83 @@
-/* Home screen styles — weekly dashboard */
-/* Most layout uses global rank-row / week-stats / home-min classes from global.css */
+.root { max-width: 720px; }
+.sheetMeta { text-align: right; }
 
-/* Running low — reuses the global rank-row list, with a stock meter under the name */
-.lowRow  { align-items: stretch; }
-.lowMain { gap: 10px; }
+/* Last shot: the sample readout */
+.readout { border-top: 2px solid var(--rule-strong); padding-top: 12px; }
+.readoutHead { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.readoutMeta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.metaDim { color: var(--text-tertiary); }
+
+.beanLine {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; width: 100%;
+  background: transparent; border: none; padding: 4px 0 10px; text-align: left; cursor: pointer; color: inherit;
+}
+.beanName { font-size: 24px; font-weight: 650; font-variation-settings: 'wdth' 84; letter-spacing: -0.01em; line-height: 1.1; }
+.beanRoaster { font-size: 14px; color: var(--text-secondary); }
+.beanChevron { color: var(--text-tertiary); margin-left: auto; align-self: center; }
+@media (hover: hover) { .beanLine:hover .beanName { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; } }
+
+.readings {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  border: 1px solid var(--border); border-radius: 2px;
+}
+.reading { display: flex; flex-direction: column; gap: 4px; padding: 12px 12px 10px; min-width: 0; }
+.reading + .reading { border-left: 1px solid var(--border); }
+.readingValue {
+  font-size: 40px; font-weight: 500; font-variation-settings: 'wdth' 88; letter-spacing: -0.03em; line-height: 1;
+  color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.reading:nth-child(2) .readingValue { animation-delay: 60ms; }
+.reading:nth-child(3) .readingValue { animation-delay: 120ms; }
+.reading:nth-child(4) .readingValue { animation-delay: 180ms; }
+.readingUnit { font-size: 16px; font-weight: 500; color: var(--text-secondary); margin-left: 2px; letter-spacing: 0; }
+.readingDelta { font-size: 12.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 559px) {
+  .readings { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .reading:nth-child(3) { border-left: none; }
+  .reading:nth-child(n + 3) { border-top: 1px solid var(--border); }
+  .readingValue { font-size: 36px; }
+}
+
+.readoutFoot {
+  display: flex; align-items: center; gap: 8px 20px; flex-wrap: wrap;
+  padding: 12px 0 0;
+}
+.footItem { display: inline-flex; align-items: baseline; gap: 8px; font-size: 15px; font-weight: 500; }
+.footScore { margin-left: auto; align-self: center; }
+
+/* Primary action */
+.action { margin: 20px 0 36px; }
+.actionFoot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.actionHint { font-size: 13px; color: var(--text-secondary); }
+
+/* Blocks */
+.block { margin-bottom: 36px; }
+.block:last-child { margin-bottom: 0; }
+.blockNote { font-size: 13px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.blockLink {
+  display: inline-flex; align-items: center; gap: 2px; min-height: 32px;
+  background: transparent; border: none; cursor: pointer; padding: 0;
+  font-size: 13.5px; font-weight: 600; color: var(--accent);
+}
+
+/* Dial-in trail table */
+.trail { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.trail th {
+  text-align: left; padding: 0 8px 8px 0;
+  font-size: 11.5px; font-weight: 600; font-variation-settings: 'wdth' 75; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-secondary); border-bottom: 1px solid var(--border);
+}
+.trail td { padding: 12px 8px 12px 0; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 500; }
+.trail tbody tr { cursor: pointer; transition: background 120ms; }
+@media (hover: hover) { .trail tbody tr:hover { background: var(--bg-elevated); } }
+.trail tbody tr:first-child td { font-weight: 650; }
+.trail .num { text-align: right; }
+.trail .no { color: var(--text-tertiary); font-weight: 500; }
+.flagCol { width: 32px; text-align: right; padding-right: 0; }
+.trail td.flagCol { padding-right: 2px; }
+
+.trailNote { margin: 10px 0 0; font-size: 13.5px; color: var(--text-secondary); }
+
+/* Running low */
+.lowAside { width: 132px; }

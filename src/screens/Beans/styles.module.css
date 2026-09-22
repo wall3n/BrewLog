@@ -1,34 +1,43 @@
-/* BeanCard */
-.beanCardHeader  { margin-bottom: 12px; align-items: flex-start; }
-.beanCardLeft    { flex: 1; min-width: 0; }
-.beanName        { font-family: var(--serif); font-size: 17px; line-height: 1.2; }
-.beanRoaster     { font-size: 11px; letter-spacing: 0.04em; }
-.beanOrigin      { font-size: 10px; letter-spacing: 0.05em; }
-.beanCardPad     { padding: 20px; }
-.beanCardBottom  { align-items: flex-end; flex-wrap: wrap; gap: 8px 12px; }
+/* Beans list */
+.tabCount { margin-left: 6px; color: var(--text-tertiary); font-weight: 500; font-variant-numeric: tabular-nums; }
 
-/* BeansScreen */
-.pageRow         { align-items: flex-end; margin-bottom: 24px; }
-.tabCount        { margin-left: 6px; }
-.gridEmpty       { grid-column: 1 / -1; }
-.roastBtn        { flex: 1; justify-content: center; }
+/* Forms */
+.formGrid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 480px) { .formGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; } }
+.roastRow { display: flex; gap: 6px; }
+.roastBtn { flex: 1; min-height: var(--tap); }
 
-/* BeanDetail */
-.statSuffix      { font-size: 12px; margin-left: 4px; }
-.statFlex        { display: flex; align-items: center; gap: 6px; }
-.diallingTable   { display: flex; flex-direction: column; }
-.diallingHead    { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-.diallingHeadCell{ flex: 1; }
-.diallingCell    { width: 60px; text-align: right; }
-.diallingRow     { background: transparent; border: none; text-align: left; cursor: pointer; padding: 10px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; width: 100%; }
-.diallingDate    { flex: 1; font-size: 12px; }
-.starFilled      { color: var(--accent); }
-.starEmpty       { color: var(--text-tertiary); }
-.noteText        { font-size: 13px; line-height: 1.6; font-style: italic; }
-.cardMb          { margin-bottom: 16px; }
-.detailValue     { font-size: 13px; }
-.actionRow       { display: flex; gap: 12px; margin-top: 16px; }
-.emptyBanner     { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-color: var(--warning); }
-.emptyText       { flex: 1 1 160px; font-size: 13px; color: var(--warning); }
-.stockBlock      { align-items: flex-start; }
-.beanCardStock   { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); }
+/* Bean detail */
+.detailHead { margin-bottom: 20px; }
+.detailMeta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.detailTitle { margin: 0; font-size: 34px; font-weight: 700; font-variation-settings: 'wdth' 78; letter-spacing: -0.015em; line-height: 1.02; }
+.detailSub { margin: 6px 0 0; font-size: 15px; color: var(--text-secondary); }
+.readout { margin-bottom: 32px; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.readout > :global(*) { border-right: 1px solid var(--border) !important; }
+.readout > :global(*:last-child) { border-right: none !important; }
+.readout .computed :global(.v) { color: var(--text-primary); }
+.block { margin-bottom: 32px; }
+.blockNote { font-size: 13px; color: var(--text-secondary); }
+.noteText { margin: 14px 0 0; font-size: 15px; line-height: 1.55; color: var(--text-secondary); max-width: 60ch; }
+
+.tableWrap { overflow-x: auto; }
+.dialTable { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.dialTable th {
+  text-align: left; padding: 0 10px 8px 0; white-space: nowrap;
+  font-size: 11.5px; font-weight: 600; font-variation-settings: 'wdth' 75; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-secondary); border-bottom: 1px solid var(--border);
+}
+.dialTable td { padding: 12px 10px 12px 0; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 500; white-space: nowrap; }
+.dialTable tbody tr { cursor: pointer; transition: background 120ms; }
+@media (hover: hover) { .dialTable tbody tr:hover { background: var(--bg-elevated); } }
+.dialTable .num { text-align: right; }
+.dialTable th:last-child, .dialTable td:last-child { padding-right: 0; }
+.dateCell { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
+
+.actionRow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fieldRow { margin-top: 14px; margin-bottom: 0; }
+.roastValue { display: flex; align-items: center; gap: 6px; }
+
+/* Bean stock */
+.emptyBanner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; padding: 12px 0; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--border); }
+.emptyText { flex: 1 1 160px; font-size: 15px; font-weight: 500; }

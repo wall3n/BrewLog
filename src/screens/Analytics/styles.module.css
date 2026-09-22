@@ -1,15 +1,26 @@
-.bigNum         { font-family: var(--mono); font-size: 64px; font-weight: 300; letter-spacing: -0.04em; line-height: 1; }
-.chartHeader    { margin-bottom: 16px; }
-.chartCount     { font-size: 11px; }
-.barRow         { margin-bottom: 6px; }
-.methodName     { font-size: 12px; }
-.methodCount    { font-size: 11px; }
-.barTrack       { height: 6px; background: var(--bg-elevated); border-radius: 3px; }
-.barFill        { height: 100%; background: var(--accent); border-radius: 3px; transition: width 300ms; }
-.beanRank       { color: var(--text-tertiary); width: 18px; }
-.beanName       { font-size: 13px; }
-.beanRating     { font-size: 11px; }
-.cardMb         { margin-bottom: 16px; }
-.cardHeaderMb   { margin-bottom: 8px; }
-.noData         { font-size: 12px; padding: 12px; }
-.chartSvg       { display: block; }
+.summary { border-top: 1px solid var(--rule-strong); margin-bottom: 32px; max-width: 520px; }
+.sumValue { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sumUnit { font-size: 14px; font-weight: 500; color: var(--text-secondary); margin-left: 1px; }
+
+.block { margin-bottom: 32px; }
+.blockNote { font-size: 13px; color: var(--text-secondary); }
+.chartBox { display: grid; grid-template-columns: 24px minmax(0, 1fr); border: 1px solid var(--border); border-radius: 2px; padding: 8px 4px 4px 0; }
+.axis { display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 14px 0 45px; font-size: 11px; color: var(--text-tertiary); line-height: 0; font-variant-numeric: tabular-nums; }
+.chartSvg { display: block; height: 180px; }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; }
+
+.flagBar { display: flex; height: 12px; gap: 2px; margin-bottom: 8px; }
+.flagSeg { display: block; height: 100%; }
+.seg_dialled { background: var(--success); }
+.seg_adjust { background: var(--warning); }
+.seg_fail { background: var(--danger); }
+.flagRows { display: flex; flex-direction: column; }
+
+.barRow { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+.methodName { font-size: 15px; }
+.methodCount { font-size: 14px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.barTrack { height: 8px; background: var(--bg-elevated); }
+.barFill { height: 100%; background: var(--text-primary); }
+
+.beanAvg { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.noData { margin: 0; font-size: 14px; color: var(--text-secondary); }
