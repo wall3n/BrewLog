@@ -209,3 +209,14 @@
 .eqItemType      { font-size: 11px; }
 .actionRow       { margin-top: 24px; }
 .radarCenter     { display: flex; justify-content: center; }
+
+/* Recipe link on extraction detail */
+.recipeLink {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 40px; margin-top: 4px; padding: 4px 0;
+  color: var(--accent); text-decoration: none; border-radius: 4px;
+}
+.recipeLink :global(.t-upper) { color: var(--text-tertiary); }
+.recipeName { font-size: 13px; text-decoration: underline; text-decoration-color: var(--accent-dim); text-underline-offset: 4px; }
+@media (hover: hover) { .recipeLink:hover .recipeName { text-decoration-color: var(--accent); } }
+.recipeLink:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

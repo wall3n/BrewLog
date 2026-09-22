@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, Stars, Tag, MethodBadge, Empty } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
-import type { Extraction, Bean, Equipment } from '../../db/types';
+import { Icon } from '../../components/Icons';
+import type { Extraction, Bean, Equipment, Recipe } from '../../db/types';
 import s from './styles.module.css';
 
 function TastingRadar({ values }: { values: Pick<Extraction, 'acidity'|'sweetness'|'bitterness'|'body'|'balance'> }) {
@@ -54,6 +55,7 @@ export function ExtractionDetail() {
   const [ext, setExt] = useState<Extraction | null>(null);
   const [bean, setBean] = useState<Bean | undefined>(undefined);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
@@ -61,12 +63,14 @@ export function ExtractionDetail() {
       const extraction = await db.getExtraction(Number(id));
       if (!extraction) { setNotFound(true); return; }
       setExt(extraction);
-      const [b, allEq] = await Promise.all([
+      const [b, allEq, rcp] = await Promise.all([
         extraction.beanId ? db.getBean(extraction.beanId) : Promise.resolve(undefined),
         db.getAllEquipment(),
+        extraction.recipeId != null ? db.getRecipe(extraction.recipeId) : Promise.resolve(undefined),
       ]);
       setBean(b);
       setEquipment(allEq.filter(e => (extraction.equipmentIds ?? []).includes(e.id!)));
+      setRecipe(rcp);
     }
     load();
   }, [id]);
@@ -87,6 +91,13 @@ export function ExtractionDetail() {
         </div>
         <h1>{bean?.name ?? t('extraction.unknownBean')}</h1>
         {bean && <p>{bean.roaster} · {bean.process}</p>}
+        {recipe && (
+          <Link to={`/recipes/${recipe.id}`} className={s.recipeLink}>
+            <Icon name="recipe" size={16} />
+            <span className="t-upper">{t('guidedBrew.recipe')}</span>
+            <span className={s.recipeName}>{recipe.name}</span>
+          </Link>
+        )}
       </div>
 
       <div className={`card ${s.cardMb}`}>
