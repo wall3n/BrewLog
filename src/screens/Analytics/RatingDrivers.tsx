@@ -36,20 +36,19 @@ export function RatingDrivers({ extractions }: RatingDriversProps) {
           : t('analytics.drivers.weak')}
       </p>
       {drivers.length > 0 && (
-        <div className="col col-gap-12">
-          <div className={`${s.driverRow} ${s.driverScale}`} aria-hidden="true">
-            <span />
-            <div className={`row row-between ${s.driverScaleLabels}`}>
-              <span>{t('analytics.drivers.lowerBetter')}</span>
-              <span>{t('analytics.drivers.higherBetter')}</span>
-            </div>
-            <span />
+        <div className="col col-gap-16">
+          <div className={`row row-between ${s.driverScale}`} aria-hidden="true">
+            <span>{t('analytics.drivers.lowerBetter')}</span>
+            <span>{t('analytics.drivers.higherBetter')}</span>
           </div>
           {drivers.map(d => {
             const strong = driverStrength(d.r) !== 'weak';
             return (
-              <div key={d.key} className={s.driverRow}>
-                <span className={`${s.driverLabel} ${strong ? '' : 't-sec'}`}>{t(`analytics.drivers.params.${d.key}`)}</span>
+              <div key={d.key}>
+                <div className={`row row-between ${s.driverHead}`}>
+                  <span className={`${s.driverLabel} ${strong ? '' : 't-sec'}`}>{t(`analytics.drivers.params.${d.key}`)}</span>
+                  <span className={`t-mono ${strong ? '' : 't-sec'} ${s.driverValue}`}>{fmtR.format(d.r)}</span>
+                </div>
                 <div className={s.driverTrack}>
                   {/* runtime values: the bar starts at the centre line and grows left or right with r */}
                   <div
@@ -57,7 +56,6 @@ export function RatingDrivers({ extractions }: RatingDriversProps) {
                     style={{ left: `${d.r < 0 ? 50 + d.r * 50 : 50}%`, width: `${Math.abs(d.r) * 50}%` }}
                   />
                 </div>
-                <span className={`t-mono ${strong ? '' : 't-sec'} ${s.driverValue}`}>{fmtR.format(d.r)}</span>
               </div>
             );
           })}

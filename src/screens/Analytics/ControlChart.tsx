@@ -16,6 +16,10 @@ const TICK = { fontSize: 10, fontFamily: 'var(--mono)', fill: 'var(--text-tertia
 const AXIS_LABEL = { fontSize: 10, fontFamily: 'var(--mono)', fill: 'var(--text-secondary)' };
 // Visible dot radius, and the larger invisible radius that takes the tap.
 const DOT_R = 5;
+
+// An outlier (for example TDS 5 %) stretches the axes; round the ticks so they stay short.
+const fmtEyTick = (v: number): string => `${Math.round(v)}%`;
+const fmtTdsTick = (v: number): string => `${Math.round(v * 10) / 10}%`;
 const HIT_R = 14;
 
 function isControlPoint(v: unknown): v is ControlPoint {
@@ -51,16 +55,15 @@ export function ControlChart({ points, onSelect }: ControlChartProps) {
         {t('analytics.controlChart.summary', { count: points.length, ideal: idealCount })}
       </p>
       <ResponsiveContainer width="100%" height={280}>
-        <ScatterChart margin={{ top: 8, right: 12, bottom: 20, left: 0 }}>
+        <ScatterChart margin={{ top: 8, right: 12, bottom: 16, left: 0 }}>
           <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" />
           <ReferenceArea
             x1={IDEAL.ey[0]} x2={IDEAL.ey[1]} y1={IDEAL.tds[0]} y2={IDEAL.tds[1]}
             fill="var(--accent)" fillOpacity={0.12} stroke="var(--accent-dim)" strokeDasharray="3 3"
-            label={{ value: t('analytics.zones.ideal'), position: 'insideTopLeft', ...AXIS_LABEL, fill: 'var(--accent)' }}
           />
-          <XAxis type="number" dataKey="ey" domain={EY_DOMAIN} unit="%" tick={TICK} stroke="var(--border)" tickLine={false}
-            label={{ value: t('analytics.controlChart.eyAxis'), position: 'insideBottom', offset: -12, ...AXIS_LABEL }} />
-          <YAxis type="number" dataKey="tds" domain={TDS_DOMAIN} unit="%" tick={TICK} stroke="var(--border)" tickLine={false} width={52}
+          <XAxis type="number" dataKey="ey" domain={EY_DOMAIN} tickFormatter={fmtEyTick} tick={TICK} stroke="var(--border)" tickLine={false}
+            label={{ value: t('analytics.controlChart.eyAxis'), position: 'insideBottom', offset: -8, ...AXIS_LABEL }} />
+          <YAxis type="number" dataKey="tds" domain={TDS_DOMAIN} tickFormatter={fmtTdsTick} tick={TICK} stroke="var(--border)" tickLine={false} width={52}
             label={{ value: t('analytics.controlChart.tdsAxis'), angle: -90, position: 'insideLeft', offset: 4, ...AXIS_LABEL }} />
           <Tooltip
             cursor={false}

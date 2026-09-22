@@ -15,6 +15,8 @@ export interface BeanTimelineProps {
 const TICK = { fontSize: 10, fontFamily: 'var(--mono)', fill: 'var(--text-tertiary)' };
 const MARGIN = { top: 8, right: 12, bottom: 0, left: 0 };
 const Y_WIDTH = 44;
+// Fine grinders step in tenths (2.3, 2.4); keep ticks at 2 decimals at most.
+const fmtGrindTick = (v: number): string => String(Number(v.toFixed(2)));
 
 function isTimelinePoint(v: unknown): v is TimelinePoint {
   return typeof v === 'object' && v !== null && 'n' in v && 'timeS' in v && 'createdAt' in v;
@@ -87,8 +89,10 @@ export function BeanTimeline({ extractions, beans }: BeanTimelineProps) {
               <LineChart data={points} syncId={syncId} margin={MARGIN}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
                 {xAxis(true)}
-                <YAxis tick={TICK} tickLine={false} stroke="var(--border)" width={Y_WIDTH} domain={['auto', 'auto']} />
-                <Tooltip content={TimelineTooltip} cursor={{ stroke: 'var(--border)' }} />
+                <YAxis tick={TICK} tickLine={false} stroke="var(--border)" width={Y_WIDTH} domain={['auto', 'auto']}
+                  tickFormatter={fmtGrindTick} />
+                {/* The time chart above shows the shared tooltip; this one only tracks the pointer. */}
+                <Tooltip content={() => null} cursor={{ stroke: 'var(--border)' }} />
                 <Line dataKey="grind" stroke="var(--text-secondary)" strokeWidth={2} strokeDasharray="4 3"
                   dot={{ r: 4, fill: 'var(--text-secondary)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
                   activeDot={{ r: 5, fill: 'var(--text-secondary)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
