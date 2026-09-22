@@ -28,5 +28,6 @@
 .cardMb          { margin-bottom: 16px; }
 .detailValue     { font-size: 13px; }
 .actionRow       { display: flex; gap: 12px; margin-top: 16px; }
-
-
+.emptyBanner     { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; border-color: var(--warning); }
+.emptyText       { flex: 1 1 160px; font-size: 13px; color: var(--warning); }
+.stockBlock      { align-items: flex-start; }

@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, RoastDot, Empty, Sheet } from '../../components/UI';
+import { Button, BackBar, RoastDot, Empty, Sheet, StockMeter, FreshnessBadge } from '../../components/UI';
+import { useApp } from '../../context/AppContext';
+import { beanStockView, summariseUsage } from '../../utils/beanStock';
 import { daysSince, fmtRelDate, fmtTime } from '../../utils/formatters';
 import type { Bean, Extraction } from '../../db/types';
 import { BeanForm } from './BeanForm';
@@ -23,6 +25,7 @@ export function BeanDetail() {
   const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { state } = useApp();
 
   const [bean, setBean] = useState<Bean | null>(null);
   const [extractions, setExtractions] = useState<Extraction[]>([]);
@@ -47,6 +50,13 @@ export function BeanDetail() {
     ? (extractions.reduce((a, e) => a + (e.rating ?? 0), 0) / extractions.length).toFixed(1)
     : null;
 
+  const stock = beanStockView(bean, summariseUsage(extractions).get(bean.id!), state.settings.defaultMethod, new Date());
+  const hasStockBlock = stock.freshness.state !== 'unknown' || bean.weightG != null;
+  const markFinished = async (): Promise<void> => {
+    await db.updateBean({ ...bean, status: 'finished' });
+    setBean({ ...bean, status: 'finished' });
+  };
+
   return (
     <div>
       <BackBar onClick={() => navigate('/beans')} label={t('beans.backToBeans')} />
@@ -58,6 +68,13 @@ export function BeanDetail() {
         <h1>{bean.name}</h1>
         <p>{bean.roaster}</p>
       </div>
+
+      {stock.isEmpty && bean.status === 'active' && (
+        <div className={`card card-tight ${s.cardMb} ${s.emptyBanner}`} role="status">
+          <span className={s.emptyText}>{t('beans.stock.empty')}</span>
+          <Button variant="ghost" onClick={markFinished}>{t('beans.stock.markFinished')}</Button>
+        </div>
+      )}
 
       <div className={`card ${s.cardMb}`}>
         <div className="grid grid-3">
@@ -77,6 +94,17 @@ export function BeanDetail() {
           </div>
         </div>
         <div className="divider" />
+        {hasStockBlock && (
+          <>
+            <div className={`col col-gap-12 ${s.stockBlock}`}>
+              {stock.freshness.state !== 'unknown' && <FreshnessBadge freshness={stock.freshness} />}
+              {bean.weightG != null && (
+                <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow} />
+              )}
+            </div>
+            <div className="divider" />
+          </>
+        )}
         <div className="col col-gap-12">
           <DetailRow label={t('beans.fields.origin')} value={bean.origin ?? '—'} />
           <DetailRow label={t('beans.fields.process')} value={bean.process ?? '—'} />
