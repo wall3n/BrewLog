@@ -8,7 +8,8 @@ type IconName =
   | 'flame' | 'thermo' | 'scale' | 'espresso' | 'frenchPress' | 'pourOver'
   | 'aeropress' | 'mokaPot' | 'coldBrew' | 'drip' | 'siphon' | 'custom'
   | 'user' | 'download' | 'upload' | 'chevronRight' | 'chevronDown' | 'chevronUp'
-  | 'sparkles' | 'refractometer' | 'grid' | 'list' | 'more' | 'sun' | 'moon';
+  | 'sparkles' | 'refractometer' | 'grid' | 'list' | 'more' | 'sun' | 'moon'
+  | 'minus' | 'delta' | 'stop';
 
 interface IconProps extends SVGProps<SVGSVGElement> {
   name: IconName | string;
@@ -67,6 +68,9 @@ const PATHS: Record<string, React.ReactNode> = {
   list: <><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></>,
   more: <><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></>,
   sun: <><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></>,
+  minus: <><path d="M5 12h14"/></>,
+  delta: <><path d="M12 4 21 20H3z"/></>,
+  stop: <><rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor"/></>,
   moon: <><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></>,
 };
 

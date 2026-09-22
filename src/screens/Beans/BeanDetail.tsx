@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, RoastDot, Empty, Sheet } from '../../components/UI';
-import { daysSince, fmtRelDate, fmtTime } from '../../utils/formatters';
+import { Button, BackBar, RoastDot, Empty, Sheet, Stars, FlagMark } from '../../components/UI';
+import { daysSince, fmtDate, fmtRelDate, fmtTime } from '../../utils/formatters';
 import type { Bean, Extraction } from '../../db/types';
 import { BeanForm } from './BeanForm';
 import s from './styles.module.css';
@@ -11,9 +11,9 @@ import s from './styles.module.css';
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="row row-between">
+    <div className="spec-row">
       <span className="t-upper">{label}</span>
-      <span className={`t-mono ${s.detailValue}`}>{value}</span>
+      <span className="v">{value}</span>
     </div>
   );
 }
@@ -47,76 +47,72 @@ export function BeanDetail() {
     ? (extractions.reduce((a, e) => a + (e.rating ?? 0), 0) / extractions.length).toFixed(1)
     : null;
 
+  const days = daysSince(bean.roastedAt);
+
   return (
     <div>
       <BackBar onClick={() => navigate('/beans')} label={t('beans.backToBeans')} />
-      <div className="page-head mb-5">
-        <div className="row row-gap-12 mb-[6px]">
-          <RoastDot level={bean.roast} />
-          <span className="t-upper">{bean.process} · {t(`beans.roasts.${bean.roast}`, { defaultValue: bean.roast })}</span>
-        </div>
-        <h1>{bean.name}</h1>
-        <p>{bean.roaster}</p>
+      <header className={s.detailHead}>
+        <h1 className={s.detailTitle}>{bean.name}</h1>
+        <p className={s.detailSub}>{bean.roaster}</p>
+        <dl className={`field-row ${s.fieldRow}`}>
+          <div><dt>{t('beans.fields.roastLevel')}</dt><dd className={s.roastValue}><RoastDot level={bean.roast} />{t(`beans.roasts.${bean.roast}`, { defaultValue: bean.roast })}</dd></div>
+        </dl>
+      </header>
+
+      <div className={`readout-grid grid-paper ${s.readout}`}>
+        <div className="stat"><div className="v">{days ?? '—'}{days != null && <span className="u">{t('beans.daysUnit')}</span>}</div><div className="l">{t('beans.stats.offRoast')}</div></div>
+        <div className={`stat ${s.computed}`}><div className="v">{extractions.length}</div><div className="l">{t('beans.stats.extractions')}</div></div>
+        <div className={`stat ${s.computed}`}><div className="v">{avgRating ?? '—'}{avgRating && <span className="u">/5</span>}</div><div className="l">{t('beans.stats.avgRating')}</div></div>
       </div>
 
-      <div className={`card ${s.cardMb}`}>
-        <div className="grid grid-3">
-          <div className="stat"><div className="v t-mono">{extractions.length}</div><div className="l">{t('beans.stats.extractions')}</div></div>
-          <div className="stat">
-            <div className="v t-mono">
-              {avgRating ?? '0'}
-              {avgRating && <span className={`t-ter ${s.statSuffix}`}>/5</span>}
-            </div>
-            <div className="l">{t('beans.stats.avgRating')}</div>
-          </div>
-          <div className="stat">
-            <div className={`v t-mono ${s.statFlex}`}>
-              {daysSince(bean.roastedAt) ?? '—'}<span className={`t-ter ${s.statSuffix}`}>d</span>
-            </div>
-            <div className="l">{t('beans.stats.offRoast')}</div>
-          </div>
-        </div>
-        <div className="divider" />
-        <div className="col col-gap-12">
-          <DetailRow label={t('beans.fields.origin')} value={bean.origin ?? '—'} />
-          <DetailRow label={t('beans.fields.process')} value={bean.process ?? '—'} />
-          <DetailRow label={t('beans.fields.weight')} value={bean.weightG != null ? `${bean.weightG} g` : '—'} />
-          <DetailRow label={t('beans.fields.status')} value={t(`beans.tabs.${bean.status ?? 'active'}`).toUpperCase()} />
-        </div>
-        {bean.notes && (
-          <>
-            <div className="divider" />
-            <div className={s.noteText}>"{bean.notes}"</div>
-          </>
-        )}
-      </div>
+      <section className={s.block}>
+        <div className="section-label"><span className="t-upper">{t('beans.specSheet')}</span></div>
+        <DetailRow label={t('beans.fields.origin')} value={bean.origin ?? '—'} />
+        <DetailRow label={t('beans.fields.process')} value={bean.process ?? '—'} />
+        <DetailRow label={t('beans.fields.roastedAt')} value={bean.roastedAt ? fmtDate(bean.roastedAt) : '—'} />
+        <DetailRow label={t('beans.fields.weight')} value={bean.weightG != null ? `${bean.weightG} g` : '—'} />
+        <DetailRow label={t('beans.fields.status')} value={t(`beans.tabs.${bean.status ?? 'active'}`)} />
+        {bean.notes && <p className={s.noteText}>{bean.notes}</p>}
+      </section>
 
       {extractions.length > 0 && (
-        <div className={`card ${s.cardMb}`}>
-          <div className="t-upper mb-4">{t('beans.diallingTable')}</div>
-          <div className={s.diallingTable}>
-            <div className={`row ${s.diallingHead}`}>
-              <div className={`t-upper ${s.diallingHeadCell}`}>{t('beans.diallingHeaders.date')}</div>
-              {(['grind','ratio','time','rating'] as const).map(h => (
-                <div key={h} className={`t-upper ${s.diallingCell}`}>{t(`beans.diallingHeaders.${h}`)}</div>
-              ))}
-            </div>
-            {extractions.map(e => (
-              <button key={e.id} onClick={() => navigate(`/history/${e.id}`)} className={s.diallingRow}>
-                <div className={`t-mono t-sec ${s.diallingDate}`}>{fmtRelDate(e.createdAt)}</div>
-                <div className={`t-mono ${s.diallingCell}`}>{e.grindSetting ?? '—'}</div>
-                <div className={`t-mono t-acc ${s.diallingCell}`}>1:{e.ratio.toFixed(1)}</div>
-                <div className={`t-mono ${s.diallingCell}`}>{fmtTime(e.timeS)}</div>
-                <div className={`t-mono ${s.diallingCell}`}><span className={s.starFilled}>{'★'.repeat(e.rating)}</span><span className={s.starEmpty}>{'·'.repeat(5 - e.rating)}</span></div>
-              </button>
-            ))}
+        <section className={s.block}>
+          <div className="section-label">
+            <span className="t-upper">{t('beans.diallingTable')}</span>
+            <span className={s.blockNote}>{t('history.groups.count', { count: extractions.length })}</span>
           </div>
-        </div>
+          <div className={s.tableWrap}>
+            <table className={s.dialTable}>
+              <thead>
+                <tr>
+                  <th scope="col">{t('beans.diallingHeaders.date')}</th>
+                  <th scope="col">{t('beans.diallingHeaders.grind')}</th>
+                  <th scope="col" className={s.num}>{t('beans.diallingHeaders.ratio')}</th>
+                  <th scope="col" className={s.num}>{t('beans.diallingHeaders.time')}</th>
+                  <th scope="col" className={s.num}>{t('beans.diallingHeaders.rating')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {extractions.map(e => (
+                  <tr key={e.id} tabIndex={0} onClick={() => navigate(`/history/${e.id}`)}
+                    onKeyDown={ev => { if (ev.key === 'Enter') navigate(`/history/${e.id}`); }}>
+                    <td className={s.dateCell}><FlagMark flag={e.flag} iconOnly size={14} /> {fmtRelDate(e.createdAt)}</td>
+                    <td className="t-ink">{e.grindSetting || '—'}</td>
+                    <td className={`t-ink ${s.num}`}>1:{e.ratio.toFixed(1)}</td>
+                    <td className={`t-ink ${s.num}`}>{fmtTime(e.timeS)}</td>
+                    <td className={s.num}><Stars value={e.rating} size={8} /></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
       )}
 
       <div className={s.actionRow}>
         <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
-        <Button variant="danger" leftIcon="trash" onClick={async () => {
+        <Button variant="danger" full leftIcon="trash" onClick={async () => {
           if (confirm(t('beans.confirmDelete'))) { await db.deleteBean(bean.id!); navigate('/beans'); }
         }}>{t('beans.delete')}</Button>
       </div>
