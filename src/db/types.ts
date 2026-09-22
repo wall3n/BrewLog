@@ -9,6 +9,7 @@ export interface Bean {
   notes?: string;
   status: 'active' | 'finished' | 'wishlist';
   weightG?: number;
+  initialWeightG?: number;   // bag size, for the stock bar. Not indexed, so no schema version change.
   createdAt: string;
   updatedAt: string;
 }

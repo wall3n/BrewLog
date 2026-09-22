@@ -1,11 +1,25 @@
 import { db } from '../db/schema';
 import { useApp } from '../context/AppContext';
 import type { Bean, Equipment, Recipe, Extraction, AppSettings } from '../db/types';
+import { stockChanges, applyStockChange, summariseUsage, type StockChange, type BeanUsage } from '../utils/beanStock';
 
 const now = () => new Date().toISOString();
 
+// Runs inside the caller's transaction. A bean with no weight is not tracked.
+async function applyStock(changes: readonly StockChange[]): Promise<void> {
+  for (const change of changes) {
+    const bean = await db.beans.get(change.beanId);
+    if (!bean || bean.weightG == null) continue;
+    await db.beans.put({ ...bean, weightG: applyStockChange(bean.weightG, change.deltaG), updatedAt: now() });
+  }
+}
+
 export function useDb() {
   const { dispatch } = useApp();
+  const refreshActiveBeans = async (): Promise<void> => {
+    const activeBeans = await db.beans.where('status').equals('active').toArray();
+    dispatch({ type: 'ACTIVE_BEANS_CHANGED', payload: activeBeans });
+  };
 
   return {
     // ── Read ──────────────────────────────────────────────────────
@@ -23,6 +37,11 @@ export function useDb() {
     },
     async getActiveBeans(): Promise<Bean[]> {
       return db.beans.where('status').equals('active').toArray();
+    },
+    async getBeanUsage(beanIds: readonly number[]): Promise<Map<number, BeanUsage>> {
+      if (beanIds.length === 0) return new Map();
+      const rows = await db.extractions.where('beanId').anyOf([...beanIds]).toArray();
+      return summariseUsage(rows);
     },
     async getAllEquipment(): Promise<Equipment[]> {
       return db.equipment.orderBy('createdAt').toArray();
@@ -261,14 +280,32 @@ export function useDb() {
     // ── Extractions ───────────────────────────────────────────────
     async addExtraction(data: Omit<Extraction, 'id' | 'createdAt' | 'updatedAt'>): Promise<number> {
       const ts = now();
-      const id = await db.extractions.add({ ...data, createdAt: ts, updatedAt: ts });
+      const id = await db.transaction('rw', db.extractions, db.beans, async () => {
+        const newId = await db.extractions.add({ ...data, createdAt: ts, updatedAt: ts });
+        await applyStock(stockChanges(null, { beanId: data.beanId, dose: data.dose }));
+        return newId;
+      });
+      await refreshActiveBeans();
       return id as number;
     },
     async updateExtraction(data: Extraction): Promise<void> {
-      await db.extractions.put({ ...data, updatedAt: now() });
+      await db.transaction('rw', db.extractions, db.beans, async () => {
+        const prev = data.id != null ? await db.extractions.get(data.id) : undefined;
+        await db.extractions.put({ ...data, updatedAt: now() });
+        await applyStock(stockChanges(
+          prev ? { beanId: prev.beanId, dose: prev.dose } : null,
+          { beanId: data.beanId, dose: data.dose },
+        ));
+      });
+      await refreshActiveBeans();
     },
     async deleteExtraction(id: number): Promise<void> {
-      await db.extractions.delete(id);
+      await db.transaction('rw', db.extractions, db.beans, async () => {
+        const prev = await db.extractions.get(id);
+        await db.extractions.delete(id);
+        if (prev) await applyStock(stockChanges({ beanId: prev.beanId, dose: prev.dose }, null));
+      });
+      await refreshActiveBeans();
     },
 
     // ── Beans ─────────────────────────────────────────────────────
