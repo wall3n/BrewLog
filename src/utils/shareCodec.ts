@@ -9,6 +9,29 @@ export const MAX_NAME_LENGTH = 80;
 export const MAX_LABEL_LENGTH = 40;
 export const MAX_STAGES = 20;
 
+// Inclusive [min, max] for each number a link can carry. The decoder and shareProblems both read these.
+export const SHARE_LIMITS = {
+  ratio: [1, 30],
+  dose: [1, 200],
+  yield: [1, 3000],
+  temp: [0, 100],
+  time: [0, 86_400],
+  stageTime: [0, 86_400],
+  stageWeight: [0, 3000],
+} as const satisfies Record<string, readonly [number, number]>;
+
+type LimitKey = keyof typeof SHARE_LIMITS;
+
+export type ShareProblemField =
+  | 'name' | 'method' | 'ratio' | 'dose' | 'yield' | 'temp' | 'time'
+  | 'stages' | 'stageLabel' | 'stageTime' | 'stageWeight' | 'payload';
+
+// `stage` is the 0-based index of the stage, for stage fields only.
+export interface ShareProblem {
+  field: ShareProblemField;
+  stage?: number;
+}
+
 export type SharedRecipe = Pick<Recipe, 'name' | 'method' | 'ratio' | 'dose' | 'yield' | 'temp' | 'time' | 'stages'>;
 
 export function toSharedRecipe(r: Recipe): SharedRecipe {
@@ -38,8 +61,34 @@ function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
 }
 
-function num(v: unknown, min: number, max: number): number | null {
+function num(v: unknown, key: LimitKey): number | null {
+  const [min, max] = SHARE_LIMITS[key];
   return typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max ? v : null;
+}
+
+function isKnownMethod(v: unknown): v is string {
+  return typeof v === 'string' && METHODS.some(m => m.id === v);
+}
+
+// Lists every reason the decoder would reject or change this recipe. Empty list: the link round-trips.
+export function shareProblems(recipe: SharedRecipe): readonly ShareProblem[] {
+  const problems: ShareProblem[] = [];
+  const name = recipe.name.trim();
+  if (!name || name.length > MAX_NAME_LENGTH) problems.push({ field: 'name' });
+  if (!isKnownMethod(recipe.method)) problems.push({ field: 'method' });
+  const fields = ['ratio', 'dose', 'yield', 'temp', 'time'] as const;
+  for (const field of fields) {
+    if (num(recipe[field], field) === null) problems.push({ field });
+  }
+  if (recipe.stages.length > MAX_STAGES) problems.push({ field: 'stages' });
+  recipe.stages.forEach((st, stage) => {
+    if (st.label.trim().length > MAX_LABEL_LENGTH) problems.push({ field: 'stageLabel', stage });
+    if (num(st.timeS, 'stageTime') === null) problems.push({ field: 'stageTime', stage });
+    if (num(st.weightG, 'stageWeight') === null) problems.push({ field: 'stageWeight', stage });
+  });
+  // The size check only matters once every field fits.
+  if (problems.length === 0 && encodeRecipe(recipe).length > MAX_PAYLOAD_CHARS) problems.push({ field: 'payload' });
+  return problems;
 }
 
 // Treat every link as untrusted input: check each field and its range.
@@ -47,19 +96,19 @@ function parseRecipe(v: unknown): SharedRecipe | null {
   if (!isRecord(v) || v.v !== SHARE_VERSION || !isRecord(v.r)) return null;
   const r = v.r;
   const name = typeof r.name === 'string' ? r.name.trim().slice(0, MAX_NAME_LENGTH) : '';
-  const method = typeof r.method === 'string' && METHODS.some(m => m.id === r.method) ? r.method : null;
-  const ratio = num(r.ratio, 1, 30);
-  const dose = num(r.dose, 1, 200);
-  const yieldG = num(r.yield, 1, 3000);
-  const temp = num(r.temp, 0, 100);
-  const time = num(r.time, 0, 86_400);
+  const method = isKnownMethod(r.method) ? r.method : null;
+  const ratio = num(r.ratio, 'ratio');
+  const dose = num(r.dose, 'dose');
+  const yieldG = num(r.yield, 'yield');
+  const temp = num(r.temp, 'temp');
+  const time = num(r.time, 'time');
   if (!name || !method || ratio === null || dose === null || yieldG === null || temp === null || time === null) return null;
   if (!Array.isArray(r.stages) || r.stages.length > MAX_STAGES) return null;
   const stages: PourStage[] = [];
   for (const [i, s] of r.stages.entries()) {
     if (!isRecord(s) || typeof s.label !== 'string') return null;
-    const timeS = num(s.timeS, 0, 86_400);
-    const weightG = num(s.weightG, 0, 3000);
+    const timeS = num(s.timeS, 'stageTime');
+    const weightG = num(s.weightG, 'stageWeight');
     if (timeS === null || weightG === null) return null;
     stages.push({ id: `s${i + 1}`, label: s.label.trim().slice(0, MAX_LABEL_LENGTH), timeS, weightG });
   }
