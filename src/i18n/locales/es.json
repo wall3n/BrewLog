@@ -325,6 +325,21 @@
     "unknownBean": "Café desconocido",
     "equipmentSection": "Equipo"
   },
+  "guidedBrew": {
+    "open": "Preparación guiada",
+    "title": "Preparación guiada",
+    "close": "Cerrar la preparación guiada",
+    "now": "Ahora",
+    "ready": "Pulsa iniciar",
+    "getReady": "Prepárate",
+    "pourTo": "Vierte hasta {{weight}} g",
+    "nextIn": "{{label}} en {{time}}",
+    "finalStage": "Último vertido. Espera a que drene.",
+    "done": "Listo · usar {{time}}",
+    "stages": "Etapas de vertido",
+    "recipe": "Receta",
+    "noRecipe": "Sin receta"
+  },
   "beans": {
     "title": "Cafés",
     "total": "{{count}} EN TOTAL",
