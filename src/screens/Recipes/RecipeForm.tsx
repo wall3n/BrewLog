@@ -1,6 +1,6 @@
 import { Fragment, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Field, Input, Slider, Tag } from '../../components/UI';
+import { Button, Field, Input, Stepper, Tag } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { METHODS, methodById } from '../../utils/methodDefaults';
 import { fmtTime } from '../../utils/formatters';
@@ -162,7 +162,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
       </Field>
 
       <Field label={t('recipes.form.method')}>
-        <div className="row row-wrap row-gap-8" style={{ gap: 8 }}>
+        <div className="row row-wrap row-gap-8">
           {METHODS.map(m => (
             <Tag key={m.id} active={method === m.id} onClick={() => pickMethod(m.id)}>
               {t(`methods.${m.id}`)}
@@ -172,68 +172,37 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
         {errors.method && <p className={s.fieldError}>{errors.method}</p>}
       </Field>
 
-      <div className="grid grid-2">
-        <Field label={t('recipes.form.dose')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>g</span>}>
-          <Input
-            type="number"
-            inputMode="decimal"
-            min={SHARE_LIMITS.dose[0]}
-            max={SHARE_LIMITS.dose[1]}
-            step={0.1}
-            value={numValue(dose)}
-            onChange={e => setDose(readNumber(e.target.value))}
-            {...errorProps(errors.dose, errId('dose'))}
-          />
-          {errors.dose && <p id={errId('dose')} className={s.fieldError}>{errors.dose}</p>}
-        </Field>
-        <Field label={t('recipes.form.yield')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>{t('recipes.form.yieldAuto')}</span>}>
-          <div className="input-underline" style={{ color: 'var(--accent)', padding: '10px 0' }} aria-invalid={errors.yield ? true : undefined}>{numValue(yieldG)}</div>
-          {errors.yield && <p className={s.fieldError}>{errors.yield}</p>}
-        </Field>
-      </div>
-
-      <Field label={`${t('recipes.form.ratio')}  ·  1 : ${ratio.toFixed(1)}`}>
-        <Slider
-          value={ratio}
-          min={isEspresso ? 1.0 : 5}
-          max={isEspresso ? 3.0 : 20}
-          step={0.1}
-          onChange={setRatio}
-          displayValue={`1:${ratio.toFixed(1)}`}
+      <div className={s.params}>
+        <Stepper
+          label={t('recipes.form.dose')} value={dose} onChange={setDose} step={0.1} unit="g"
+          min={SHARE_LIMITS.dose[0]} max={SHARE_LIMITS.dose[1]} error={errors.dose}
         />
-        {errors.ratio && <p className={s.fieldError}>{errors.ratio}</p>}
-      </Field>
-
-      <div className="grid grid-2">
-        <Field label={t('recipes.form.brewTime')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>m:ss</span>}>
-          <Input
-            value={fmtTime(timeS)}
-            onChange={e => {
-              const parsed = parseTime(e.target.value);
-              if (parsed != null) setTimeS(parsed);
-            }}
-            {...errorProps(errors.time, errId('time'))}
-          />
-          {errors.time && <p id={errId('time')} className={s.fieldError}>{errors.time}</p>}
-        </Field>
-        <Field label={t('recipes.form.temperature')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>°C</span>}>
-          <Input
-            type="number"
-            inputMode="decimal"
-            min={SHARE_LIMITS.temp[0]}
-            max={SHARE_LIMITS.temp[1]}
-            step={0.5}
-            value={numValue(temp)}
-            onChange={e => setTemp(readNumber(e.target.value))}
-            {...errorProps(errors.temp, errId('temp'))}
-          />
-          {errors.temp && <p id={errId('temp')} className={s.fieldError}>{errors.temp}</p>}
-        </Field>
+        <div className={`${s.autoCell} ${errors.yield ? s.autoInvalid : ''}`}>
+          <span className="field-label">{t('recipes.form.yield')}</span>
+          <span className={s.autoValue} aria-invalid={errors.yield ? true : undefined} aria-describedby={errors.yield ? errId('yield') : undefined}>
+            {numValue(yieldG)}<span className={s.autoUnit}>g</span>
+          </span>
+          {errors.yield
+            ? <p id={errId('yield')} className={s.fieldError}>{errors.yield}</p>
+            : <span className="field-hint">{t('recipes.form.yieldAuto')}</span>}
+        </div>
+        <Stepper
+          label={t('recipes.form.ratio')} value={ratio} onChange={setRatio} step={isEspresso ? 0.1 : 0.5} prefix="1:" decimals={1}
+          min={SHARE_LIMITS.ratio[0]} max={SHARE_LIMITS.ratio[1]} size="md" error={errors.ratio}
+        />
+        <Stepper
+          label={t('recipes.form.temperature')} value={temp} onChange={setTemp} step={1} decimals={0} unit="°C"
+          min={SHARE_LIMITS.temp[0]} max={SHARE_LIMITS.temp[1]} size="md" error={errors.temp}
+        />
+        <Stepper
+          label={t('recipes.form.brewTime')} value={timeS} onChange={setTimeS} step={isEspresso ? 1 : 5} decimals={0} unit="s"
+          min={SHARE_LIMITS.time[0]} max={SHARE_LIMITS.time[1]} hint={fmtTime(timeS)} size="md" error={errors.time}
+        />
       </div>
 
       {!isEspresso && (
         <Field label={t('recipes.form.pourSchedule')} hint={t('recipes.form.pourScheduleHint')}>
-          <div className="col col-gap-12" style={{ marginTop: 4 }}>
+          <div className={`col col-gap-8 ${s.stagesEdit}`}>
             {stages.map((st, i) => {
               const message = stageError(i);
               const problem = problems.find(p => p.stage === i)?.field;
@@ -243,8 +212,8 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
                   <div className="stage-edit-row">
                     <span className="sn">{i + 1}</span>
                     <input
-                      className="stage-mini-input"
-                      style={{ textAlign: 'left' }}
+                      className="stage-mini-input left"
+                      aria-label={t('recipes.form.labelPlaceholder')}
                       value={st.label}
                       maxLength={MAX_LABEL_LENGTH}
                       onChange={e => updateStage(st.id, { label: e.target.value })}
@@ -272,7 +241,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
                       placeholder="g"
                       {...errorProps(problem === 'stageWeight' ? message : null, id)}
                     />
-                    <button className="icon-btn" onClick={() => removeStage(st.id)} aria-label={t('common.removePour')}>
+                    <button type="button" className="icon-btn" onClick={() => removeStage(st.id)} aria-label={t('common.removePour')}>
                       <Icon name="x" size={15} />
                     </button>
                   </div>
@@ -282,13 +251,8 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
             })}
             {errors.stages && <p className={s.fieldError}>{errors.stages}</p>}
             <div className={s.addPourRow}>
-              <button
-                className="sidebar-link"
-                style={{ color: 'var(--accent)', padding: '6px 0', width: 'auto' }}
-                onClick={addStage}
-                disabled={atStageLimit}
-              >
-                <Icon name="plus" size={15} /> {t('recipes.form.addPour')}
+              <button type="button" className="btn-link" onClick={addStage} disabled={atStageLimit}>
+                <Icon name="plus" size={16} /> {t('recipes.form.addPour')}
               </button>
               {atStageLimit && <span className={s.limitNote}>{t('recipes.form.maxPours', { max: MAX_STAGES })}</span>}
             </div>

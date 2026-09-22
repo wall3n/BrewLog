@@ -1,12 +1,16 @@
+import type { ReactNode } from 'react';
 import { Icon } from '../Icons';
 import s from './styles.module.css';
 
-export function Empty({ icon = 'flask', title, body }: { icon?: string; title: string; body?: string }) {
+interface EmptyProps { icon?: string; title: string; body?: string; action?: ReactNode; }
+
+export function Empty({ icon = 'flask', title, body, action }: EmptyProps) {
   return (
-    <div className={`card ${s.root}`}>
-      <div className={s.icon}><Icon name={icon} size={28} /></div>
-      <div className={`h-display ${s.title}`}>{title}</div>
-      {body && <div className={`t-sec ${s.body}`}>{body}</div>}
+    <div className={s.root}>
+      <div className={s.icon}><Icon name={icon} size={22} /></div>
+      <div className={s.title}>{title}</div>
+      {body && <div className={s.body}>{body}</div>}
+      {action && <div className={s.action}>{action}</div>}
     </div>
   );
 }

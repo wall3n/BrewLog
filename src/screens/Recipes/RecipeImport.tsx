@@ -41,50 +41,48 @@ export function RecipeImport() {
   return (
     <div>
       {back}
-      <div className={`page-head ${s.detailHead}`}>
-        <div className={`row row-gap-12 ${s.headRow}`}>
-          <MethodBadge method={recipe.method} />
-          <span className="t-upper">{t('share.import.from')}</span>
-        </div>
-        <h1>{recipe.name}</h1>
-      </div>
+      <header className={s.detailHead}>
+        <h1 className={s.detailTitle}>{recipe.name}</h1>
+        <dl className={`field-row ${s.fieldRow}`}>
+          <div><dt>{t('sheet.method')}</dt><dd><MethodBadge method={recipe.method} /></dd></div>
+          <div><dt>{t('share.import.sourceLabel')}</dt><dd>{t('share.import.from')}</dd></div>
+        </dl>
+      </header>
 
-      <div className={`card ${s.detailCard}`}>
-        <div className="grid grid-3">
-          {[
-            { v: `${recipe.dose}g`, l: t('recipes.fields.dose') },
-            { v: `${recipe.yield}g`, l: t('recipes.fields.yield') },
-            { v: `1:${recipe.ratio.toFixed(1)}`, l: t('recipes.fields.ratio') },
-            { v: fmtTime(recipe.time), l: t('recipes.fields.time') },
-            { v: `${recipe.temp}°C`, l: t('recipes.fields.temp') },
-          ].map(item => (
-            <div key={item.l} className="stat">
-              <div className="v t-mono">{item.v}</div>
-              <div className="l">{item.l}</div>
-            </div>
-          ))}
-        </div>
+      <div className={`readout-grid grid-paper ${s.readout}`}>
+        {[
+          { v: String(recipe.dose), u: 'g', l: t('recipes.fields.dose') },
+          { v: String(recipe.yield), u: 'g', l: t('recipes.fields.yield') },
+          { v: `1:${recipe.ratio.toFixed(1)}`, l: t('recipes.fields.ratio') },
+          { v: fmtTime(recipe.time), l: t('recipes.fields.time') },
+          { v: String(recipe.temp), u: '°C', l: t('recipes.fields.temp') },
+        ].map(item => (
+          <div key={item.l} className="stat">
+            <div className="v">{item.v}{item.u && <span className="u">{item.u}</span>}</div>
+            <div className="l">{item.l}</div>
+          </div>
+        ))}
       </div>
 
       {recipe.stages.length > 0 && (
-        <div className={`card ${s.detailCard}`}>
-          <div className={`t-upper ${s.pourLabel}`}>{t('recipes.pourSchedule')}</div>
-          <div className="col col-gap-8">
-            {recipe.stages.map((stage, i) => (
-              <div key={stage.id} className="pour-stage">
-                <span className="pn">{i + 1}</span>
-                <span className="pl">{stage.label}</span>
-                <span className="pt">@ {fmtTime(stage.timeS)} → {stage.weightG}g</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <section className={s.block}>
+          <div className="section-label"><span className="t-upper">{t('recipes.pourSchedule')}</span></div>
+          {recipe.stages.map((stage, i) => (
+            <div key={stage.id} className="pour-stage">
+              <span className="pn">{i + 1}</span>
+              <span className="pl">{stage.label}</span>
+              <span className="pt">{fmtTime(stage.timeS)} → {stage.weightG} g</span>
+            </div>
+          ))}
+        </section>
       )}
 
-      <Button full size="lg" leftIcon="download" disabled={saving} onClick={() => void save()}>
-        {t('share.import.save')}
-      </Button>
-      {failed && <p className={s.importError} role="alert">{t('share.import.failed')}</p>}
+      <div className={s.importSave}>
+        <Button full size="lg" leftIcon="download" disabled={saving} onClick={() => void save()}>
+          {t('share.import.save')}
+        </Button>
+        {failed && <p className={s.importError} role="alert">{t('share.import.failed')}</p>}
+      </div>
     </div>
   );
 }

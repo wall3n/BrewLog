@@ -19,25 +19,24 @@ export function Pagination({
 }: PaginationProps) {
   const { t } = useTranslation();
 
-  const showNavigation = totalPages >= 1;
-  const showPerPage = itemsPerPage !== undefined && onItemsPerPageChange !== undefined;
+  const showNavigation = totalPages > 1;
+  const showPerPage = itemsPerPage !== undefined && onItemsPerPageChange !== undefined && totalPages >= 1;
 
   if (!showNavigation && !showPerPage) return null;
 
   return (
     <div className={s.paginationWrapper}>
-      {showNavigation && (
-        <div className={`row row-between ${s.paginationContainer}`}>
+      {showNavigation ? (
+        <div className={s.paginationContainer}>
           <Button
             variant="ghost"
             disabled={currentPage <= 1}
             onClick={() => onPageChange(currentPage - 1)}
             leftIcon="arrowLeft"
             className={s.pageBtn}
-          >
-            {t('common.prev')}
-          </Button>
-          <span className={`t-mono t-sec ${s.pageIndicator}`}>
+            aria-label={t('common.prev')}
+          />
+          <span className={s.pageIndicator}>
             {t('common.pageOf', { current: currentPage, total: totalPages })}
           </span>
           <Button
@@ -46,14 +45,13 @@ export function Pagination({
             onClick={() => onPageChange(currentPage + 1)}
             rightIcon="arrowRight"
             className={s.pageBtn}
-          >
-            {t('common.next')}
-          </Button>
+            aria-label={t('common.next')}
+          />
         </div>
-      )}
+      ) : <span />}
       {showPerPage && (
-        <div className={`row row-center ${s.perPageContainer}`}>
-          <span className={`t-mono t-sec ${s.perPageLabel}`}>{t('common.perPage')}</span>
+        <label className={s.perPageContainer}>
+          <span className={s.perPageLabel}>{t('common.perPage')}</span>
           <select
             className={`input-underline ${s.perPageSelect}`}
             value={itemsPerPage}
@@ -65,7 +63,7 @@ export function Pagination({
               </option>
             ))}
           </select>
-        </div>
+        </label>
       )}
     </div>
   );

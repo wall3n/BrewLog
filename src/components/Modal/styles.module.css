@@ -1,4 +1,8 @@
-.header   { margin-bottom: 20px; }
-.title    { margin: 0; font-size: 22px; }
-.closeBtn { background: transparent; border: none; color: var(--text-secondary); cursor: pointer; padding: 4px; }
+.header   { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.title    { margin: 0; font-size: 24px; }
+.closeBtn {
+  background: transparent; border: none; color: var(--text-secondary); cursor: pointer;
+  width: 44px; height: 44px; margin-right: -10px; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius);
+}
+@media (hover: hover) { .closeBtn:hover { background: var(--bg-elevated); color: var(--text-primary); } }
 .footer   { margin-top: 20px; }
