@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { sortStages, getStageProgress, cueBetween, pickDefaultRecipe } from './brewStages';
+import {
+  sortStages, getStageProgress, cueBetween, pickDefaultRecipe,
+  initialRecipeChoice, recipePatchOnChoose, recipePatchOnGuidedDone, recipeIdToSave,
+} from './brewStages';
+import type { RecipeDraft } from './brewStages';
 import type { PourStage, Recipe } from '../db/types';
 
 const stages: PourStage[] = [
@@ -103,5 +107,73 @@ describe('pickDefaultRecipe', () => {
 
   it('returns undefined when no recipe matches', () => {
     expect(pickDefaultRecipe([other], 'pour-over', null)).toBeUndefined();
+  });
+});
+
+describe('recipe choice on the timer step', () => {
+  const a = recipe({ id: 1, createdAt: '2026-01-01T00:00:00.000Z' });
+  const b = recipe({ id: 2, lastUsedAt: '2026-09-12T00:00:00.000Z' });
+  const forMethod = [a, b];
+  const newBrew: RecipeDraft = { recipeId: null };
+
+  it('preselects the default recipe for a new brew', () => {
+    expect(initialRecipeChoice(forMethod, newBrew)).toBe(2);
+  });
+
+  it('preselects the recipe from Start brew', () => {
+    expect(initialRecipeChoice(forMethod, { recipeId: 1 })).toBe(1);
+  });
+
+  it('shows the last choice when the user comes back', () => {
+    expect(initialRecipeChoice(forMethod, { recipeId: null, recipeChoice: null })).toBeNull();
+    expect(initialRecipeChoice(forMethod, { recipeId: null, recipeChoice: 1 })).toBe(1);
+  });
+
+  it('ignores a last choice of another method', () => {
+    expect(initialRecipeChoice(forMethod, { recipeId: null, recipeChoice: 99 })).toBe(2);
+  });
+
+  it('selects no default when editing', () => {
+    expect(initialRecipeChoice(forMethod, { recipeId: null, isEditing: true })).toBeNull();
+  });
+
+  it('selects the own recipe when editing', () => {
+    expect(initialRecipeChoice(forMethod, { recipeId: 1, isEditing: true })).toBe(1);
+  });
+
+  it('saves no recipe when the user skips without a guided brew', () => {
+    // Opening the step writes nothing into the draft.
+    expect(recipeIdToSave(newBrew)).toBeNull();
+  });
+
+  it('saves no recipe after tapping a chip without a guided brew', () => {
+    const draft = { ...newBrew, ...recipePatchOnChoose(1) };
+    expect(draft.recipeChoice).toBe(1);
+    expect(recipeIdToSave(draft)).toBeNull();
+  });
+
+  it('clears the Start brew recipe when the user taps No recipe', () => {
+    const draft = { recipeId: 1, ...recipePatchOnChoose(null) };
+    expect(draft.recipeChoice).toBeNull();
+    expect(recipeIdToSave(draft)).toBeNull();
+  });
+
+  it('saves the recipe of a finished guided brew', () => {
+    const draft = { ...newBrew, ...recipePatchOnGuidedDone(2) };
+    expect(draft.recipeChoice).toBe(2);
+    expect(recipeIdToSave(draft)).toBe(2);
+  });
+
+  it('keeps the Start brew recipe on skip', () => {
+    expect(recipeIdToSave({ recipeId: 1 })).toBe(1);
+  });
+
+  it('keeps the own recipe of an edited brew', () => {
+    const draft = { recipeId: 1, isEditing: true, ...recipePatchOnChoose(2) };
+    expect(recipeIdToSave(draft)).toBe(1);
+  });
+
+  it('keeps the Start brew recipe out of the draft when it is not for the method', () => {
+    expect(recipeIdToSave({ recipeId: 99 }, forMethod)).toBeNull();
   });
 });

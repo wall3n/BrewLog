@@ -13,6 +13,7 @@ import { StepParameters } from './steps/StepParameters';
 import { StepTimer } from './steps/StepTimer';
 import { StepTasting } from './steps/StepTasting';
 import type { Extraction } from '../../db/types';
+import { recipeIdToSave } from '../../utils/brewStages';
 
 export interface WizardDraft {
   id?: number;
@@ -20,7 +21,8 @@ export interface WizardDraft {
   createdAt?: string;
   method: string;
   beanId: number | null;
-  recipeId: number | null;
+  recipeId: number | null;       // linked on save; see RecipeDraft in utils/brewStages
+  recipeChoice?: number | null;  // chip selected on step 5; undefined = not chosen yet
   equipmentIds: number[];
   grindSetting: string;
   dose: number;
@@ -84,7 +86,8 @@ export function LogExtractionScreen() {
   const onSave = async () => {
     if (!draft.beanId) return;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { showTds, isEditing, id, createdAt, recipeId, ...payload } = draft;
+    const { showTds, isEditing, id, createdAt, recipeId: _recipeId, recipeChoice, ...payload } = draft;
+    const recipeId = recipeIdToSave(draft);
     const recipeField = recipeId != null ? { recipeId } : {};
     if (isEditing && id) {
       await db.updateExtraction({

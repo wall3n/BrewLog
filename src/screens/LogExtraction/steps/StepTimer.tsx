@@ -4,7 +4,9 @@ import { useDb } from '../../../hooks/useDb';
 import { useTimer } from '../../../hooks/useTimer';
 import { Button, Tag } from '../../../components/UI';
 import { fmtTime } from '../../../utils/formatters';
-import { pickDefaultRecipe, sortStages, getStageProgress } from '../../../utils/brewStages';
+import {
+  sortStages, getStageProgress, initialRecipeChoice, recipePatchOnChoose, recipePatchOnGuidedDone, recipeIdToSave,
+} from '../../../utils/brewStages';
 import { GuidedBrew } from '../GuidedBrew';
 import type { WizardDraft } from '../index';
 import type { Recipe } from '../../../db/types';
@@ -18,28 +20,33 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
   const { seconds, display, isRunning, start, pause, reset } = useTimer();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [guided, setGuided] = useState(false);
+  // The selected chip. Opening the step does not link a recipe to the brew.
+  const [choice, setChoice] = useState<number | null>(null);
 
   useEffect(() => {
     db.getAllRecipes().then(all => {
       const forMethod = all.filter(r => r.method === draft.method);
       setRecipes(forMethod);
-      // An edit keeps the brew's own recipe. A default would silently link a recipe to old data.
-      const initial = draft.isEditing
-        ? forMethod.find(r => r.id === draft.recipeId)
-        : pickDefaultRecipe(forMethod, draft.method, draft.recipeId);
-      update({ recipeId: initial?.id ?? null });
+      setChoice(initialRecipeChoice(forMethod, draft));
+      // A Start brew recipe of another method (the method changed at step 1) is not linked.
+      if (draft.recipeId !== null && recipeIdToSave(draft, forMethod) === null) update({ recipeId: null });
     });
     // Load once per method. `update` and `db` change on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [draft.method]);
 
-  const recipe = recipes.find(r => r.id === draft.recipeId);
+  const recipe = recipes.find(r => r.id === choice);
   const stages = useMemo(() => sortStages(recipe?.stages ?? []), [recipe]);
   const activeStageIdx = getStageProgress(stages, seconds).activeIndex;
 
+  const choose = (id: number | null): void => {
+    setChoice(id);
+    update(recipePatchOnChoose(id));
+  };
+
   const finishGuided = (timeS: number): void => {
     setGuided(false);
-    update({ timeS, recipeId: recipe?.id ?? null });
+    update({ timeS, ...(recipe?.id != null ? recipePatchOnGuidedDone(recipe.id) : {}) });
     onNext();
   };
 
@@ -58,9 +65,9 @@ export function StepTimer({ draft, update, onNext, onSkip }: Props) {
           <div className="t-upper" aria-hidden="true">{t('guidedBrew.recipe')}</div>
           <div className={`scroll-x ${css.recipeChips}`} role="group" aria-label={t('guidedBrew.recipe')}>
             {recipes.map(r => (
-              <Tag key={r.id} active={r.id === draft.recipeId} onClick={() => update({ recipeId: r.id ?? null })}>{r.name}</Tag>
+              <Tag key={r.id} active={r.id === choice} onClick={() => choose(r.id ?? null)}>{r.name}</Tag>
             ))}
-            <Tag subtle active={draft.recipeId === null} onClick={() => update({ recipeId: null })}>{t('guidedBrew.noRecipe')}</Tag>
+            <Tag subtle active={choice === null} onClick={() => choose(null)}>{t('guidedBrew.noRecipe')}</Tag>
           </div>
         </div>
       )}

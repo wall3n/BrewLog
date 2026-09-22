@@ -57,3 +57,39 @@ export function pickDefaultRecipe(
   if (used.length > 0) return used[0];
   return [...forMethod].sort((a, b) => time(a.createdAt) - time(b.createdAt))[0];
 }
+
+// The recipe fields of the log wizard draft.
+// recipeId is the recipe the brew is linked to on save. Only Start brew, an edited brew,
+// a finished guided brew, or "No recipe" (null) write it.
+// recipeChoice is the chip selected on the timer step. undefined means not chosen yet.
+export interface RecipeDraft {
+  recipeId: number | null;
+  recipeChoice?: number | null;
+  isEditing?: boolean;
+}
+
+// The chip to select when the timer step opens. It is a UI preselection only.
+export function initialRecipeChoice(forMethod: readonly Recipe[], draft: RecipeDraft): number | null {
+  const has = (id: number | null | undefined): boolean => forMethod.some(r => r.id === id);
+  if (draft.recipeChoice === null) return null;
+  if (draft.recipeChoice !== undefined && has(draft.recipeChoice)) return draft.recipeChoice;
+  // An edit keeps the brew's own recipe. A default would silently link a recipe to old data.
+  if (draft.isEditing) return has(draft.recipeId) ? draft.recipeId : null;
+  return pickDefaultRecipe(forMethod, forMethod[0]?.method ?? '', draft.recipeId)?.id ?? null;
+}
+
+// A chip tap changes the selection. "No recipe" also clears a recipe from Start brew.
+export function recipePatchOnChoose(choice: number | null): Partial<RecipeDraft> {
+  return choice === null ? { recipeChoice: null, recipeId: null } : { recipeChoice: choice };
+}
+
+export function recipePatchOnGuidedDone(recipeId: number): Partial<RecipeDraft> {
+  return { recipeChoice: recipeId, recipeId };
+}
+
+// The recipe to link on save. With forMethod, a recipe of another method is dropped.
+export function recipeIdToSave(draft: RecipeDraft, forMethod?: readonly Recipe[]): number | null {
+  if (draft.recipeId === null) return null;
+  if (forMethod && !forMethod.some(r => r.id === draft.recipeId)) return null;
+  return draft.recipeId;
+}
