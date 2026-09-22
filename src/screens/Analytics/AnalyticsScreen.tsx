@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useDb } from '../../hooks/useDb';
 import { Stars } from '../../components/UI';
 import type { Extraction, Bean } from '../../db/types';
+import { toControlPoints } from '../../utils/analytics';
+import { ControlChart } from './ControlChart';
+import { RatingDrivers } from './RatingDrivers';
+import { BeanTimeline } from './BeanTimeline';
 import s from './styles.module.css';
 
 function LineChart({ data }: { data: { rating: number }[] }) {
@@ -29,6 +34,7 @@ function LineChart({ data }: { data: { rating: number }[] }) {
 
 export function AnalyticsScreen() {
   const db = useDb();
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const [extractions, setExtractions] = useState<Extraction[]>([]);
@@ -75,6 +81,21 @@ export function AnalyticsScreen() {
           <span className={`t-mono t-sec ${s.chartCount}`}>{t('analytics.last', { count: ratingsOverTime.length })}</span>
         </div>
         <LineChart data={ratingsOverTime} />
+      </div>
+
+      <div className={`card ${s.cardMb}`}>
+        <div className={`t-upper ${s.chartHeader}`}>{t('analytics.controlChart.title')}</div>
+        <ControlChart points={toControlPoints(extractions)} onSelect={id => navigate(`/history/${id}`)} />
+      </div>
+
+      <div className={`card ${s.cardMb}`}>
+        <div className={`t-upper ${s.chartHeader}`}>{t('analytics.drivers.title')}</div>
+        <RatingDrivers extractions={extractions} />
+      </div>
+
+      <div className={`card ${s.cardMb}`}>
+        <div className={`t-upper ${s.chartHeader}`}>{t('analytics.timeline.title')}</div>
+        <BeanTimeline extractions={extractions} beans={beans} />
       </div>
 
       <div className={`card ${s.cardMb}`}>
