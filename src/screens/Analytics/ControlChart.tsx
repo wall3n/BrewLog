@@ -50,7 +50,7 @@ export function ControlChart({ points, onSelect }: ControlChartProps) {
   if (points.length === 0) return <div className={`t-sec ${s.noData}`}>{t('analytics.controlChart.empty')}</div>;
   const idealCount = points.filter(p => p.zone === 'ideal').length;
   return (
-    <div className={s.chartBox}>
+    <div className={s.plotBox}>
       <p className={`t-mono ${s.chartSummary}`}>
         {t('analytics.controlChart.summary', { count: points.length, ideal: idealCount })}
       </p>

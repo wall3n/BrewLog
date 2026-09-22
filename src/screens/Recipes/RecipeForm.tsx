@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Field, Input, Slider, Tag } from '../../components/UI';
+import { Button, Field, Input, Stepper, Tag } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { METHODS, methodById } from '../../utils/methodDefaults';
 import { fmtTime } from '../../utils/formatters';
 import type { Recipe, PourStage } from '../../db/types';
+import s from './styles.module.css';
 
 function parseTime(val: string): number | null {
   const m = val.match(/^(\d{1,2}):(\d{2})$/);
@@ -89,7 +90,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
       </Field>
 
       <Field label={t('recipes.form.method')}>
-        <div className="row row-wrap row-gap-8" style={{ gap: 8 }}>
+        <div className="row row-wrap row-gap-8">
           {METHODS.map(m => (
             <Tag key={m.id} active={method === m.id} onClick={() => pickMethod(m.id)}>
               {t(`methods.${m.id}`)}
@@ -98,89 +99,54 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
         </div>
       </Field>
 
-      <div className="grid grid-2">
-        <Field label={t('recipes.form.dose')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>g</span>}>
-          <Input
-            type="number"
-            value={dose}
-            onChange={e => setDose(parseFloat(e.target.value) || 0)}
-          />
-        </Field>
-        <Field label={t('recipes.form.yield')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>{t('recipes.form.yieldAuto')}</span>}>
-          <div className="input-underline" style={{ color: 'var(--accent)', padding: '10px 0' }}>{yieldG}</div>
-        </Field>
-      </div>
-
-      <Field label={`${t('recipes.form.ratio')}  ·  1 : ${ratio.toFixed(1)}`}>
-        <Slider
-          value={ratio}
-          min={isEspresso ? 1.0 : 5}
-          max={isEspresso ? 3.0 : 20}
-          step={0.1}
-          onChange={setRatio}
-          displayValue={`1:${ratio.toFixed(1)}`}
-        />
-      </Field>
-
-      <div className="grid grid-2">
-        <Field label={t('recipes.form.brewTime')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>m:ss</span>}>
-          <Input
-            value={fmtTime(timeS)}
-            onChange={e => {
-              const parsed = parseTime(e.target.value);
-              if (parsed != null) setTimeS(parsed);
-            }}
-          />
-        </Field>
-        <Field label={t('recipes.form.temperature')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>°C</span>}>
-          <Input
-            type="number"
-            value={temp}
-            onChange={e => setTemp(parseFloat(e.target.value) || 0)}
-          />
-        </Field>
+      <div className={s.params}>
+        <Stepper label={t('recipes.form.dose')} value={dose} onChange={setDose} step={0.1} unit="g" max={2000} />
+        <div className={s.autoCell}>
+          <span className="field-label">{t('recipes.form.yield')}</span>
+          <span className={s.autoValue}>{yieldG}<span className={s.autoUnit}>g</span></span>
+          <span className="field-hint">{t('recipes.form.yieldAuto')}</span>
+        </div>
+        <Stepper label={t('recipes.form.ratio')} value={ratio} onChange={setRatio} step={isEspresso ? 0.1 : 0.5} prefix="1:" decimals={1} max={30} size="md" />
+        <Stepper label={t('recipes.form.temperature')} value={temp} onChange={setTemp} step={1} decimals={0} unit="°C" max={100} size="md" />
+        <Stepper label={t('recipes.form.brewTime')} value={timeS} onChange={setTimeS} step={isEspresso ? 1 : 5} decimals={0} unit="s" max={86400} hint={fmtTime(timeS)} size="md" />
       </div>
 
       {!isEspresso && (
         <Field label={t('recipes.form.pourSchedule')} hint={t('recipes.form.pourScheduleHint')}>
-          <div className="col col-gap-12" style={{ marginTop: 4 }}>
-            {stages.map((s, i) => (
-              <div key={s.id} className="stage-edit-row">
+          <div className={`col col-gap-8 ${s.stagesEdit}`}>
+            {stages.map((st, i) => (
+              <div key={st.id} className="stage-edit-row">
                 <span className="sn">{i + 1}</span>
                 <input
-                  className="stage-mini-input"
-                  style={{ textAlign: 'left' }}
-                  value={s.label}
-                  onChange={e => updateStage(s.id, { label: e.target.value })}
+                  className="stage-mini-input left"
+                  aria-label={t('recipes.form.labelPlaceholder')}
+                  value={st.label}
+                  onChange={e => updateStage(st.id, { label: e.target.value })}
                   placeholder={t('recipes.form.labelPlaceholder')}
                 />
                 <input
                   className="stage-mini-input"
-                  value={fmtTime(s.timeS)}
+                  value={fmtTime(st.timeS)}
                   onChange={e => {
                     const parsed = parseTime(e.target.value);
-                    if (parsed != null) updateStage(s.id, { timeS: parsed });
+                    if (parsed != null) updateStage(st.id, { timeS: parsed });
                   }}
                   placeholder="0:00"
                 />
                 <input
                   className="stage-mini-input"
                   type="number"
-                  value={s.weightG}
-                  onChange={e => updateStage(s.id, { weightG: parseFloat(e.target.value) || 0 })}
+                  value={st.weightG}
+                  onChange={e => updateStage(st.id, { weightG: parseFloat(e.target.value) || 0 })}
                   placeholder="g"
                 />
-                <button className="icon-btn" onClick={() => removeStage(s.id)} aria-label={t('common.removePour')}>
+                <button type="button" className="icon-btn" onClick={() => removeStage(st.id)} aria-label={t('common.removePour')}>
                   <Icon name="x" size={15} />
                 </button>
               </div>
             ))}
-            <button
-              className="sidebar-link"
-              style={{ color: 'var(--accent)', padding: '6px 0', width: 'auto' }}
-              onClick={addStage}
-            >
-              <Icon name="plus" size={15} /> {t('recipes.form.addPour')}
+            <button type="button" className="btn-link" onClick={addStage}>
+              <Icon name="plus" size={16} /> {t('recipes.form.addPour')}
             </button>
           </div>
         </Field>

@@ -1,117 +1,42 @@
-.filterBarRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  flex: 1;
-  position: relative;
-}
+.filterBarRow { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; flex: 1; min-width: 0; position: relative; }
 
 .activeTag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: var(--accent-bg);
-  border: 1px solid var(--accent-dim);
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--accent);
+  display: inline-flex; align-items: center; gap: 4px; min-height: 36px; padding: 0 4px 0 12px;
+  background: var(--accent-bg); border: 1px solid var(--accent); border-radius: var(--radius);
+  font-size: 13.5px; font-weight: 500; color: var(--accent);
 }
-
 .removeBtn {
-  background: transparent;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
+  background: transparent; border: none; color: var(--accent); cursor: pointer;
+  width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px;
 }
-@media (hover: hover) { .removeBtn:hover { color: var(--text-primary); } }
+@media (hover: hover) { .removeBtn:hover { background: var(--accent-bg); } }
 
-.dropdownContainer {
-  position: relative;
-  display: inline-block;
-}
-
-.scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: transparent;
-}
-
+.dropdownContainer { position: relative; display: inline-block; }
+.trigger { gap: 6px; }
+.scrim { position: fixed; inset: 0; z-index: 1000; background: transparent; }
 .dropdownMenu {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 1001;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  min-width: 180px;
-  max-width: 240px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  padding: 4px;
-  animation: fade-in 100ms ease-out;
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 1001;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius);
+  min-width: 200px; max-width: 260px; box-shadow: var(--shadow-pop); padding: 4px;
+  animation: menu-in 140ms var(--ease-out);
 }
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: none; }
-}
+@keyframes menu-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
 .menuHeader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  font-size: 10px;
-  color: var(--text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px 6px;
+  font-size: 11.5px; font-weight: 600; font-variation-settings: 'wdth' 75; letter-spacing: 0.07em; text-transform: uppercase;
+  color: var(--text-secondary); border-bottom: 1px solid var(--border); margin-bottom: 4px;
 }
-
 .backBtn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  padding: 0;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  width: 100%;
+  background: transparent; border: none; cursor: pointer; color: var(--text-secondary);
+  display: inline-flex; align-items: center; gap: 4px; padding: 0; min-height: 28px; width: 100%;
+  font: inherit; letter-spacing: inherit; text-transform: inherit;
 }
 @media (hover: hover) { .backBtn:hover { color: var(--text-primary); } }
-
 .menuItem {
-  width: 100%;
-  text-align: left;
-  background: transparent;
-  border: none;
-  padding: 8px 12px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background 120ms, color 120ms;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  width: 100%; text-align: left; background: transparent; border: none; min-height: 40px; padding: 8px 10px;
+  font-size: 14px; color: var(--text-primary); cursor: pointer; border-radius: 3px;
+  display: flex; align-items: center; justify-content: space-between; transition: background 120ms;
 }
-@media (hover: hover) { .menuItem:hover { background: var(--bg-surface); color: var(--text-primary); } }
-
-.optionList {
-  max-height: 200px;
-  overflow-y: auto;
-}
+@media (hover: hover) { .menuItem:hover { background: var(--bg-elevated); } }
+.optionList { max-height: 240px; overflow-y: auto; }

@@ -1,16 +1,30 @@
-.pageRow      { align-items: flex-end; margin-bottom: 24px; }
-.pageHead     { margin-bottom: 0; }
-.recipeCard   { align-items: flex-start; }
-.recipeLeft   { flex: 1; }
-.recipeName   { font-family: var(--serif); font-size: 22px; }
-.recipeMeta   { font-size: 12px; }
+/* Recipe list */
+.recipeMeta { display: flex; align-items: center; gap: 10px; }
+.recipeUsed { font-size: 12.5px; color: var(--text-secondary); }
+.recipeNums {
+  display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 2px;
+  font-size: 15px; font-weight: 500; color: var(--accent); font-variant-numeric: tabular-nums;
+}
+.recipePours { color: var(--text-secondary); }
 
-/* RecipeDetail */
-.detailHead   { margin-bottom: 20px; }
-.headRow      { margin-bottom: 6px; }
-.detailCard   { margin-bottom: 16px; }
-.pourLabel    { margin-bottom: 16px; }
-.statAccent   { color: var(--accent); }
-.spacer12     { height: 12px; }
-.actionRow    { display: flex; gap: 12px; }
+/* Recipe detail */
+.detailHead { margin-bottom: 20px; }
+.headRow { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.detailTitle { margin: 0; font-size: 34px; font-weight: 700; font-variation-settings: 'wdth' 78; letter-spacing: -0.015em; line-height: 1.02; }
+.readout { margin-bottom: 32px; }
+.block { margin-bottom: 32px; }
+.actionRow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.actionRow > :first-child { grid-column: 1 / -1; }
 
+/* Recipe form */
+.params { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 12px; }
+.autoCell { display: flex; flex-direction: column; gap: 6px; }
+.autoValue {
+  display: flex; align-items: baseline; gap: 3px; min-height: 56px; padding: 10px 12px;
+  border: 1px dashed var(--border); border-radius: var(--radius);
+  font-size: 28px; font-weight: 500; font-variation-settings: 'wdth' 90; letter-spacing: -0.02em; color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.autoUnit { font-size: 14px; color: var(--text-secondary); letter-spacing: 0; }
+.stagesEdit { margin-top: 4px; }
+.fieldRow { margin-top: 14px; margin-bottom: 0; }

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Field, Input, Textarea } from '../../components/UI';
+import { Button, Field, Input, Textarea, RoastDot } from '../../components/UI';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
@@ -58,7 +58,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         />
       </Field>
 
-      <div className="grid grid-2">
+      <div className={s.formGrid}>
         <Field label={t('beans.fields.origin')}>
           <Input
             value={origin}
@@ -85,24 +85,26 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         </Field>
       </div>
 
-      <div className="grid grid-2">
+      <div className={s.formGrid}>
         <Field label={t('beans.fields.roastLevel')}>
-          <div className="row row-gap-8" style={{ gap: 8 }}>
+          <div className={s.roastRow} role="radiogroup" aria-label={t('beans.fields.roastLevel')}>
             {(['light', 'medium', 'dark'] as const).map(r => (
               <button
                 key={r}
                 type="button"
+                role="radio"
+                aria-checked={roast === r}
                 className={`tag ${roast === r ? 'active' : ''} ${s.roastBtn}`}
-                style={{ flex: 1, justifyContent: 'center' }}
                 onClick={() => setRoast(r)}
               >
+                <RoastDot level={r} />
                 {t(`beans.roasts.${r}`)}
               </button>
             ))}
           </div>
         </Field>
         
-        <Field label={t('beans.fields.weight')} right={<span className="t-ter t-mono" style={{ fontSize: 11 }}>g</span>}>
+        <Field label={t('beans.fields.weight')} right={<span className="field-hint">g</span>}>
           <Input
             type="number"
             value={weightG}
@@ -112,7 +114,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         </Field>
       </div>
 
-      <div className="grid grid-2">
+      <div className={s.formGrid}>
         <Field label={t('beans.fields.roastedAt')}>
           <Input
             type="date"

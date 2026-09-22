@@ -67,7 +67,7 @@ export function BeanTimeline({ extractions, beans }: BeanTimelineProps) {
           <option key={id} value={id}>{beans.find(b => b.id === id)?.name ?? t('common.unknown')}</option>
         ))}
       </select>
-      <div className={s.chartBox}>
+      <div className={s.plotBox}>
         <div className={`${s.seriesLabel} ${s.legendTime}`}>{t('analytics.timeline.time')}</div>
         <ResponsiveContainer width="100%" height={hasGrind ? 150 : 200}>
           <LineChart data={points} syncId={syncId} margin={MARGIN}>

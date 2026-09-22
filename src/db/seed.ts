@@ -54,8 +54,10 @@ export async function seedDemoData(): Promise<void> {
     flavours: ['chocolate', 'cherry'], notes: '', updatedAt: now(),
   };
 
-  await db.extractions.bulkAdd([
-    { ...base, rating: 5, flag: 'dialled', method: 'pour-over', beanId: b1, dose: 20, yield: 320, ratio: 16, timeS: 210, temp: 92, equipmentIds: [eq1, eq2, eq5], grindSetting: '6.5', tds: 1.42, flavours: ['floral', 'jasmine', 'honey'], notes: 'Best one all week. Hold this dial.', createdAt: daysAgo(1) } as Extraction,
+  // Insert oldest first so sample numbers (ids) rise with time.
+  const demoShots: Extraction[] = [
+    { ...base, rating: 5, flag: 'dialled', method: 'pour-over', beanId: b1, dose: 20, yield: 320, ratio: 16, timeS: 210, temp: 92, equipmentIds: [eq1, eq2, eq5], grindSetting: '6.5', tds: 1.42, flavours: ['floral', 'jasmine', 'honey'], notes: 'Clean and sweet on the V60.', createdAt: daysAgo(4) } as Extraction,
+    { ...base, rating: 5, flag: 'dialled', beanId: b1, dose: 18, yield: 36.5, ratio: 2.03, timeS: 29, grindSetting: '2.3', tds: 9.8, flavours: ['jasmine', 'honey', 'chocolate'], notes: 'Best one all week. Hold this dial.', createdAt: daysAgo(1) } as Extraction,
     { ...base, rating: 4, flag: 'dialled', beanId: b1, dose: 18, yield: 38, ratio: 2.1, timeS: 30, grindSetting: '2.2', tds: 9.4, flavours: ['chocolate', 'caramel'], notes: 'Solid. Slight bitterness on finish.', createdAt: daysAgo(2) } as Extraction,
     { ...base, rating: 3, flag: 'adjust', beanId: b1, dose: 18, yield: 41, timeS: 22, ratio: 2.3, grindSetting: '2.5', flavours: ['nutty', 'earthy'], notes: 'Pulled fast. Tighten grind one notch.', createdAt: daysAgo(3) } as Extraction,
     { ...base, rating: 2, flag: 'fail', beanId: b2, dose: 19, yield: 28, timeS: 42, ratio: 1.5, grindSetting: '1.8', flavours: ['bitter'], notes: 'Choked, sour finish. Wrong basket.', createdAt: daysAgo(5) } as Extraction,
@@ -63,7 +65,8 @@ export async function seedDemoData(): Promise<void> {
     { ...base, rating: 3, flag: 'adjust', beanId: b2, dose: 18, yield: 36, timeS: 26, ratio: 2.0, grindSetting: '2.5', flavours: ['nutty'], notes: '', createdAt: daysAgo(9) } as Extraction,
     { ...base, rating: 5, flag: 'dialled', method: 'aeropress', beanId: b1, dose: 15, yield: 210, ratio: 14, timeS: 90, temp: 88, equipmentIds: [eq1, eq2], grindSetting: '8.5', flavours: ['bergamot', 'apricot'], notes: 'Sweet, juicy. Repeat with same dial.', createdAt: daysAgo(11) } as Extraction,
     { ...base, rating: 4, flag: 'dialled', method: 'french-press', beanId: b2, dose: 30, yield: 480, ratio: 16, timeS: 240, temp: 94, equipmentIds: [eq1, eq2], grindSetting: '15', flavours: ['stone fruit', 'honey'], notes: '', createdAt: daysAgo(13) } as Extraction,
-  ]);
+  ];
+  await db.extractions.bulkAdd([...demoShots].sort((a, b) => a.createdAt.localeCompare(b.createdAt)));
 
   await db.settings.add({
     weightUnit: 'g', tempUnit: 'C', volumeUnit: 'ml',

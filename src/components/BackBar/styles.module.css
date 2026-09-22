@@ -1,1 +1,5 @@
-.btn { padding: 6px 10px; margin-bottom: 16px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px 0 0; margin-bottom: 8px;
+  background: transparent; border: none; cursor: pointer; font-size: 15px; font-weight: 500; color: var(--text-secondary);
+}
+@media (hover: hover) { .btn:hover { color: var(--text-primary); } }
