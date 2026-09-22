@@ -32,53 +32,48 @@ export function RecipeDetail() {
   return (
     <div>
       <BackBar onClick={() => navigate('/recipes')} label={t('recipes.backToRecipes')} />
-      <div className={`page-head ${s.detailHead}`}>
-        <div className={`row row-gap-12 ${s.headRow}`}>
-          <MethodBadge method={r.method} />
-          <span className="t-upper">{r.lastUsedAt ? t('recipes.lastUsed', { date: fmtRelDate(r.lastUsedAt).toLowerCase() }) : t('recipes.neverUsed')}</span>
-        </div>
-        <h1>{r.name}</h1>
-      </div>
+      <header className={s.detailHead}>
+        <h1 className={s.detailTitle}>{r.name}</h1>
+        <dl className={`field-row ${s.fieldRow}`}>
+          <div><dt>{t('sheet.method')}</dt><dd><MethodBadge method={r.method} /></dd></div>
+          <div><dt>{t('recipes.lastUsedLabel')}</dt><dd>{r.lastUsedAt ? fmtRelDate(r.lastUsedAt) : t('recipes.neverUsed')}</dd></div>
+        </dl>
+      </header>
 
-      <div className={`card ${s.detailCard}`}>
-        <div className="grid grid-3">
-          {[
-            { v: `${r.dose}g`, l: t('recipes.fields.dose') },
-            { v: `${r.yield}g`, l: t('recipes.fields.yield') },
-            { v: `1:${r.ratio.toFixed(1)}`, l: t('recipes.fields.ratio'), accent: true },
-            { v: fmtTime(r.time), l: t('recipes.fields.time') },
-            { v: `${r.temp}°C`, l: t('recipes.fields.temp') },
-          ].map(item => (
-            <div key={item.l} className="stat">
-              <div className={`v t-mono${item.accent ? ` ${s.statAccent}` : ''}`}>{item.v}</div>
-              <div className="l">{item.l}</div>
-            </div>
-          ))}
-        </div>
+      <div className={`readout-grid grid-paper ${s.readout}`}>
+        {[
+          { v: String(r.dose), u: 'g', l: t('recipes.fields.dose') },
+          { v: String(r.yield), u: 'g', l: t('recipes.fields.yield') },
+          { v: `1:${r.ratio.toFixed(1)}`, l: t('recipes.fields.ratio') },
+          { v: fmtTime(r.time), l: t('recipes.fields.time') },
+          { v: String(r.temp), u: '°C', l: t('recipes.fields.temp') },
+        ].map(item => (
+          <div key={item.l} className="stat">
+            <div className="v">{item.v}{item.u && <span className="u">{item.u}</span>}</div>
+            <div className="l">{item.l}</div>
+          </div>
+        ))}
       </div>
 
       {r.stages?.length > 0 && (
-        <div className={`card ${s.detailCard}`}>
-          <div className={`t-upper ${s.pourLabel}`}>{t('recipes.pourSchedule')}</div>
-          <div className="col col-gap-8">
-            {r.stages.map((s, i) => (
-              <div key={s.id} className="pour-stage">
-                <span className="pn">{i + 1}</span>
-                <span className="pl">{s.label}</span>
-                <span className="pt">@ {fmtTime(s.timeS)} → {s.weightG}g</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <section className={s.block}>
+          <div className="section-label"><span className="t-upper">{t('recipes.pourSchedule')}</span></div>
+          {r.stages.map((st, i) => (
+            <div key={st.id} className="pour-stage">
+              <span className="pn">{i + 1}</span>
+              <span className="pl">{st.label}</span>
+              <span className="pt">{fmtTime(st.timeS)} → {st.weightG} g</span>
+            </div>
+          ))}
+        </section>
       )}
 
-      <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp, recipeId: r.id } })}>
-        {t('recipes.startBrew')}
-      </Button>
-      <div className={s.spacer12} />
       <div className={s.actionRow}>
+        <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp } })}>
+          {t('recipes.startBrew')}
+        </Button>
         <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
-        <Button variant="danger" leftIcon="trash" onClick={async () => {
+        <Button variant="danger" full leftIcon="trash" onClick={async () => {
           if (confirm(t('recipes.confirmDelete'))) { await db.deleteRecipe(r.id!); navigate('/recipes'); }
         }}>{t('recipes.deleteRecipe')}</Button>
       </div>

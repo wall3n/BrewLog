@@ -35,10 +35,16 @@ export function WelcomeModal() {
             <div className="welcome-tagline">{t('welcome.tagline')}</div>
             <div className="welcome-divider" />
             <div className="welcome-copy">{t('welcome.copy')}</div>
+            <div className="readout-grid grid-paper welcome-sample" aria-hidden="true">
+              <div className="stat"><div className="v">18.0<span className="u">g</span></div><div className="l">{t('extraction.fields.dose')}</div></div>
+              <div className="stat"><div className="v">36.4<span className="u">g</span></div><div className="l">{t('extraction.fields.yield')}</div></div>
+              <div className="stat"><div className="v">00:28</div><div className="l">{t('extraction.fields.time')}</div></div>
+            </div>
           </div>
 
           <div className="welcome-sheet">
             <button
+              type="button"
               className="btn btn-primary btn-full btn-lg"
               onClick={() => setShowWizard(true)}
               disabled={loading}
@@ -47,6 +53,7 @@ export function WelcomeModal() {
             </button>
             <div className="welcome-sheet-row">
               <button
+                type="button"
                 className="btn btn-ghost flex-1"
                 onClick={handleFresh}
                 disabled={loading}
@@ -54,6 +61,7 @@ export function WelcomeModal() {
                 {t('welcome.startFresh')}
               </button>
               <button
+                type="button"
                 className="btn btn-ghost flex-1"
                 onClick={handleDemo}
                 disabled={loading}

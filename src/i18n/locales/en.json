@@ -1,6 +1,6 @@
 {
   "app": {
-    "tagline": "YOUR EXTRACTION JOURNAL"
+    "tagline": "Your extraction lab sheet"
   },
   "common": {
     "save": "Save",
@@ -31,16 +31,23 @@
     "filterBy": "Filter by",
     "newExtraction": "New extraction",
     "starRating": "{{count}} star",
-    "today": "TODAY",
-    "yesterday": "YESTERDAY",
-    "daysAgo": "{{count}}D AGO"
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{count}}d ago",
+    "close": "Close",
+    "decrease": "Decrease {{label}}",
+    "increase": "Increase {{label}}",
+    "scoreOf": "Score {{value}} of {{max}}",
+    "clearSearch": "Clear search",
+    "sortBy": "Sort by",
+    "minScore": "{{n}}+ score"
   },
   "welcome": {
-    "quickSetup": "✦ Quick setup",
+    "quickSetup": "Quick setup",
     "startFresh": "Start fresh",
     "demoData": "Demo data",
-    "tagline": "YOUR EXTRACTION JOURNAL",
-    "copy": "Track every pour. Dial in your perfect cup."
+    "tagline": "Your extraction lab sheet",
+    "copy": "Log every shot at the machine, see what changed since the last one, and dial in faster. Everything stays on this device."
   },
   "wizard": {
     "backLabel": "Back",
@@ -90,7 +97,8 @@
     "equipment": "Equipment",
     "analytics": "Analytics",
     "settings": "Settings",
-    "more": "More"
+    "more": "More",
+    "main": "Main"
   },
   "methods": {
     "espresso": "Espresso",
@@ -105,7 +113,7 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "PREFERENCES & DATA",
+    "subtitle": "Preferences & data",
     "units": {
       "title": "Units",
       "weight": "Weight",
@@ -158,7 +166,7 @@
   },
   "home": {
     "title": "BrewLog",
-    "subtitle": "YOUR EXTRACTION JOURNAL",
+    "subtitle": "Your extraction journal",
     "greetings": {
       "lateBrew": "Late brew",
       "morning": "Good morning",
@@ -183,17 +191,31 @@
     "seeAll": "All",
     "activeBeans": "Active beans",
     "allBeans": "All beans",
-    "noExtractions": "No extractions yet",
-    "noExtractionsBody": "Tap the + to log your first one.",
+    "noExtractions": "No shots logged yet",
+    "noExtractionsBody": "Log a shot and its readings appear here, with what changed since the last one.",
     "noBrewsWeek": "Nothing brewed this week",
     "noBrewsWeekBody": "Tap + to log an extraction.",
-    "noBeansWeek": "No beans used this week"
+    "noBeansWeek": "No beans used this week",
+    "lastShot": "Last shot",
+    "nextShot": "Next shot",
+    "firstShot": "Log your first shot",
+    "nextShotHint": "Prefilled from No. {{no}}. Change only what you adjust.",
+    "blankSheet": "Blank sheet",
+    "dialInTrail": "Dial-in trail",
+    "trail": {
+      "no": "No.",
+      "doseYield": "Dose → yield"
+    },
+    "wasValue": "was {{value}}",
+    "onTheShelf": "On the shelf",
+    "logged": "Logged",
+    "firstSample": "First sample of this bean on {{method}}. The next shot shows what changed."
   },
   "history": {
     "title": "History",
-    "subtitle_one": "{{count}} EXTRACTION",
-    "subtitle_other": "{{count}} EXTRACTIONS",
-    "shown": "{{count}} SHOWN",
+    "subtitle_one": "{{count}} extraction",
+    "subtitle_other": "{{count}} extractions",
+    "shown": "{{count}} shown",
     "search": "Search bean, note, flavour…",
     "filters": {
       "allMethods": "All methods",
@@ -209,8 +231,8 @@
       "thisWeek": "This week",
       "lastWeek": "Last week",
       "earlier": "Earlier",
-      "count_one": "{{count}} EXTRACTION",
-      "count_other": "{{count}} EXTRACTIONS"
+      "count_one": "{{count}} extraction",
+      "count_other": "{{count}} extractions"
     },
     "nothingMatches": "Nothing matches",
     "loosenFilters": "Loosen your filters.",
@@ -234,7 +256,7 @@
     "steps": {
       "method": {
         "title": "What are you brewing?",
-        "subtitle": "PICK A METHOD"
+        "subtitle": "Pick a method"
       },
       "bean": {
         "title": "Choose your beans",
@@ -243,7 +265,7 @@
       },
       "equipment": {
         "title": "Your gear",
-        "subtitle": "MULTI-SELECT",
+        "subtitle": "Multi-select",
         "grindSetting": "Grinder setting",
         "grindSettingHint": "Click number, dial, or rotation depending on grinder",
         "grindPlaceholder": "e.g. 2.3"
@@ -257,7 +279,7 @@
       },
       "timer": {
         "title": "Brew timer",
-        "subtitle": "OPTIONAL",
+        "subtitle": "Optional",
         "skip": "Skip →",
         "start": "Start",
         "pause": "Pause",
@@ -267,7 +289,7 @@
       },
       "tasting": {
         "title": "How did it taste?",
-        "subtitle": "THE FUN PART",
+        "subtitle": "The fun part",
         "outcome": "Outcome",
         "overallRating": "Overall rating",
         "flavourProfile": "Flavour profile",
@@ -311,11 +333,11 @@
       "fail": "Failure"
     },
     "zones": {
-      "under": "UNDER-EXTRACTED",
-      "weak": "WEAK",
-      "ideal": "IDEAL ✓",
-      "strong": "STRONG",
-      "over": "OVER-EXTRACTED"
+      "under": "Under-extracted",
+      "weak": "Weak",
+      "ideal": "Ideal",
+      "strong": "Strong",
+      "over": "Over-extracted"
     },
     "duplicate": "Duplicate",
     "delete": "Delete",
@@ -342,7 +364,7 @@
   },
   "beans": {
     "title": "Beans",
-    "total": "{{count}} TOTAL",
+    "total": "{{count}} total",
     "add": "Add bean",
     "tabs": {
       "active": "Active",
@@ -419,11 +441,13 @@
     "confirmDelete": "Delete this bean?",
     "delete": "Delete bean",
     "saveName": "Untitled bean",
-    "saveBeanBtn": "Save bean"
+    "saveBeanBtn": "Save bean",
+    "daysUnit": "d",
+    "specSheet": "Spec sheet"
   },
   "equipment": {
     "title": "Equipment",
-    "items": "{{count}} ITEMS",
+    "items": "{{count}} items",
     "addGear": "Add gear",
     "search": "Search gear, model...",
     "sortBy": "Sort: ",
@@ -465,8 +489,8 @@
   },
   "recipes": {
     "title": "Recipes",
-    "saved": "{{count}} SAVED",
-    "shown": "{{count}} SHOWN",
+    "saved": "{{count}} saved",
+    "shown": "{{count}} shown",
     "new": "New recipe",
     "search": "Search recipe name...",
     "sortDoseDesc": "Highest dose",
@@ -515,17 +539,54 @@
     "pourSchedule": "Pour schedule",
     "startBrew": "Start brew",
     "deleteRecipe": "Delete recipe",
-    "confirmDelete": "Delete this recipe?"
+    "confirmDelete": "Delete this recipe?",
+    "lastUsedLabel": "Last used"
   },
   "analytics": {
     "title": "Analytics",
-    "subtitle": "OBSERVATIONS FROM THE LOGBOOK",
+    "subtitle": "Observations from the logbook",
     "totalExtractions": "Total extractions",
     "ratingOverTime": "Rating over time",
-    "last": "LAST {{count}}",
+    "last": "Last {{count}}",
     "methodDistribution": "Method distribution",
     "topBeans": "Top beans by rating",
     "noRatings": "Need more rated extractions.",
-    "logFirst": "Log some extractions first."
+    "logFirst": "Log some extractions first.",
+    "beansUsed": "Beans used"
+  },
+  "sheet": {
+    "newShot": "New shot",
+    "editShot": "Edit shot",
+    "sampleNo": "No. {{no}}",
+    "method": "Method",
+    "bean": "Bean",
+    "chooseBean": "Choose a bean",
+    "change": "Change",
+    "recipe": "Recipe",
+    "gear": "Gear",
+    "time": "Time",
+    "target": "Target {{range}}",
+    "sameAsLast": "Same as last",
+    "vsLast": "{{delta}} vs last",
+    "wasValue": "Last: {{value}}",
+    "timerIdle": "Tap start when the pump starts",
+    "timerRunning": "Running",
+    "timerStopped": "Stopped. Time saved to the sheet.",
+    "stop": "Stop",
+    "resume": "Resume",
+    "adjustTime": "Set manually",
+    "refractometer": "Refractometer",
+    "addTds": "Add TDS reading",
+    "removeTds": "Remove TDS reading",
+    "cupping": "Cupping",
+    "scoreOutOf": "{{value}} / 5",
+    "customFlavourPlaceholder": "Other note, e.g. plum",
+    "save": "Save shot",
+    "needBean": "Choose a bean to save",
+    "saveError": "The shot was not saved. Try again.",
+    "loadError": "Could not read your data. Reload the app.",
+    "noBeansMatch": "No beans match.",
+    "localOnly": "Stored on this device",
+    "needOutcome": "Mark the outcome to save"
   }
 }

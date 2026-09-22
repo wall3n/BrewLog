@@ -1,0 +1,5 @@
+.clear {
+  width: 32px; height: 32px; margin-right: -6px; display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: var(--radius); color: var(--text-tertiary); cursor: pointer;
+}
+@media (hover: hover) { .clear:hover { color: var(--text-primary); background: var(--bg-elevated); } }

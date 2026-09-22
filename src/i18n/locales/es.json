@@ -1,6 +1,6 @@
 {
   "app": {
-    "tagline": "TU DIARIO DE EXTRACCIONES"
+    "tagline": "Tu hoja de laboratorio de extracciones"
   },
   "common": {
     "save": "Guardar",
@@ -31,16 +31,23 @@
     "filterBy": "Filtrar por",
     "newExtraction": "Nueva extracción",
     "starRating": "{{count}} estrella",
-    "today": "HOY",
-    "yesterday": "AYER",
-    "daysAgo": "HACE {{count}}D"
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "daysAgo": "Hace {{count}}d",
+    "close": "Cerrar",
+    "decrease": "Reducir {{label}}",
+    "increase": "Aumentar {{label}}",
+    "scoreOf": "Puntuación {{value}} de {{max}}",
+    "clearSearch": "Borrar búsqueda",
+    "sortBy": "Ordenar por",
+    "minScore": "Puntuación {{n}}+"
   },
   "welcome": {
-    "quickSetup": "✦ Configuración rápida",
+    "quickSetup": "Configuración rápida",
     "startFresh": "Empezar desde cero",
     "demoData": "Datos de demo",
-    "tagline": "TU DIARIO DE EXTRACCIONES",
-    "copy": "Registra cada extracción. Perfecciona tu taza ideal."
+    "tagline": "Tu hoja de laboratorio de extracciones",
+    "copy": "Registra cada shot junto a la máquina, mira qué cambió desde el anterior y ajusta más rápido. Todo se queda en este dispositivo."
   },
   "wizard": {
     "backLabel": "Atrás",
@@ -90,7 +97,8 @@
     "equipment": "Equipo",
     "analytics": "Análisis",
     "settings": "Ajustes",
-    "more": "Más"
+    "more": "Más",
+    "main": "Principal"
   },
   "methods": {
     "espresso": "Espresso",
@@ -105,7 +113,7 @@
   },
   "settings": {
     "title": "Ajustes",
-    "subtitle": "PREFERENCIAS Y DATOS",
+    "subtitle": "Preferencias y datos",
     "units": {
       "title": "Unidades",
       "weight": "Peso",
@@ -158,7 +166,7 @@
   },
   "home": {
     "title": "BrewLog",
-    "subtitle": "TU DIARIO DE EXTRACCIÓN",
+    "subtitle": "Tu diario de extracción",
     "greetings": {
       "lateBrew": "Café nocturno",
       "morning": "Buenos días",
@@ -183,17 +191,31 @@
     "seeAll": "Ver todo",
     "activeBeans": "Cafés activos",
     "allBeans": "Todos los cafés",
-    "noExtractions": "Sin extracciones aún",
-    "noExtractionsBody": "Toca + para registrar la primera.",
+    "noExtractions": "Aún no hay shots",
+    "noExtractionsBody": "Registra un shot y aquí verás sus lecturas y qué cambió respecto al anterior.",
     "noBrewsWeek": "Nada preparado esta semana",
     "noBrewsWeekBody": "Toca + para registrar una extracción.",
-    "noBeansWeek": "Sin cafés usados esta semana"
+    "noBeansWeek": "Sin cafés usados esta semana",
+    "lastShot": "Último shot",
+    "nextShot": "Siguiente shot",
+    "firstShot": "Registra tu primer shot",
+    "nextShotHint": "Precargado desde el n.º {{no}}. Cambia solo lo que ajustes.",
+    "blankSheet": "Hoja en blanco",
+    "dialInTrail": "Ajuste reciente",
+    "trail": {
+      "no": "N.º",
+      "doseYield": "Dosis → rendimiento"
+    },
+    "wasValue": "antes {{value}}",
+    "onTheShelf": "En la estantería",
+    "logged": "Registrado",
+    "firstSample": "Primera muestra de este café en {{method}}. El siguiente shot muestra qué cambió."
   },
   "history": {
     "title": "Historial",
-    "subtitle_one": "{{count}} EXTRACCIÓN",
-    "subtitle_other": "{{count}} EXTRACCIONES",
-    "shown": "{{count}} MOSTRADAS",
+    "subtitle_one": "{{count}} extracción",
+    "subtitle_other": "{{count}} extracciones",
+    "shown": "{{count}} mostradas",
     "search": "Buscar café, nota, sabor…",
     "filters": {
       "allMethods": "Todos los métodos",
@@ -209,8 +231,8 @@
       "thisWeek": "Esta semana",
       "lastWeek": "Semana pasada",
       "earlier": "Anteriores",
-      "count_one": "{{count}} EXTRACCIÓN",
-      "count_other": "{{count}} EXTRACCIONES"
+      "count_one": "{{count}} extracción",
+      "count_other": "{{count}} extracciones"
     },
     "nothingMatches": "Sin resultados",
     "loosenFilters": "Amplía los filtros.",
@@ -234,7 +256,7 @@
     "steps": {
       "method": {
         "title": "¿Qué vas a preparar?",
-        "subtitle": "ELIGE UN MÉTODO"
+        "subtitle": "Elige un método"
       },
       "bean": {
         "title": "Elige tu café",
@@ -243,7 +265,7 @@
       },
       "equipment": {
         "title": "Tu equipamiento",
-        "subtitle": "SELECCIÓN MÚLTIPLE",
+        "subtitle": "Selección múltiple",
         "grindSetting": "Ajuste de molino",
         "grindSettingHint": "Número de clics, dial o rotaciones según el molino",
         "grindPlaceholder": "p.ej. 2.3"
@@ -257,7 +279,7 @@
       },
       "timer": {
         "title": "Temporizador",
-        "subtitle": "OPCIONAL",
+        "subtitle": "Opcional",
         "skip": "Omitir →",
         "start": "Iniciar",
         "pause": "Pausar",
@@ -267,7 +289,7 @@
       },
       "tasting": {
         "title": "¿Cómo quedó?",
-        "subtitle": "LA PARTE DIVERTIDA",
+        "subtitle": "La parte divertida",
         "outcome": "Resultado",
         "overallRating": "Valoración general",
         "flavourProfile": "Perfil de sabor",
@@ -311,11 +333,11 @@
       "fail": "Fallido"
     },
     "zones": {
-      "under": "SUBEXTRAÍDO",
-      "weak": "DÉBIL",
-      "ideal": "IDEAL ✓",
-      "strong": "FUERTE",
-      "over": "SOBREEXTRAÍDO"
+      "under": "Subextraído",
+      "weak": "Débil",
+      "ideal": "Ideal",
+      "strong": "Fuerte",
+      "over": "Sobreextraído"
     },
     "duplicate": "Duplicar",
     "delete": "Eliminar",
@@ -342,7 +364,7 @@
   },
   "beans": {
     "title": "Cafés",
-    "total": "{{count}} EN TOTAL",
+    "total": "{{count}} en total",
     "add": "Agregar café",
     "tabs": {
       "active": "Activo",
@@ -419,11 +441,13 @@
     "confirmDelete": "¿Eliminar este café?",
     "delete": "Eliminar café",
     "saveName": "Café sin nombre",
-    "saveBeanBtn": "Guardar café"
+    "saveBeanBtn": "Guardar café",
+    "daysUnit": "d",
+    "specSheet": "Ficha técnica"
   },
   "equipment": {
     "title": "Equipo",
-    "items": "{{count}} ELEMENTOS",
+    "items": "{{count}} elementos",
     "addGear": "Agregar equipo",
     "search": "Buscar equipo, modelo...",
     "sortBy": "Ordenar: ",
@@ -465,8 +489,8 @@
   },
   "recipes": {
     "title": "Recetas",
-    "saved": "{{count}} GUARDADAS",
-    "shown": "{{count}} MOSTRADAS",
+    "saved": "{{count}} guardadas",
+    "shown": "{{count}} mostradas",
     "new": "Nueva receta",
     "search": "Buscar nombre de receta...",
     "sortDoseDesc": "Mayor dosis",
@@ -515,17 +539,54 @@
     "pourSchedule": "Calendario de vertidos",
     "startBrew": "Iniciar extracción",
     "deleteRecipe": "Eliminar receta",
-    "confirmDelete": "¿Eliminar esta receta?"
+    "confirmDelete": "¿Eliminar esta receta?",
+    "lastUsedLabel": "Último uso"
   },
   "analytics": {
     "title": "Análisis",
-    "subtitle": "OBSERVACIONES DEL DIARIO",
+    "subtitle": "Observaciones del diario",
     "totalExtractions": "Extracciones totales",
     "ratingOverTime": "Valoración en el tiempo",
-    "last": "ÚLTIMAS {{count}}",
+    "last": "Últimas {{count}}",
     "methodDistribution": "Distribución por método",
     "topBeans": "Mejores cafés por valoración",
     "noRatings": "Se necesitan más extracciones valoradas.",
-    "logFirst": "Registra algunas extracciones primero."
+    "logFirst": "Registra algunas extracciones primero.",
+    "beansUsed": "Cafés usados"
+  },
+  "sheet": {
+    "newShot": "Nuevo shot",
+    "editShot": "Editar shot",
+    "sampleNo": "N.º {{no}}",
+    "method": "Método",
+    "bean": "Café",
+    "chooseBean": "Elige un café",
+    "change": "Cambiar",
+    "recipe": "Receta",
+    "gear": "Equipo",
+    "time": "Tiempo",
+    "target": "Objetivo {{range}}",
+    "sameAsLast": "Igual que el anterior",
+    "vsLast": "{{delta}} vs anterior",
+    "wasValue": "Anterior: {{value}}",
+    "timerIdle": "Pulsa iniciar cuando arranque la bomba",
+    "timerRunning": "En marcha",
+    "timerStopped": "Detenido. Tiempo guardado en la hoja.",
+    "stop": "Parar",
+    "resume": "Seguir",
+    "adjustTime": "Ajustar a mano",
+    "refractometer": "Refractómetro",
+    "addTds": "Añadir lectura TDS",
+    "removeTds": "Quitar lectura TDS",
+    "cupping": "Cata",
+    "scoreOutOf": "{{value}} / 5",
+    "customFlavourPlaceholder": "Otra nota, p. ej. ciruela",
+    "save": "Guardar shot",
+    "needBean": "Elige un café para guardar",
+    "saveError": "No se guardó el shot. Inténtalo de nuevo.",
+    "loadError": "No se pudieron leer tus datos. Recarga la app.",
+    "noBeansMatch": "Ningún café coincide.",
+    "localOnly": "Guardado en este dispositivo",
+    "needOutcome": "Marca el resultado para guardar"
   }
 }
