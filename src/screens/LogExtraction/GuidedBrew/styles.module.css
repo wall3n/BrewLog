@@ -82,9 +82,12 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  padding-bottom: 12px;
+  scrollbar-width: none;
+  /* Fade the bottom edge so a cut-off row reads as "more below". */
+  mask-image: linear-gradient(to bottom, currentColor calc(100% - 20px), transparent);
 }
+.stages::-webkit-scrollbar { display: none; }
 .stage {
   flex: none;
   display: grid;
@@ -103,7 +106,7 @@
 .stageActive .stageNum { color: var(--accent); }
 .stageDone .stageNum   { color: var(--success); }
 .stageName   { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 13px; letter-spacing: 0.02em; }
-.nowBadge    { color: var(--accent); }
+.stageActive .nowBadge { color: var(--accent); }
 .stageTime   { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
 .stageWeight { font-size: 13px; min-width: 5ch; text-align: right; color: var(--text-primary); font-variant-numeric: tabular-nums; }
 
