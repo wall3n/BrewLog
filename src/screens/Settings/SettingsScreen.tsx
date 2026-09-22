@@ -82,7 +82,7 @@ export function SettingsScreen() {
 
       <div className={`card ${css.cardMb}`}>
         <div className={`t-upper ${css.sectionHead}`}>{t('settings.units.title')}</div>
-        <div className="col col-gap-16">
+        <div className="col">
           <SettingRow label={t('settings.units.weight')}><SegToggle value={s.weightUnit} options={[['g',t('settings.units.grams')],['oz',t('settings.units.ounces')]]} onChange={v => set({ weightUnit: v as 'g'|'oz' })} /></SettingRow>
           <SettingRow label={t('settings.units.temperature')}><SegToggle value={s.tempUnit} options={[['C','°C'],['F','°F']]} onChange={v => set({ tempUnit: v as 'C'|'F' })} /></SettingRow>
           <SettingRow label={t('settings.units.volume')}><SegToggle value={s.volumeUnit} options={[['ml','ml'],['oz',t('settings.units.flOz')]]} onChange={v => set({ volumeUnit: v as 'ml'|'oz' })} /></SettingRow>
@@ -91,7 +91,7 @@ export function SettingsScreen() {
 
       <div className={`card ${css.cardMb}`}>
         <div className={`t-upper ${css.sectionHead}`}>{t('settings.defaults.title')}</div>
-        <div className="col col-gap-16">
+        <div className="col">
           <SettingRow label={t('settings.defaults.method')}>
             <select className={`input-underline ${css.methodSelect}`} value={s.defaultMethod} onChange={e => set({ defaultMethod: e.target.value })}>
               {METHODS.map(m => <option key={m.id} value={m.id}>{t(`methods.${m.id}`)}</option>)}
@@ -136,7 +136,7 @@ export function SettingsScreen() {
 
       <div className="card">
         <div className={`t-upper ${css.sectionHead}`}>{t('settings.data.title')}</div>
-        <div className="col col-gap-12">
+        <div className="col col-gap-8">
           <Button variant="ghost" full leftIcon="download" onClick={handleExport}>{t('settings.data.exportJson')}</Button>
           <Button variant="ghost" full leftIcon="upload" onClick={handleImport}>{t('settings.data.importJson')}</Button>
           <Button variant="danger" full leftIcon="trash" onClick={handleClear}>{t('settings.data.clearAll')}</Button>
@@ -145,9 +145,9 @@ export function SettingsScreen() {
 
       <div className={`card ${css.cardMt}`}>
         <div className={`t-upper ${css.sectionHead}`}>{t('settings.about.title')}</div>
-        <div className="col col-gap-12">
+        <div className="col">
           <SettingRow label={t('settings.about.version')}>
-            <span className="t-mono t-sec">v{__APP_VERSION__}</span>
+            <span className="t-sec">v{__APP_VERSION__}</span>
           </SettingRow>
           <SettingRow label={t('settings.about.storage')}>
             <span className="t-sec">{t('settings.about.storageValue')}</span>
