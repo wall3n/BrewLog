@@ -7,6 +7,8 @@ const INNER = CARD_WIDTH - PAD * 2;
 const COLS = 3;
 const STAR_LINE = /^[★☆]{5}$/;
 const QUOTE_OPEN = '“';
+const ROW_PITCH = 150;
+const UNIT_SUFFIX = /^(.+) (g|°C)$/;
 
 interface CardTheme {
   bg: string; primary: string; secondary: string; accent: string; border: string;
@@ -60,6 +62,11 @@ function drawStar(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: numb
   }
 }
 
+function drawStars(ctx: CanvasRenderingContext2D, th: CardTheme, line: string, x: number, top: number, r: number): void {
+  const gap = r * 2 + 12;
+  [...line].forEach((ch, i) => drawStar(ctx, x + r + i * gap, top + r, r, ch === '★', th));
+}
+
 // The title gets the largest size that fits in two lines, then a smaller size in three lines.
 function titleLines(ctx: CanvasRenderingContext2D, th: CardTheme, title: string): { lines: string[]; size: number } {
   for (const size of [112, 96]) {
@@ -72,12 +79,28 @@ function titleLines(ctx: CanvasRenderingContext2D, th: CardTheme, title: string)
 }
 
 // A stat value shrinks until it fits its column, then gets an ellipsis.
-function fitStatValue(ctx: CanvasRenderingContext2D, th: CardTheme, value: string, width: number): string {
+// A trailing unit ("20 g", "92 °C") is drawn smaller and quieter, so the number leads.
+function drawStatValue(ctx: CanvasRenderingContext2D, th: CardTheme, value: string, x: number, y: number, width: number): void {
+  const unitMatch = UNIT_SUFFIX.exec(value);
+  const num = unitMatch ? unitMatch[1] : value;
+  const unit = unitMatch ? unitMatch[2] : '';
   for (let size = 64; size >= 40; size -= 4) {
+    const unitSize = Math.round(size * 0.55);
+    setType(ctx, `500 ${unitSize}px ${th.mono}`, th.secondary);
+    const unitW = unit ? ctx.measureText(unit).width + size * 0.18 : 0;
     setType(ctx, `500 ${size}px ${th.mono}`, th.primary, -1);
-    if (ctx.measureText(value).width <= width) return value;
+    const numW = ctx.measureText(num).width;
+    if (numW + unitW <= width || size === 40) {
+      const text = numW + unitW <= width ? num : wrapLines(num, width - unitW, measure(ctx), 1)[0] ?? '';
+      ctx.fillText(text, x, y);
+      if (unit) {
+        const after = ctx.measureText(text).width;
+        setType(ctx, `500 ${unitSize}px ${th.mono}`, th.secondary);
+        ctx.fillText(unit, x + after + size * 0.18, y);
+      }
+      return;
+    }
   }
-  return wrapLines(value, width, measure(ctx), 1)[0] ?? '';
 }
 
 function drawCard(ctx: CanvasRenderingContext2D, model: CardModel, th: CardTheme): void {
@@ -102,57 +125,69 @@ function drawCard(ctx: CanvasRenderingContext2D, model: CardModel, th: CardTheme
     ctx.fillText(line, PAD, y);
   }
   if (model.subtitle) {
-    y += 60;
+    y += 72;
     setType(ctx, `32px ${th.mono}`, th.secondary);
     ctx.fillText(wrapLines(model.subtitle, INNER, measure(ctx), 1)[0] ?? '', PAD, y);
   }
 
-  // Stats grid: value above label, as on the detail screens.
+  // Lower block: stats grid, then free lines (flavours, a note, or pour stages).
+  // It sits on the bottom edge when there is room, so a short card does not end in empty space.
+  const bottom = model.footer ? CARD_HEIGHT - PAD - 80 : CARD_HEIGHT - PAD;
+  const stars = model.footer ? model.lines.find(l => STAR_LINE.test(l)) : undefined;
+  const textLines = model.lines
+    .filter(l => l !== stars)
+    .map(text => {
+      const quote = text.startsWith(QUOTE_OPEN);
+      if (quote) setType(ctx, `46px ${th.serif}`, th.primary);
+      else setType(ctx, `32px ${th.mono}`, th.secondary);
+      const lines = STAR_LINE.test(text) ? [text] : wrapLines(text, INNER, measure(ctx), quote ? 3 : 2);
+      return { text, quote, lines, lineH: quote ? 58 : 48 };
+    });
+  const rows = Math.ceil(model.stats.length / COLS);
+  const statsH = 64 + (rows > 0 ? 104 + (rows - 1) * ROW_PITCH + 46 + 56 : 0);
+  const linesH = textLines.reduce((h, b) => h + (b.quote ? 20 : 0) + b.lines.length * b.lineH + 12, 24);
+  y = Math.max(y, bottom - statsH - linesH);
+
   y += 64;
   rule(ctx, th, y);
   const colW = INNER / COLS;
-  const rows = Math.ceil(model.stats.length / COLS);
   model.stats.forEach((stat, i) => {
     const x = PAD + (i % COLS) * colW;
-    const rowY = y + 104 + Math.floor(i / COLS) * 164;
-    ctx.fillText(fitStatValue(ctx, th, stat.value, colW - 24), x, rowY);
+    const rowY = y + 104 + Math.floor(i / COLS) * ROW_PITCH;
+    drawStatValue(ctx, th, stat.value, x, rowY, colW - 24);
     setType(ctx, `500 22px ${th.mono}`, th.secondary, 2.5);
     ctx.fillText(wrapLines(stat.label.toUpperCase(), colW - 24, measure(ctx), 1)[0] ?? '', x, rowY + 46);
   });
   if (rows > 0) {
-    y += 104 + (rows - 1) * 164 + 46 + 56;
-    rule(ctx, th, y);
+    y += 104 + (rows - 1) * ROW_PITCH + 46 + 56;
+    if (textLines.length > 0) rule(ctx, th, y);
   }
 
-  // Free lines: stars, flavours, a note, or pour stages. They stop above the footer.
-  const bottom = model.footer ? CARD_HEIGHT - PAD - 96 : CARD_HEIGHT - PAD;
   y += 24;
-  for (const text of model.lines) {
-    if (STAR_LINE.test(text)) {
+  for (const block of textLines) {
+    if (STAR_LINE.test(block.text)) {
       if (y + 88 > bottom) break;
-      const r = 22;
-      [...text].forEach((ch, i) => drawStar(ctx, PAD + r + i * 60, y + 32 + r, r, ch === '★', th));
+      drawStars(ctx, th, block.text, PAD, y + 32, 22);
       y += 88;
       continue;
     }
-    const quote = text.startsWith(QUOTE_OPEN);
-    const lineH = quote ? 58 : 48;
-    if (quote) setType(ctx, `46px ${th.serif}`, th.primary);
+    if (block.quote) setType(ctx, `46px ${th.serif}`, th.primary);
     else setType(ctx, `32px ${th.mono}`, th.secondary);
-    y += quote ? 20 : 0;
-    for (const line of wrapLines(text, INNER, measure(ctx), quote ? 3 : 2)) {
-      if (y + lineH > bottom) break;
-      y += lineH;
+    y += block.quote ? 20 : 0;
+    for (const line of block.lines) {
+      if (y + block.lineH > bottom) break;
+      y += block.lineH;
       ctx.fillText(line, PAD, y);
     }
     y += 12;
   }
 
-  // Footer: the date, under a rule.
+  // Footer: the date on the left and the rating on the right, under a rule.
   if (model.footer) {
     rule(ctx, th, CARD_HEIGHT - PAD - 56);
     setType(ctx, `26px ${th.mono}`, th.secondary, 1);
     ctx.fillText(model.footer, PAD, CARD_HEIGHT - PAD);
+    if (stars) drawStars(ctx, th, stars, CARD_WIDTH - PAD - (5 * 44 - 12), CARD_HEIGHT - PAD - 26, 16);
   }
   ctx.letterSpacing = '0px';
 }
