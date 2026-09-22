@@ -21,3 +21,17 @@
 .importForm .importError { margin: 0; }
 .headActions  { display: flex; gap: 8px; flex-wrap: wrap; }
 .pageRow      { flex-wrap: wrap; row-gap: 16px; column-gap: 12px; }
+
+/* RecipeForm: inline limits. A value outside what a share link carries blocks Save. */
+.form :global(.input-underline[aria-invalid="true"]),
+.form :global(.stage-mini-input[aria-invalid="true"]) { border-bottom-color: var(--danger); }
+.fieldError   { margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--danger); }
+.stageError   { margin: -6px 0 0 34px; }
+.addPourRow   { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.addPourRow :global(.sidebar-link:disabled) { opacity: 0.4; cursor: not-allowed; background: transparent; }
+.limitNote    { font-size: 12px; color: var(--text-tertiary); }
+.saveBlock    { display: flex; flex-direction: column; gap: 10px; }
+.saveBlock .fieldError { margin: 0; text-align: center; }
+
+/* RecipeDetail: why "Share link" is missing */
+.shareNote    { margin: 0 0 10px; font-size: 12px; line-height: 1.5; color: var(--text-secondary); }

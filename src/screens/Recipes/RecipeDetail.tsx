@@ -5,7 +5,7 @@ import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, MethodBadge, Empty, Sheet, ShareActions } from '../../components/UI';
 import { fmtDate, fmtRelDate, fmtTime } from '../../utils/formatters';
 import { recipeCard } from '../../utils/shareCard';
-import { buildRecipeShareUrl, toSharedRecipe } from '../../utils/shareCodec';
+import { buildRecipeShareUrl, shareProblems, toSharedRecipe } from '../../utils/shareCodec';
 import { RecipeForm } from './RecipeForm';
 import type { Recipe } from '../../db/types';
 import s from './styles.module.css';
@@ -32,6 +32,12 @@ export function RecipeDetail() {
     () => (r ? recipeCard(toSharedRecipe(r), { t, time: fmtTime, date: fmtDate }) : null),
     [r, t],
   );
+  // Old data can hold values the link decoder rejects. Offer the image only, and say why.
+  const link = useMemo(() => {
+    if (!r) return undefined;
+    const shared = toSharedRecipe(r);
+    return shareProblems(shared).length === 0 ? buildRecipeShareUrl(window.location.origin, shared) : undefined;
+  }, [r]);
 
   if (notFound) return <div><BackBar onClick={() => navigate('/recipes')} label={t('recipes.backToRecipes')} /><Empty icon="recipe" title={t('recipes.notFound')} /></div>;
   if (!r) return null;
@@ -83,10 +89,11 @@ export function RecipeDetail() {
         {t('recipes.startBrew')}
       </Button>
       <div className={s.spacer12} />
+      {!link && <p className={s.shareNote}>{t('share.linkBlocked')}</p>}
       <ShareActions
         model={shareModel}
         fileName={`brewlog-recipe-${r.id}.png`}
-        link={buildRecipeShareUrl(window.location.origin, toSharedRecipe(r))}
+        link={link}
       />
       <div className={s.actionRow}>
         <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>

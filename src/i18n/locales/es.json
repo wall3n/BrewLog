@@ -493,7 +493,23 @@
       "save": "Guardar receta",
       "pourLabel": "Vertido {{number}}",
       "labelPlaceholder": "Etiqueta",
-      "defaultName": "Receta de {{method}}"
+      "defaultName": "Receta de {{method}}",
+      "errors": {
+        "name": "Usa de 1 a {{max}} caracteres.",
+        "method": "Elige un método de la lista.",
+        "dose": "Introduce una dosis de {{min}} a {{max}} g.",
+        "yield": "El rendimiento debe ser de {{min}} a {{max}} g. Baja la dosis o el ratio.",
+        "ratio": "Elige un ratio de 1:{{min}} a 1:{{max}}.",
+        "time": "Introduce el tiempo como m:ss.",
+        "temp": "Introduce una temperatura de {{min}} a {{max}} °C.",
+        "stages": "Usa {{max}} vertidos como máximo. Quita un vertido.",
+        "stageLabel": "Vertido {{number}}: usa {{max}} caracteres como máximo en la etiqueta.",
+        "stageTime": "Vertido {{number}}: introduce el tiempo como m:ss.",
+        "stageWeight": "Vertido {{number}}: introduce un peso de {{min}} a {{max}} g.",
+        "payload": "Esta receta es demasiado larga para compartirla como enlace. Acorta el nombre o las etiquetas de los vertidos.",
+        "summary": "Corrige los campos marcados para guardar."
+      },
+      "maxPours": "Máximo {{max}} vertidos."
     },
     "pourCount_one": "{{count}} vertido",
     "pourCount_other": "{{count}} vertidos",
@@ -521,7 +537,8 @@
       "from": "Receta compartida",
       "save": "Guardar receta",
       "failed": "No se pudo guardar la receta. Inténtalo de nuevo."
-    }
+    },
+    "linkBlocked": "Esta receta tiene valores que un enlace no puede llevar. Edita la receta para compartirla como enlace."
   },
   "analytics": {
     "title": "Análisis",

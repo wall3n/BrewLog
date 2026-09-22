@@ -493,7 +493,23 @@
       "save": "Enregistrer la recette",
       "pourLabel": "Versement {{number}}",
       "labelPlaceholder": "Étiquette",
-      "defaultName": "Recette {{method}}"
+      "defaultName": "Recette {{method}}",
+      "errors": {
+        "name": "Utilisez de 1 à {{max}} caractères.",
+        "method": "Choisissez une méthode dans la liste.",
+        "dose": "Saisissez une dose de {{min}} à {{max}} g.",
+        "yield": "Le rendement doit être de {{min}} à {{max}} g. Baissez la dose ou le ratio.",
+        "ratio": "Choisissez un ratio de 1:{{min}} à 1:{{max}}.",
+        "time": "Saisissez le temps au format m:ss.",
+        "temp": "Saisissez une température de {{min}} à {{max}} °C.",
+        "stages": "Utilisez {{max}} versements au maximum. Supprimez un versement.",
+        "stageLabel": "Versement {{number}} : utilisez {{max}} caractères au maximum dans le libellé.",
+        "stageTime": "Versement {{number}} : saisissez le temps au format m:ss.",
+        "stageWeight": "Versement {{number}} : saisissez un poids de {{min}} à {{max}} g.",
+        "payload": "Cette recette est trop longue pour être partagée par lien. Raccourcissez le nom ou les libellés des versements.",
+        "summary": "Corrigez les champs signalés pour enregistrer."
+      },
+      "maxPours": "{{max}} versements au maximum."
     },
     "pourCount_one": "{{count}} versement",
     "pourCount_other": "{{count}} versements",
@@ -521,7 +537,8 @@
       "from": "Recette partagée",
       "save": "Enregistrer la recette",
       "failed": "Impossible d’enregistrer la recette. Réessayez."
-    }
+    },
+    "linkBlocked": "Cette recette contient des valeurs qu’un lien ne peut pas transmettre. Modifiez la recette pour la partager par lien."
   },
   "analytics": {
     "title": "Analyse",
