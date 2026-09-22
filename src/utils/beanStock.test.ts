@@ -1,47 +1,93 @@
 import { describe, it, expect } from 'vitest';
 import {
-  stockChanges, applyStockChange, nextInitialWeight, averageDose, servingsLeft,
+  planStock, nextInitialWeight, averageDose, servingsLeft,
   brewKind, getFreshness, summariseUsage, beanStockView,
 } from './beanStock';
 
-describe('stockChanges', () => {
-  it('subtracts the dose of a new brew', () => {
-    expect(stockChanges(null, { beanId: 1, dose: 18 })).toEqual([{ beanId: 1, deltaG: -18 }]);
+const w = (entries: [number, number | undefined][]): Map<number, number | undefined> => new Map(entries);
+
+describe('planStock', () => {
+  it('takes the dose of a new brew and stores it as used', () => {
+    const plan = planStock(null, { beanId: 1, dose: 18 }, w([[1, 250]]));
+    expect([...plan.weights]).toEqual([[1, 232]]);
+    expect(plan.stockUsedG).toBe(18);
   });
 
-  it('gives the dose back for a deleted brew', () => {
-    expect(stockChanges({ beanId: 1, dose: 18 }, null)).toEqual([{ beanId: 1, deltaG: 18 }]);
+  it('stores only what was really taken when the bean runs out', () => {
+    const plan = planStock(null, { beanId: 1, dose: 18 }, w([[1, 10]]));
+    expect([...plan.weights]).toEqual([[1, 0]]);
+    expect(plan.stockUsedG).toBe(10);
   });
 
-  it('applies only the difference for an edit on the same bean', () => {
-    expect(stockChanges({ beanId: 1, dose: 18 }, { beanId: 1, dose: 18.5 })).toEqual([{ beanId: 1, deltaG: -0.5 }]);
+  it('gives back only what was taken when a clamped brew is deleted (10 g bean, 18 g brew)', () => {
+    const added = planStock(null, { beanId: 1, dose: 18 }, w([[1, 10]]));
+    const deleted = planStock(
+      { beanId: 1, dose: 18, stockUsedG: added.stockUsedG },
+      null,
+      w([[1, added.weights.get(1)]]),
+    );
+    expect([...deleted.weights]).toEqual([[1, 10]]);
   });
 
-  it('returns nothing when the dose and bean do not change', () => {
-    expect(stockChanges({ beanId: 1, dose: 18 }, { beanId: 1, dose: 18 })).toEqual([]);
+  it('takes nothing from a bean with no weight', () => {
+    const plan = planStock(null, { beanId: 1, dose: 18 }, w([[1, undefined]]));
+    expect([...plan.weights]).toEqual([]);
+    expect(plan.stockUsedG).toBe(0);
   });
 
-  it('moves the dose when the brew changes bean', () => {
-    expect(stockChanges({ beanId: 1, dose: 18 }, { beanId: 2, dose: 20 })).toEqual([
-      { beanId: 1, deltaG: 18 },
-      { beanId: 2, deltaG: -20 },
-    ]);
+  it('gives nothing back for a brew logged while the bean had no weight', () => {
+    const added = planStock(null, { beanId: 1, dose: 18 }, w([[1, undefined]]));
+    const deleted = planStock({ beanId: 1, dose: 18, stockUsedG: added.stockUsedG }, null, w([[1, 250]]));
+    expect([...deleted.weights]).toEqual([]);
+  });
+
+  it('gives nothing back for an old brew with no stockUsedG', () => {
+    const deleted = planStock({ beanId: 1, dose: 18 }, null, w([[1, 250]]));
+    expect([...deleted.weights]).toEqual([]);
+  });
+
+  it('changes nothing for a notes-only edit', () => {
+    const plan = planStock({ beanId: 1, dose: 18, stockUsedG: 18 }, { beanId: 1, dose: 18 }, w([[1, 232]]));
+    expect([...plan.weights]).toEqual([]);
+    expect(plan.stockUsedG).toBe(18);
+  });
+
+  it('keeps stockUsedG empty for a notes-only edit of an old brew', () => {
+    const plan = planStock({ beanId: 1, dose: 18 }, { beanId: 1, dose: 18 }, w([[1, 250]]));
+    expect([...plan.weights]).toEqual([]);
+    expect(plan.stockUsedG).toBeUndefined();
+  });
+
+  it('applies the new dose for an edit on the same bean', () => {
+    const plan = planStock({ beanId: 1, dose: 18, stockUsedG: 18 }, { beanId: 1, dose: 20 }, w([[1, 232]]));
+    expect([...plan.weights]).toEqual([[1, 230]]);
+    expect(plan.stockUsedG).toBe(20);
+  });
+
+  it('moves the brew to another bean', () => {
+    const plan = planStock(
+      { beanId: 1, dose: 18, stockUsedG: 18 },
+      { beanId: 2, dose: 20 },
+      w([[1, 232], [2, 100]]),
+    );
+    expect(Object.fromEntries(plan.weights)).toEqual({ 1: 250, 2: 80 });
+    expect(plan.stockUsedG).toBe(20);
+  });
+
+  it('gives back only what was used when a clamped brew moves bean', () => {
+    const plan = planStock(
+      { beanId: 1, dose: 18, stockUsedG: 10 },
+      { beanId: 2, dose: 20 },
+      w([[1, 0], [2, 15]]),
+    );
+    expect(Object.fromEntries(plan.weights)).toEqual({ 1: 10, 2: 0 });
+    expect(plan.stockUsedG).toBe(15);
   });
 
   it('rounds to 0.1 g', () => {
-    expect(stockChanges({ beanId: 1, dose: 18.1 }, { beanId: 1, dose: 18.3 })).toEqual([{ beanId: 1, deltaG: -0.2 }]);
-  });
-});
-
-describe('applyStockChange', () => {
-  it('leaves a bean with no weight alone', () => {
-    expect(applyStockChange(undefined, -18)).toBeUndefined();
-  });
-  it('never goes below 0', () => {
-    expect(applyStockChange(10, -18)).toBe(0);
-  });
-  it('rounds to 0.1 g', () => {
-    expect(applyStockChange(250, -18.25)).toBe(231.8);
+    const plan = planStock(null, { beanId: 1, dose: 18.25 }, w([[1, 250]]));
+    expect([...plan.weights]).toEqual([[1, 231.8]]);
+    expect(plan.stockUsedG).toBe(18.2);
   });
 });
 

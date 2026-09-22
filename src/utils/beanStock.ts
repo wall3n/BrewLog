@@ -1,7 +1,12 @@
 import type { Bean, Extraction } from '../db/types';
 
-export interface StockChange { beanId: number; deltaG: number; }   // negative = coffee used
-export interface DoseRef { beanId: number; dose: number; }
+// A brew as the stock sees it. stockUsedG = grams really taken from the bean (undefined for old brews).
+export interface StockBrew { beanId: number; dose: number; stockUsedG?: number; }
+
+export interface StockPlan {
+  weights: ReadonlyMap<number, number>;   // new weight of each bean that changes
+  stockUsedG: number | undefined;         // value to store on the brew
+}
 
 export const LOW_STOCK_SERVINGS = 3;
 const DOSE_SAMPLE = 5;
@@ -9,21 +14,36 @@ const DOSE_SAMPLE = 5;
 const round1 = (n: number): number => Math.round(n * 10) / 10;
 
 // prev = the brew before the write (null for a new brew). next = after it (null for a delete).
-export function stockChanges(prev: DoseRef | null, next: DoseRef | null): readonly StockChange[] {
-  const deltas = new Map<number, number>();
-  const add = (beanId: number, delta: number): void => {
-    deltas.set(beanId, (deltas.get(beanId) ?? 0) + delta);
-  };
-  if (prev) add(prev.beanId, prev.dose);
-  if (next) add(next.beanId, -next.dose);
-  return [...deltas]
-    .map(([beanId, delta]) => ({ beanId, deltaG: round1(delta) }))
-    .filter(change => change.deltaG !== 0);
-}
-
-export function applyStockChange(weightG: number | undefined, deltaG: number): number | undefined {
-  if (weightG == null) return undefined;
-  return Math.max(0, round1(weightG + deltaG));
+// weightsBefore = current weight of the beans involved (undefined = bean not tracked).
+// A bean gets back only what the brew really took, and never goes below 0.
+export function planStock(
+  prev: StockBrew | null,
+  next: Omit<StockBrew, 'stockUsedG'> | null,
+  weightsBefore: ReadonlyMap<number, number | undefined>,
+): StockPlan {
+  if (prev && next && prev.beanId === next.beanId && prev.dose === next.dose) {
+    return { weights: new Map(), stockUsedG: prev.stockUsedG };
+  }
+  const weights = new Map(weightsBefore);
+  if (prev) {
+    const weight = weights.get(prev.beanId);
+    if (weight != null) weights.set(prev.beanId, round1(weight + (prev.stockUsedG ?? 0)));
+  }
+  let stockUsedG: number | undefined;
+  if (next) {
+    stockUsedG = 0;
+    const weight = weights.get(next.beanId);
+    if (weight != null) {
+      const after = Math.max(0, round1(weight - next.dose));
+      stockUsedG = round1(weight - after);
+      weights.set(next.beanId, after);
+    }
+  }
+  const changed = new Map<number, number>();
+  for (const [beanId, weight] of weights) {
+    if (weight != null && weight !== weightsBefore.get(beanId)) changed.set(beanId, weight);
+  }
+  return { weights: changed, stockUsedG };
 }
 
 export function nextInitialWeight(

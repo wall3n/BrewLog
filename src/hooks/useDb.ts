@@ -1,17 +1,27 @@
 import { db } from '../db/schema';
 import { useApp } from '../context/AppContext';
 import type { Bean, Equipment, Recipe, Extraction, AppSettings } from '../db/types';
-import { stockChanges, applyStockChange, summariseUsage, type StockChange, type BeanUsage } from '../utils/beanStock';
+import { planStock, summariseUsage, type StockBrew, type BeanUsage } from '../utils/beanStock';
 
 const now = () => new Date().toISOString();
 
 // Runs inside the caller's transaction. A bean with no weight is not tracked.
-async function applyStock(changes: readonly StockChange[]): Promise<void> {
-  for (const change of changes) {
-    const bean = await db.beans.get(change.beanId);
-    if (!bean || bean.weightG == null) continue;
-    await db.beans.put({ ...bean, weightG: applyStockChange(bean.weightG, change.deltaG), updatedAt: now() });
+// Returns the grams the brew really took, to store on the extraction.
+async function applyStock(
+  prev: StockBrew | null,
+  next: Omit<StockBrew, 'stockUsedG'> | null,
+): Promise<number | undefined> {
+  const beanIds = [...new Set([prev?.beanId, next?.beanId].filter((id): id is number => id != null))];
+  const beans = await db.beans.bulkGet(beanIds);
+  const weightsBefore = new Map(beanIds.map((id, i) => [id, beans[i]?.weightG] as const));
+  const plan = planStock(prev, next, weightsBefore);
+  const ts = now();
+  for (const bean of beans) {
+    if (bean?.id == null) continue;
+    const weightG = plan.weights.get(bean.id);
+    if (weightG != null) await db.beans.put({ ...bean, weightG, updatedAt: ts });
   }
+  return plan.stockUsedG;
 }
 
 export function useDb() {
@@ -281,21 +291,21 @@ export function useDb() {
     async addExtraction(data: Omit<Extraction, 'id' | 'createdAt' | 'updatedAt'>): Promise<number> {
       const ts = now();
       const id = await db.transaction('rw', db.extractions, db.beans, async () => {
-        const newId = await db.extractions.add({ ...data, createdAt: ts, updatedAt: ts });
-        await applyStock(stockChanges(null, { beanId: data.beanId, dose: data.dose }));
-        return newId;
+        const stockUsedG = await applyStock(null, { beanId: data.beanId, dose: data.dose });
+        return db.extractions.add({ ...data, stockUsedG, createdAt: ts, updatedAt: ts });
       });
       await refreshActiveBeans();
       return id as number;
     },
     async updateExtraction(data: Extraction): Promise<void> {
       await db.transaction('rw', db.extractions, db.beans, async () => {
+        // Read stockUsedG from the stored row: the caller's copy (e.g. the wizard draft) may not carry it.
         const prev = data.id != null ? await db.extractions.get(data.id) : undefined;
-        await db.extractions.put({ ...data, updatedAt: now() });
-        await applyStock(stockChanges(
-          prev ? { beanId: prev.beanId, dose: prev.dose } : null,
+        const stockUsedG = await applyStock(
+          prev ? { beanId: prev.beanId, dose: prev.dose, stockUsedG: prev.stockUsedG } : null,
           { beanId: data.beanId, dose: data.dose },
-        ));
+        );
+        await db.extractions.put({ ...data, stockUsedG, updatedAt: now() });
       });
       await refreshActiveBeans();
     },
@@ -303,7 +313,7 @@ export function useDb() {
       await db.transaction('rw', db.extractions, db.beans, async () => {
         const prev = await db.extractions.get(id);
         await db.extractions.delete(id);
-        if (prev) await applyStock(stockChanges({ beanId: prev.beanId, dose: prev.dose }, null));
+        if (prev) await applyStock({ beanId: prev.beanId, dose: prev.dose, stockUsedG: prev.stockUsedG }, null);
       });
       await refreshActiveBeans();
     },
