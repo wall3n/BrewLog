@@ -13,3 +13,32 @@
 .cardHeaderMb   { margin-bottom: 8px; }
 .noData         { font-size: 12px; padding: 12px; }
 .chartSvg       { display: block; }
+
+/* Dial-in analytics */
+.chartBox      { width: 100%; }
+.chartSummary  { font-size: 13px; color: var(--text-primary); margin: 0 0 12px; font-variant-numeric: tabular-nums; }
+.chartNote     { font-size: 11px; line-height: 1.5; margin: 8px 0 0; max-width: 65ch; }
+.clickable     { cursor: pointer; }
+.tooltip       { background: var(--bg-elevated); color: var(--text-primary); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 11px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); font-variant-numeric: tabular-nums; }
+.tooltipRating { gap: 4px; color: var(--accent); }
+.driverSummary { font-family: var(--serif); font-size: 20px; line-height: 1.25; color: var(--text-primary); margin: 0; text-wrap: balance; }
+.driverRow     { display: grid; grid-template-columns: 88px 1fr 48px; align-items: center; gap: 12px; }
+.driverScale   { margin-bottom: -4px; }
+.driverScaleLabels { font-size: 10px; letter-spacing: 0.04em; color: var(--text-tertiary); }
+.driverLabel   { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.driverTrack   { position: relative; height: 8px; background: var(--bg-elevated); border-radius: 4px; }
+.driverTrack::after { content: ''; position: absolute; left: 50%; top: -4px; bottom: -4px; width: 1px; background: var(--text-tertiary); }
+.driverFill    { position: absolute; top: 0; height: 100%; background: var(--accent); border-radius: 4px; }
+.driverWeak    { background: var(--text-tertiary); }
+.driverValue   { font-size: 11px; text-align: right; font-variant-numeric: tabular-nums; }
+.beanSelect    { width: auto; max-width: 100%; min-height: 44px; align-self: flex-start; font-size: 13px; cursor: pointer; }
+.seriesLabel   { font-size: 10.5px; letter-spacing: 0.04em; color: var(--text-secondary); margin-bottom: 4px; }
+.seriesLabelGap { margin-top: 12px; }
+.legendTime::before, .legendGrind::before { content: ''; display: inline-block; width: 14px; height: 0; margin-right: 6px; vertical-align: middle; border-top: 2px solid var(--accent); }
+.legendGrind::before { border-top: 2px dashed var(--text-secondary); }
+.axisCaption   { font-size: 10px; letter-spacing: 0.04em; text-align: center; margin-top: 4px; }
+.srOnly        { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (min-width: 640px) {
+  .driverRow   { grid-template-columns: 112px 1fr 48px; }
+}
