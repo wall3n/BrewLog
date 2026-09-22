@@ -3,29 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Slider, Pagination, FilterBar } from '../../components/UI';
-import { Icon } from '../../components/Icons';
+import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Stepper, Pagination, ListToolbar } from '../../components/UI';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
-function BeanCard({ bean, onClick }: { bean: Bean; onClick: () => void }) {
+const BEAN_SORTS = ['nameAsc', 'nameDesc', 'roastedDesc', 'roastedAsc', 'createdDesc'] as const;
+type BeanSort = typeof BEAN_SORTS[number];
+
+function BeanRow({ bean, onClick }: { bean: Bean; onClick: () => void }) {
   return (
-    <div className={`card card-hover ${s.beanCardPad}`} onClick={onClick}>
-      <div className={`row row-between ${s.beanCardHeader}`}>
-        <div className={`col col-gap-4 ${s.beanCardLeft}`}>
-          <div className={s.beanName}>{bean.name}</div>
-          <div className={`t-sec ${s.beanRoaster}`}>{bean.roaster}</div>
-        </div>
-        <RoastDot level={bean.roast} />
-      </div>
-      <div className={`row row-between ${s.beanCardBottom}`}>
-        <div className="col col-gap-4">
-          <span className="t-upper">{bean.process}</span>
-          <span className={`t-ter ${s.beanOrigin}`}>{(bean.origin ?? '').toUpperCase()}</span>
-        </div>
+    <button type="button" className="ledger-row" onClick={onClick}>
+      <RoastDot level={bean.roast} />
+      <span className="ledger-main">
+        <span className="ledger-title">{bean.name}</span>
+        <span className="ledger-sub">{[bean.roaster, bean.origin, bean.process].filter(Boolean).join(' · ')}</span>
+      </span>
+      <span className="ledger-aside">
         <DaysOffRoast iso={bean.roastedAt} />
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
 
@@ -41,7 +37,7 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
     <div className="col col-gap-16">
       <Field label={t('beans.fields.name')}><Input value={name} onChange={e => setName(e.target.value)} placeholder={t('beans.placeholders.name')} /></Field>
       <Field label={t('beans.fields.roaster')}><Input value={roaster} onChange={e => setRoaster(e.target.value)} placeholder={t('beans.placeholders.roaster')} /></Field>
-      <div className="grid grid-2">
+      <div className={s.formGrid}>
         <Field label={t('beans.fields.process')}>
           <select className="input-underline" value={process} onChange={e => setProcess(e.target.value)}>
             {[
@@ -54,17 +50,17 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
           </select>
         </Field>
         <Field label={t('beans.fields.roastLevel')}>
-          <div className="row row-gap-8">
+          <div className={s.roastRow} role="radiogroup" aria-label={t('beans.fields.roastLevel')}>
             {(['light','medium','dark'] as const).map(r => (
-              <button key={r} type="button" className={`tag ${roast === r ? 'active' : ''} ${s.roastBtn}`} onClick={() => setRoast(r)}>{t(`beans.roasts.${r}`)}</button>
+              <button key={r} type="button" role="radio" aria-checked={roast === r} className={`tag ${roast === r ? 'active' : ''} ${s.roastBtn}`} onClick={() => setRoast(r)}>
+                <RoastDot level={r} />{t(`beans.roasts.${r}`)}
+              </button>
             ))}
           </div>
         </Field>
       </div>
-      <Field label={t('beans.fields.daysSinceRoast')}>
-        <Slider value={days} min={0} max={60} step={1} onChange={setDays} displayValue={`${days}d`} />
-      </Field>
-      <Button full onClick={() => {
+      <Stepper label={t('beans.fields.daysSinceRoast')} value={days} onChange={setDays} step={1} decimals={0} max={365} unit={t('beans.daysUnit')} size="md" />
+      <Button full size="lg" onClick={() => {
         const d = new Date(); d.setDate(d.getDate() - days);
         onSave({ name: name || t('beans.saveName'), roaster, process, roast, roastedAt: d.toISOString(), status: 'active' });
       }} disabled={!name}>{t('beans.saveBeanBtn')}</Button>
@@ -86,7 +82,7 @@ export function BeansScreen() {
   const [inputQ, setInputQ] = useState('');
   const q = useDebounce(inputQ, 500);
   const [roastFilter, setRoastFilter] = useState<'all'|'light'|'medium'|'dark'>('all');
-  const [sort, setSort] = useState<'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'>('nameAsc');
+  const [sort, setSort] = useState<BeanSort>('nameAsc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -155,7 +151,7 @@ export function BeansScreen() {
 
   return (
     <div>
-      <div className={`row row-between ${s.pageRow}`}>
+      <div className="page-title-row">
         <div className="page-head">
           <h1>{t('beans.title')}</h1>
           <p>
@@ -163,50 +159,34 @@ export function BeansScreen() {
             {(q || roastFilter !== 'all') && ` · ${t('history.shown', { count: totalCount })}`}
           </p>
         </div>
-        <Button variant="ghost" leftIcon="plus" onClick={() => setAdding(true)}>{t('beans.add')}</Button>
+        <Button leftIcon="plus" onClick={() => setAdding(true)}>{t('beans.add')}</Button>
       </div>
       <div className="tabs">
         {(['active', 'finished', 'wishlist'] as const).map(k => (
           <button key={k} className={tab === k ? 'active' : ''} onClick={() => handleTabChange(k)}>
-            {t(`beans.tabs.${k}`)} <span className={`t-ter ${s.tabCount}`}>{tabCounts[k]}</span>
+            {t(`beans.tabs.${k}`)} <span className={s.tabCount}>{tabCounts[k]}</span>
           </button>
         ))}
       </div>
 
-      <div className="row row-gap-8 mb-4">
-        <div className="search-bar flex-1">
-          <Icon name="search" size={16} className="t-ter" />
-          <input
-            placeholder={t('beans.search')}
-            value={inputQ}
-            onChange={e => { setInputQ(e.target.value); setPage(1); }}
-          />
-        </div>
-      </div>
+      <ListToolbar
+        query={inputQ}
+        onQuery={v => { setInputQ(v); setPage(1); }}
+        placeholder={t('beans.search')}
+        activeFilters={activeFilters}
+        categories={categories}
+        sort={sort}
+        onSort={v => { setSort(v); setPage(1); }}
+        sortOptions={BEAN_SORTS.map(k => [k, t(`beans.sorts.${k}`)] as const)}
+      />
 
-      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
-        <FilterBar activeFilters={activeFilters} categories={categories} />
-        <select
-          className="input-underline"
-          value={sort}
-          onChange={e => { setSort(e.target.value as 'nameAsc'|'nameDesc'|'roastedDesc'|'roastedAsc'|'createdDesc'); setPage(1); }}
-          style={{ width: 'auto', padding: '6px 4px', fontSize: 12, color: 'var(--text-secondary)', flexShrink: 0 }}
-        >
-          <option value="nameAsc">{t('beans.sorts.nameAsc')}</option>
-          <option value="nameDesc">{t('beans.sorts.nameDesc')}</option>
-          <option value="roastedDesc">{t('beans.sorts.roastedDesc')}</option>
-          <option value="roastedAsc">{t('beans.sorts.roastedAsc')}</option>
-          <option value="createdDesc">{t('beans.sorts.createdDesc')}</option>
-        </select>
-      </div>
-
-
-      <div className="grid grid-2">
-        {beans.length === 0
-          ? <div className={s.gridEmpty}><Empty icon="bean" title={noBeansTitle} body={noBeansBody} /></div>
-          : beans.map(b => <BeanCard key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)
-        }
-      </div>
+      {beans.length === 0
+        ? <Empty icon="bean" title={noBeansTitle} body={noBeansBody} />
+        : (
+          <div className="ledger">
+            {beans.map(b => <BeanRow key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)}
+          </div>
+        )}
 
       <Pagination
         currentPage={page}

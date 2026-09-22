@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Empty, Stars, Pagination, FilterBar } from '../../components/UI';
-import { Icon } from '../../components/Icons';
+import { Empty, Stars, Pagination, ListToolbar, MethodBadge, FlagMark } from '../../components/UI';
 import { fmtRelDate, fmtTime, daysSince } from '../../utils/formatters';
 import { methodById } from '../../utils/methodDefaults';
+import { sampleNo } from '../../utils/shots';
 import type { Extraction, Bean } from '../../db/types';
 import s from './styles.module.css';
+
+const SORTS = ['dateDesc', 'dateAsc', 'ratingDesc', 'ratingAsc', 'timeDesc', 'timeAsc', 'ratioDesc', 'ratioAsc'] as const;
+type HistorySort = typeof SORTS[number];
 
 interface DateBucket {
   key: string;
@@ -19,41 +22,27 @@ interface DateBucket {
 function HistoryRow({ extraction, beans, onClick }: { extraction: Extraction; beans: readonly Bean[]; onClick: () => void }) {
   const { t } = useTranslation();
   const bean = beans.find(b => b.id === extraction.beanId);
-  const method = methodById(extraction.method);
-  const flagClass = extraction.flag === 'dialled' ? s.flagDialled
-    : extraction.flag === 'adjust' ? s.flagAdjust
-    : extraction.flag === 'fail' ? s.flagFail
-    : '';
 
   return (
-    <div
-      className={`${s.histRow} ${flagClass}`}
-      role="button"
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); onClick(); } }}
-    >
-      <div className={s.histDate}>
-        <span className={s.dateRel}>{fmtRelDate(extraction.createdAt)}</span>
-        <span className={s.dateMethod}>{method?.name ?? extraction.method}</span>
-      </div>
-      <div className={s.histMain}>
-        <div className={s.histBean}>{bean?.name ?? t('extraction.unknownBean')}</div>
-        <div className={s.histMetrics}>
-          <span>{extraction.dose}g → {extraction.yield}g</span>
-          <span className={s.metricSep}>·</span>
-          <span style={{ color: 'var(--accent)' }}>1:{extraction.ratio.toFixed(1)}</span>
-          <span className={s.metricSep}>·</span>
+    <button type="button" className={`ledger-row ${s.histRow}`} onClick={onClick}>
+      <span className={s.histNo}>{sampleNo(extraction.id)}</span>
+      <span className="ledger-main">
+        <span className={s.histMeta}>
+          <MethodBadge method={extraction.method} />
+          <span className={s.histDate}>{fmtRelDate(extraction.createdAt)}</span>
+        </span>
+        <span className="ledger-title">{bean?.name ?? t('extraction.unknownBean')}</span>
+        <span className={s.histMetrics}>
+          <span>{extraction.dose.toFixed(1)} → {extraction.yield.toFixed(1)} g</span>
+          <span>1:{extraction.ratio.toFixed(1)}</span>
           <span>{fmtTime(extraction.timeS)}</span>
-        </div>
-      </div>
-      <div className={s.histAside}>
-        <Stars value={extraction.rating} size={14} />
-        {extraction.flag === 'dialled' && <span className={`${s.histFlagTag} ${s.histFlagDialled}`}>✓ {t('history.flags.dialled')}</span>}
-        {extraction.flag === 'adjust'  && <span className={`${s.histFlagTag} ${s.histFlagAdjust}`}>! {t('history.flags.adjust')}</span>}
-        {extraction.flag === 'fail'    && <span className={`${s.histFlagTag} ${s.histFlagFail}`}>✗ {t('history.flags.fail')}</span>}
-      </div>
-    </div>
+        </span>
+      </span>
+      <span className="ledger-aside">
+        <FlagMark flag={extraction.flag} iconOnly size={16} />
+        <Stars value={extraction.rating} size={9} />
+      </span>
+    </button>
   );
 }
 
@@ -85,7 +74,7 @@ export function HistoryScreen() {
   const [flagFilter, setFlagFilter] = useState('all');
   const [ratingFilter, setRatingFilter] = useState(0);
 
-  const [sort, setSort] = useState<'dateDesc'|'dateAsc'|'ratingDesc'|'ratingAsc'|'timeDesc'|'timeAsc'|'ratioDesc'|'ratioAsc'>('dateDesc');
+  const [sort, setSort] = useState<HistorySort>('dateDesc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -146,7 +135,7 @@ export function HistoryScreen() {
   if (ratingFilter > 0) {
     activeFilters.push({
       id: 'rating',
-      label: `${t('extraction.fields.rating')}: ${ratingFilter}+ ★`,
+      label: t('common.minScore', { n: ratingFilter }),
       onRemove: () => handleRatingChange(0)
     });
   }
@@ -184,7 +173,7 @@ export function HistoryScreen() {
         { value: 0, label: t('history.filters.anyRating') },
         ...[3, 4, 5].map(r => ({
           value: r,
-          label: `${r}+ ★`
+          label: t('common.minScore', { n: r })
         }))
       ]
     }
@@ -197,34 +186,21 @@ export function HistoryScreen() {
         <p>{t('history.subtitle', { count: extractionsTotalCount })} · {t('history.shown', { count: totalCount })}</p>
       </div>
 
-      <div className="row row-gap-8 mb-4">
-        <div className="search-bar flex-1">
-          <Icon name="search" size={16} className="t-ter" />
-          <input placeholder={t('history.search')} value={inputQ} onChange={e => handleQChange(e.target.value)} />
-        </div>
-      </div>
-
-      <div className="row row-gap-8 mb-4" style={{ alignItems: 'center' }}>
-        <FilterBar activeFilters={activeFilters} categories={categories} />
-        <select
-          className="input-underline"
-          value={sort}
-          onChange={e => { setSort(e.target.value as typeof sort); setPage(1); }}
-          style={{ width: 'auto', padding: '6px 4px', fontSize: 12, color: 'var(--text-secondary)', flexShrink: 0 }}
-        >
-          <option value="dateDesc">{t('history.sorts.dateDesc')}</option>
-          <option value="dateAsc">{t('history.sorts.dateAsc')}</option>
-          <option value="ratingDesc">{t('history.sorts.ratingDesc')}</option>
-          <option value="ratingAsc">{t('history.sorts.ratingAsc')}</option>
-          <option value="timeDesc">{t('history.sorts.timeDesc')}</option>
-          <option value="timeAsc">{t('history.sorts.timeAsc')}</option>
-          <option value="ratioDesc">{t('history.sorts.ratioDesc')}</option>
-          <option value="ratioAsc">{t('history.sorts.ratioAsc')}</option>
-        </select>
-      </div>
+      <ListToolbar
+        query={inputQ}
+        onQuery={handleQChange}
+        placeholder={t('history.search')}
+        activeFilters={activeFilters}
+        categories={categories}
+        sort={sort}
+        onSort={v => { setSort(v); setPage(1); }}
+        sortOptions={SORTS.map(k => [k, t(`history.sorts.${k}`)] as const)}
+      />
 
       {extractions.length === 0
-        ? <Empty icon="history" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />
+        ? (extractionsTotalCount === 0
+          ? <Empty icon="history" title={t('home.noExtractions')} body={t('home.noExtractionsBody')} />
+          : <Empty icon="filter" title={t('history.nothingMatches')} body={t('history.loosenFilters')} />)
         : (
           <div className={s.histGroups}>
             {groups.map(g => (
