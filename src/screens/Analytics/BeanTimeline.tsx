@@ -73,8 +73,9 @@ export function BeanTimeline({ extractions, beans }: BeanTimelineProps) {
           <LineChart data={points} syncId={syncId} margin={MARGIN}>
             <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
             {xAxis(!hasGrind)}
+            {/* Whole seconds only: a 27.5 s tick would print as "00:27.5". */}
             <YAxis tick={TICK} tickLine={false} stroke="var(--border)" width={Y_WIDTH} domain={['auto', 'auto']}
-              tickFormatter={(v: number) => fmtTime(v)} />
+              allowDecimals={false} tickFormatter={(v: number) => fmtTime(Math.round(v))} />
             <Tooltip content={TimelineTooltip} cursor={{ stroke: 'var(--border)' }} />
             <Line dataKey="timeS" stroke="var(--accent)" strokeWidth={2}
               dot={{ r: 4, fill: 'var(--accent)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
