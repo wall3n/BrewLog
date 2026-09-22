@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, MethodBadge, Empty, Sheet } from '../../components/UI';
-import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { Button, BackBar, MethodBadge, Empty, Sheet, ShareActions } from '../../components/UI';
+import { fmtDate, fmtRelDate, fmtTime } from '../../utils/formatters';
+import { recipeCard } from '../../utils/shareCard';
+import { buildRecipeShareUrl, toSharedRecipe } from '../../utils/shareCodec';
 import { RecipeForm } from './RecipeForm';
 import type { Recipe } from '../../db/types';
 import s from './styles.module.css';
@@ -25,6 +27,11 @@ export function RecipeDetail() {
       else setR(recipe);
     });
   }, [id]);
+
+  const shareModel = useMemo(
+    () => (r ? recipeCard(toSharedRecipe(r), { t, time: fmtTime, date: fmtDate }) : null),
+    [r, t],
+  );
 
   if (notFound) return <div><BackBar onClick={() => navigate('/recipes')} label={t('recipes.backToRecipes')} /><Empty icon="recipe" title={t('recipes.notFound')} /></div>;
   if (!r) return null;
@@ -76,6 +83,11 @@ export function RecipeDetail() {
         {t('recipes.startBrew')}
       </Button>
       <div className={s.spacer12} />
+      <ShareActions
+        model={shareModel}
+        fileName={`brewlog-recipe-${r.id}.png`}
+        link={buildRecipeShareUrl(window.location.origin, toSharedRecipe(r))}
+      />
       <div className={s.actionRow}>
         <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
         <Button variant="danger" leftIcon="trash" onClick={async () => {

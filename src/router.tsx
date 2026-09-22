@@ -8,6 +8,7 @@ import { BeansScreen } from './screens/Beans/BeansScreen';
 import { BeanDetail } from './screens/Beans/BeanDetail';
 import { RecipesScreen } from './screens/Recipes/RecipesScreen';
 import { RecipeDetail } from './screens/Recipes/RecipeDetail';
+import { RecipeImport } from './screens/Recipes/RecipeImport';
 import { EquipmentScreen } from './screens/Equipment/EquipmentScreen';
 import { AnalyticsScreen } from './screens/Analytics/AnalyticsScreen';
 import { SettingsScreen } from './screens/Settings/SettingsScreen';
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       { path: 'beans', element: <BeansScreen /> },
       { path: 'beans/:id', element: <BeanDetail /> },
       { path: 'recipes', element: <RecipesScreen /> },
+      { path: 'recipes/import', element: <RecipeImport /> },
       { path: 'recipes/:id', element: <RecipeDetail /> },
       { path: 'equipment', element: <EquipmentScreen /> },
       { path: 'analytics', element: <AnalyticsScreen /> },

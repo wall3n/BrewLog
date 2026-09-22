@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Button, StagList, Empty, MethodBadge, Sheet, Pagination, FilterBar } from '../../components/UI';
+import { Button, StagList, Empty, MethodBadge, Sheet, Pagination, FilterBar, Field, Input } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { METHODS } from '../../utils/methodDefaults';
+import { decodeRecipe, readPayloadFromText, IMPORT_PATH } from '../../utils/shareCodec';
 import { RecipeForm } from './RecipeForm';
 import type { Recipe } from '../../db/types';
 import s from './styles.module.css';
@@ -18,6 +19,9 @@ export function RecipesScreen() {
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [creating, setCreating] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [importText, setImportText] = useState('');
+  const [importError, setImportError] = useState(false);
   const [method, setMethod] = useState('all');
   const [inputQ, setInputQ] = useState('');
   const q = useDebounce(inputQ, 500);
@@ -88,6 +92,19 @@ export function RecipesScreen() {
     }
   ];
 
+  const openImport = (): void => {
+    const payload = readPayloadFromText(importText);
+    if (!payload || !decodeRecipe(payload)) { setImportError(true); return; }
+    setImporting(false);
+    setImportText('');
+    navigate(`${IMPORT_PATH}#r=${payload}`);
+  };
+
+  const closeImport = (): void => {
+    setImporting(false);
+    setImportError(false);
+  };
+
   return (
     <div>
       <div className={`row row-between ${s.pageRow}`}>
@@ -98,9 +115,12 @@ export function RecipesScreen() {
             {(method !== 'all' || q) && ` · ${t('recipes.shown', { count: totalCount })}`}
           </p>
         </div>
-        <Button variant="primary" leftIcon="plus" onClick={() => setCreating(true)}>
-          {t('recipes.new')}
-        </Button>
+        <div className={s.headActions}>
+          <Button variant="ghost" leftIcon="download" onClick={() => setImporting(true)}>{t('share.import.open')}</Button>
+          <Button variant="primary" leftIcon="plus" onClick={() => setCreating(true)}>
+            {t('recipes.new')}
+          </Button>
+        </div>
       </div>
 
       <div className="row row-gap-8 mb-4">
@@ -181,6 +201,19 @@ export function RecipesScreen() {
 
       <Sheet open={creating} onClose={() => setCreating(false)} title={t('recipes.new')}>
         <RecipeForm onSave={handleSave} />
+      </Sheet>
+
+      <Sheet open={importing} onClose={closeImport} title={t('share.import.title')}>
+        <form className={s.importForm} noValidate onSubmit={e => { e.preventDefault(); openImport(); }}>
+          <Field label={t('share.import.pasteLabel')}>
+            <Input value={importText} placeholder={t('share.import.paste')}
+              inputMode="url" autoCapitalize="off" autoCorrect="off" spellCheck={false} enterKeyHint="go"
+              aria-invalid={importError} aria-describedby={importError ? 'recipe-import-error' : undefined}
+              onChange={e => { setImportText(e.target.value); setImportError(false); }} />
+          </Field>
+          {importError && <p id="recipe-import-error" className={s.importError} role="alert">{t('share.import.invalid')}</p>}
+          <Button type="submit" full size="lg" disabled={!importText.trim()}>{t('share.import.go')}</Button>
+        </form>
       </Sheet>
     </div>
   );

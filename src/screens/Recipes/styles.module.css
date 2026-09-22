@@ -14,3 +14,10 @@
 .spacer12     { height: 12px; }
 .actionRow    { display: flex; gap: 12px; }
 
+
+/* Recipe import (link preview + paste sheet) */
+.importError  { margin: 12px 0 0; font-size: 12px; line-height: 1.5; color: var(--danger); }
+.importForm   { display: flex; flex-direction: column; gap: 16px; }
+.importForm .importError { margin: 0; }
+.headActions  { display: flex; gap: 8px; flex-wrap: wrap; }
+.pageRow      { flex-wrap: wrap; row-gap: 16px; column-gap: 12px; }

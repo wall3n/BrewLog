@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, Stars, Tag, MethodBadge, Empty } from '../../components/UI';
-import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { Button, BackBar, Stars, Tag, MethodBadge, Empty, ShareActions } from '../../components/UI';
+import { fmtDate, fmtRelDate, fmtTime } from '../../utils/formatters';
+import { extractionCard } from '../../utils/shareCard';
 import type { Extraction, Bean, Equipment } from '../../db/types';
 import s from './styles.module.css';
 
@@ -70,6 +71,11 @@ export function ExtractionDetail() {
     }
     load();
   }, [id]);
+
+  const shareModel = useMemo(
+    () => (ext ? extractionCard(ext, bean, { t, time: fmtTime, date: fmtDate }) : null),
+    [ext, bean, t],
+  );
 
   if (notFound) return <div><BackBar onClick={() => navigate('/history')} label={t('extraction.backToHistory')} /><Empty icon="flask" title={t('extraction.notFound')} /></div>;
   if (!ext) return null;
@@ -143,6 +149,8 @@ export function ExtractionDetail() {
           </div>
         </div>
       )}
+
+      <ShareActions model={shareModel} fileName={`brewlog-${ext.id}.png`} />
 
       <div className={`row row-gap-12 ${s.actionRow}`}>
         <Button variant="ghost" full leftIcon="edit" onClick={() => navigate('/log', { state: { ...ext, isEditing: true } })}>{t('common.edit')}</Button>
