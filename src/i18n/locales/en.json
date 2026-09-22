@@ -517,7 +517,11 @@
       "eyAxis": "Extraction yield",
       "tooltip": "EY {{ey}}% · TDS {{tds}}%",
       "empty": "Log a filter brew with a TDS reading to see it here.",
-      "note": "Filter brews only. The shaded box is the SCA ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds."
+      "note": "Filter brews only. The shaded box is the SCA ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds.",
+      "tdsAxis": "TDS",
+      "summary_one": "{{ideal}} of {{count}} brew in the ideal zone",
+      "summary_other": "{{ideal}} of {{count}} brews in the ideal zone",
+      "hint": "Tap a dot to open the brew."
     },
     "zones": {
       "ideal": "Ideal",
@@ -534,14 +538,24 @@
       "negative": "Lower {{param}} gave better ratings.",
       "weak": "No parameter has a clear link to your rating yet.",
       "sample": "Based on {{n}} rated brews",
-      "params": { "dose": "Dose", "ratio": "Ratio", "timeS": "Time", "temp": "Temperature", "grind": "Grind" }
+      "params": {
+        "dose": "Dose",
+        "ratio": "Ratio",
+        "timeS": "Time",
+        "temp": "Temperature",
+        "grind": "Grind"
+      },
+      "lowerBetter": "Lower is better",
+      "higherBetter": "Higher is better"
     },
     "timeline": {
       "title": "Dial-in timeline",
       "empty": "Log 2 or more brews of one bean to see its timeline.",
       "time": "Time",
       "grind": "Grind",
-      "brew": "Brew {{n}}"
+      "brew": "Brew {{n}}",
+      "beanLabel": "Bean",
+      "brewAxis": "Brew number"
     }
   }
 }
