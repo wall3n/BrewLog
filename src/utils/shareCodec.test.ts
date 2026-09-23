@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   encodeRecipe, decodeRecipe, toSharedRecipe, buildRecipeShareUrl, readPayloadFromText,
-  shareProblems, MAX_PAYLOAD_CHARS, MAX_STAGES, SHARE_LIMITS, type SharedRecipe,
+  shareProblems, MAX_PAYLOAD_CHARS, MAX_STAGES, MAX_GRIND_LENGTH, SHARE_LIMITS, type SharedRecipe,
 } from './shareCodec';
 import type { Recipe } from '../db/types';
 
@@ -61,7 +61,30 @@ describe('encodeRecipe / decodeRecipe', () => {
   });
 });
 
+describe('grind setting', () => {
+  it('round-trips a grind setting and trims it', () => {
+    expect(decodeRecipe(encodeRecipe({ ...recipe, grindSetting: '18' }))).toEqual({ ...recipe, grindSetting: '18' });
+    expect(decodeRecipe(encodeRecipe({ ...recipe, grindSetting: '  2.5 rot  ' }))?.grindSetting).toBe('2.5 rot');
+  });
+
+  it('drops an empty or wrong-type grind setting', () => {
+    expect(decodeRecipe(encodeRecipe({ ...recipe, grindSetting: '   ' }))).toEqual(recipe);
+    expect(decodeRecipe(b64url(JSON.stringify({ v: 1, r: { ...recipe, grindSetting: 18 } })))).toEqual(recipe);
+  });
+
+  it('flags a grind setting that is too long', () => {
+    expect(shareProblems({ ...recipe, grindSetting: 'x'.repeat(MAX_GRIND_LENGTH + 1) })).toEqual([{ field: 'grind' }]);
+    expect(shareProblems({ ...recipe, grindSetting: 'x'.repeat(MAX_GRIND_LENGTH) })).toEqual([]);
+  });
+});
+
 describe('toSharedRecipe', () => {
+  it('keeps the grind setting', () => {
+    const full: Recipe = { ...recipe, grindSetting: '12', createdAt: 'a', updatedAt: 'b' };
+    expect(toSharedRecipe(full)).toEqual({ ...recipe, grindSetting: '12' });
+  });
+
+
   it('drops the database fields', () => {
     const full: Recipe = { ...recipe, id: 9, lastUsedAt: '2026-09-01T00:00:00.000Z', createdAt: 'a', updatedAt: 'b' };
     expect(toSharedRecipe(full)).toEqual(recipe);

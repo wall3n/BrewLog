@@ -543,7 +543,8 @@
       "yield": "Rendement",
       "ratio": "Ratio",
       "time": "Temps",
-      "temp": "Temp"
+      "temp": "Temp",
+      "grind": "Mouture"
     },
     "form": {
       "name": "Nom de la recette",
@@ -575,7 +576,8 @@
         "stageTime": "Versement {{number}} : saisissez le temps au format m:ss.",
         "stageWeight": "Versement {{number}} : saisissez un poids de {{min}} à {{max}} g.",
         "payload": "Cette recette est trop longue pour être partagée par lien. Raccourcissez le nom ou les libellés des versements.",
-        "summary": "Corrigez les champs signalés pour enregistrer."
+        "summary": "Corrigez les champs signalés pour enregistrer.",
+        "grind": "Utilisez {{max}} caractères maximum pour la mouture."
       },
       "maxPours": "{{max}} versements au maximum."
     },

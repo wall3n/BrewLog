@@ -543,7 +543,8 @@
       "yield": "Yield",
       "ratio": "Ratio",
       "time": "Time",
-      "temp": "Temp"
+      "temp": "Temp",
+      "grind": "Grind"
     },
     "form": {
       "name": "Recipe name",
@@ -575,7 +576,8 @@
         "stageTime": "Pour {{number}}: enter a time as m:ss.",
         "stageWeight": "Pour {{number}}: enter a weight from {{min}} to {{max}} g.",
         "payload": "This recipe is too long to share as a link. Shorten the name or the pour labels.",
-        "summary": "Fix the marked fields to save."
+        "summary": "Fix the marked fields to save.",
+        "grind": "Use {{max}} characters or fewer for the grind setting."
       },
       "maxPours": "{{max}} pours max."
     },

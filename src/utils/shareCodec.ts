@@ -8,6 +8,7 @@ export const MAX_PAYLOAD_CHARS = 4000;
 export const MAX_NAME_LENGTH = 80;
 export const MAX_LABEL_LENGTH = 40;
 export const MAX_STAGES = 20;
+export const MAX_GRIND_LENGTH = 20;
 
 // Inclusive [min, max] for each number a link can carry. The decoder and shareProblems both read these.
 export const SHARE_LIMITS = {
@@ -23,7 +24,7 @@ export const SHARE_LIMITS = {
 type LimitKey = keyof typeof SHARE_LIMITS;
 
 export type ShareProblemField =
-  | 'name' | 'method' | 'ratio' | 'dose' | 'yield' | 'temp' | 'time'
+  | 'name' | 'method' | 'grind' | 'ratio' | 'dose' | 'yield' | 'temp' | 'time'
   | 'stages' | 'stageLabel' | 'stageTime' | 'stageWeight' | 'payload';
 
 // `stage` is the 0-based index of the stage, for stage fields only.
@@ -32,12 +33,13 @@ export interface ShareProblem {
   stage?: number;
 }
 
-export type SharedRecipe = Pick<Recipe, 'name' | 'method' | 'ratio' | 'dose' | 'yield' | 'temp' | 'time' | 'stages'>;
+export type SharedRecipe = Pick<Recipe, 'name' | 'method' | 'ratio' | 'dose' | 'yield' | 'temp' | 'time' | 'stages' | 'grindSetting'>;
 
 export function toSharedRecipe(r: Recipe): SharedRecipe {
   return {
     name: r.name, method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, temp: r.temp, time: r.time,
     stages: r.stages.map(s => ({ id: s.id, label: s.label, timeS: s.timeS, weightG: s.weightG })),
+    ...(r.grindSetting ? { grindSetting: r.grindSetting } : {}),
   };
 }
 
@@ -76,6 +78,7 @@ export function shareProblems(recipe: SharedRecipe): readonly ShareProblem[] {
   const name = recipe.name.trim();
   if (!name || name.length > MAX_NAME_LENGTH) problems.push({ field: 'name' });
   if (!isKnownMethod(recipe.method)) problems.push({ field: 'method' });
+  if ((recipe.grindSetting ?? '').trim().length > MAX_GRIND_LENGTH) problems.push({ field: 'grind' });
   const fields = ['ratio', 'dose', 'yield', 'temp', 'time'] as const;
   for (const field of fields) {
     if (num(recipe[field], field) === null) problems.push({ field });
@@ -112,7 +115,8 @@ function parseRecipe(v: unknown): SharedRecipe | null {
     if (timeS === null || weightG === null) return null;
     stages.push({ id: `s${i + 1}`, label: s.label.trim().slice(0, MAX_LABEL_LENGTH), timeS, weightG });
   }
-  return { name, method, ratio, dose, yield: yieldG, temp, time, stages };
+  const grindSetting = typeof r.grindSetting === 'string' ? r.grindSetting.trim().slice(0, MAX_GRIND_LENGTH) : '';
+  return { name, method, ratio, dose, yield: yieldG, temp, time, stages, ...(grindSetting ? { grindSetting } : {}) };
 }
 
 export function decodeRecipe(payload: string): SharedRecipe | null {

@@ -1,11 +1,11 @@
 import { Fragment, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Field, Input, Stepper, Tag } from '../../components/UI';
+import { Button, Field, GrindField, Input, Stepper, Tag } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { METHODS, methodById } from '../../utils/methodDefaults';
 import { fmtTime } from '../../utils/formatters';
 import {
-  shareProblems, MAX_LABEL_LENGTH, MAX_NAME_LENGTH, MAX_STAGES, SHARE_LIMITS,
+  shareProblems, MAX_GRIND_LENGTH, MAX_LABEL_LENGTH, MAX_NAME_LENGTH, MAX_STAGES, SHARE_LIMITS,
   type ShareProblem, type SharedRecipe,
 } from '../../utils/shareCodec';
 import type { Recipe, PourStage } from '../../db/types';
@@ -47,16 +47,19 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
   const [temp, setTemp] = useState(initial.temp ?? 93);
   const [timeS, setTimeS] = useState(initial.time ?? 28);
   const [stages, setStages] = useState<PourStage[]>(initial.stages ?? []);
+  const [grindSetting, setGrindSetting] = useState(initial.grindSetting ?? '');
 
   const isEspresso = method === 'espresso' || method === 'moka-pot';
   const yieldG = Math.round(dose * ratio * 10) / 10;
   const savedName = name.trim() || t('recipes.form.defaultName', { method: t(`methods.${method}`) });
   const savedStages = isEspresso ? [] : stages;
+  const savedGrind = grindSetting.trim();
   const idBase = useId();
 
   // Only save what a share link can carry, so every saved recipe can be shared.
   const candidate: SharedRecipe = {
     name: savedName, method, dose, ratio, yield: yieldG, temp, time: timeS, stages: savedStages,
+    ...(savedGrind ? { grindSetting: savedGrind } : {}),
   };
   const problems = shareProblems(candidate);
   const atStageLimit = stages.length >= MAX_STAGES;
@@ -69,6 +72,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
       case 'payload': return t('recipes.form.errors.payload');
       case 'method': return t('recipes.form.errors.method');
       case 'time': return t('recipes.form.errors.time');
+      case 'grind': return t('recipes.form.errors.grind', { max: MAX_GRIND_LENGTH });
       default: {
         const [min, max] = SHARE_LIMITS[field];
         return t(`recipes.form.errors.${field}`, { min, max });
@@ -98,6 +102,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
     ratio: fieldError('ratio'),
     time: fieldError('time'),
     temp: fieldError('temp'),
+    grind: fieldError('grind'),
     stages: fieldError('stages'),
     payload: fieldError('payload'),
   };
@@ -144,6 +149,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
       temp,
       time: timeS,
       stages: savedStages,
+      grindSetting: savedGrind || undefined,
       lastUsedAt: undefined,
     });
   }
@@ -198,7 +204,9 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
           label={t('recipes.form.brewTime')} value={timeS} onChange={setTimeS} step={isEspresso ? 1 : 5} decimals={0} unit="s"
           min={SHARE_LIMITS.time[0]} max={SHARE_LIMITS.time[1]} hint={fmtTime(timeS)} size="md" error={errors.time}
         />
+        <GrindField value={grindSetting} onChange={setGrindSetting} />
       </div>
+      {errors.grind && <p className={s.fieldError}>{errors.grind}</p>}
 
       {!isEspresso && (
         <Field label={t('recipes.form.pourSchedule')} hint={t('recipes.form.pourScheduleHint')}>

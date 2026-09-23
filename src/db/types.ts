@@ -42,6 +42,7 @@ export interface Recipe {
   temp: number;
   time: number;
   stages: PourStage[];
+  grindSetting?: string;
   lastUsedAt?: string;
   createdAt: string;
   updatedAt: string;

@@ -543,7 +543,8 @@
       "yield": "Rendimiento",
       "ratio": "Ratio",
       "time": "Tiempo",
-      "temp": "Temp"
+      "temp": "Temp",
+      "grind": "Molienda"
     },
     "form": {
       "name": "Nombre de la receta",
@@ -575,7 +576,8 @@
         "stageTime": "Vertido {{number}}: introduce el tiempo como m:ss.",
         "stageWeight": "Vertido {{number}}: introduce un peso de {{min}} a {{max}} g.",
         "payload": "Esta receta es demasiado larga para compartirla como enlace. Acorta el nombre o las etiquetas de los vertidos.",
-        "summary": "Corrige los campos marcados para guardar."
+        "summary": "Corrige los campos marcados para guardar.",
+        "grind": "Usa {{max}} caracteres o menos para la molienda."
       },
       "maxPours": "Máximo {{max}} vertidos."
     },
