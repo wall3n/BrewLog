@@ -400,7 +400,6 @@
       "roaster": "Roaster",
       "process": "Process",
       "roastLevel": "Roast level",
-      "daysSinceRoast": "Days since roast",
       "roastedAt": "Roast date",
       "origin": "Origin",
       "weight": "Weight remaining",
@@ -466,7 +465,14 @@
     "saveName": "Untitled bean",
     "saveBeanBtn": "Save bean",
     "daysUnit": "d",
-    "specSheet": "Spec sheet"
+    "specSheet": "Spec sheet",
+    "roastDate": {
+      "days_one": "{{count}} day off roast",
+      "days_other": "{{count}} days off roast",
+      "today": "Roasted today",
+      "future": "This date is after today.",
+      "empty": "Use the date on the bag"
+    }
   },
   "equipment": {
     "title": "Equipment",

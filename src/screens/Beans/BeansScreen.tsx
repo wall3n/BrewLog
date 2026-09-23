@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Button, Sheet, Empty, RoastDot, Field, Input, Stepper, Pagination, ListToolbar, StockMeter, FreshnessBadge } from '../../components/UI';
+import { Button, Sheet, Empty, RoastDot, Field, Input, RoastDateField, Pagination, ListToolbar, StockMeter, FreshnessBadge } from '../../components/UI';
 import { useApp } from '../../context/AppContext';
 import { beanStockView, type BeanUsage } from '../../utils/beanStock';
+import { daysOffRoast, fromDateInputValue } from '../../utils/roastDate';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
@@ -44,7 +45,8 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
   const [roaster, setRoaster] = useState('');
   const [process, setProcess] = useState('Washed');
   const [roast, setRoast] = useState<'light'|'medium'|'dark'>('light');
-  const [days, setDays] = useState(7);
+  const [roastedAt, setRoastedAt] = useState('');
+  const roastFuture = (daysOffRoast(roastedAt, new Date()) ?? 0) < 0;
 
   return (
     <div className="col col-gap-16">
@@ -72,11 +74,10 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
           </div>
         </Field>
       </div>
-      <Stepper label={t('beans.fields.daysSinceRoast')} value={days} onChange={setDays} step={1} decimals={0} max={365} unit={t('beans.daysUnit')} size="md" />
+      <RoastDateField value={roastedAt} onChange={setRoastedAt} />
       <Button full size="lg" onClick={() => {
-        const d = new Date(); d.setDate(d.getDate() - days);
-        onSave({ name: name || t('beans.saveName'), roaster, process, roast, roastedAt: d.toISOString(), status: 'active' });
-      }} disabled={!name}>{t('beans.saveBeanBtn')}</Button>
+        onSave({ name: name || t('beans.saveName'), roaster, process, roast, roastedAt: fromDateInputValue(roastedAt), status: 'active' });
+      }} disabled={!name || roastFuture}>{t('beans.saveBeanBtn')}</Button>
     </div>
   );
 }

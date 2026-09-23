@@ -400,7 +400,6 @@
       "roaster": "Tostador",
       "process": "Proceso",
       "roastLevel": "Nivel de tueste",
-      "daysSinceRoast": "Días desde el tueste",
       "roastedAt": "Fecha de tueste",
       "origin": "Origen",
       "weight": "Peso restante",
@@ -466,7 +465,14 @@
     "saveName": "Café sin nombre",
     "saveBeanBtn": "Guardar café",
     "daysUnit": "d",
-    "specSheet": "Ficha técnica"
+    "specSheet": "Ficha técnica",
+    "roastDate": {
+      "days_one": "{{count}} día desde el tueste",
+      "days_other": "{{count}} días desde el tueste",
+      "today": "Tostado hoy",
+      "future": "Esta fecha es posterior a hoy.",
+      "empty": "Usa la fecha de la bolsa"
+    }
   },
   "equipment": {
     "title": "Equipo",

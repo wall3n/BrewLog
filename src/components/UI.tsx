@@ -1,5 +1,6 @@
 export { Button } from './Button';
 export { Field, Input, Textarea } from './Input';
+export { RoastDateField } from './RoastDateField';
 export { Slider } from './Slider';
 export { Tag } from './Tag';
 export { Sheet } from './Modal';

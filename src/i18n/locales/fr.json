@@ -400,7 +400,6 @@
       "roaster": "Torréfacteur",
       "process": "Traitement",
       "roastLevel": "Niveau de torréfaction",
-      "daysSinceRoast": "Jours depuis la torréfaction",
       "roastedAt": "Date de torréfaction",
       "origin": "Origine",
       "weight": "Poids restant",
@@ -466,7 +465,14 @@
     "saveName": "Café sans nom",
     "saveBeanBtn": "Enregistrer le café",
     "daysUnit": "j",
-    "specSheet": "Fiche technique"
+    "specSheet": "Fiche technique",
+    "roastDate": {
+      "days_one": "{{count}} jour depuis la torréfaction",
+      "days_other": "{{count}} jours depuis la torréfaction",
+      "today": "Torréfié aujourd’hui",
+      "future": "Cette date est après aujourd’hui.",
+      "empty": "Utilisez la date du sachet"
+    }
   },
   "equipment": {
     "title": "Matériel",
