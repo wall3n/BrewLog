@@ -2,7 +2,7 @@
 
 > A local-first PWA for coffee extraction tracking — log every shot and brew, track beans, build recipes, and analyse your dialling-in history. No account, no server, no cloud.
 
-[![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.4.0-orange.svg)](CHANGELOG.md)
 ![Status](https://img.shields.io/badge/status-active%20development-green)
 ![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?logo=typescript&logoColor=white)
