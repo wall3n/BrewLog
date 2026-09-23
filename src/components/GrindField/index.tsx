@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { Icon } from '../../../components/Icons';
-import { grindStep } from '../../../utils/shots';
-import stepper from '../../../components/Stepper/styles.module.css';
+import { Icon } from '../Icons';
+import { grindStep } from '../../utils/shots';
+import stepper from '../Stepper/styles.module.css';
 
-interface GrindFieldProps { value: string; previous?: string | null; onChange: (v: string) => void; }
+export interface GrindFieldProps { value: string; previous?: string | null; onChange: (v: string) => void; }
 
 /** Grind is free text (clicks, dial numbers, rotations). −/+ work when the value is numeric. */
 export function GrindField({ value, previous, onChange }: GrindFieldProps) {
