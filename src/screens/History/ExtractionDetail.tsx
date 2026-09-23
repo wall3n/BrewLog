@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, Stars, MethodBadge, Empty, FlagMark } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { sampleNo, nextShotFrom } from '../../utils/shots';
 import { brewEY } from '../../utils/scaChart';
-import type { Extraction, Bean, Equipment } from '../../db/types';
+import type { Extraction, Bean, Equipment, Recipe } from '../../db/types';
 import s from './styles.module.css';
 
 const ATTRIBUTE_KEYS = ['acidity', 'sweetness', 'bitterness', 'body', 'balance'] as const;
@@ -22,6 +22,7 @@ export function ExtractionDetail() {
   const [ext, setExt] = useState<Extraction | null>(null);
   const [bean, setBean] = useState<Bean | undefined>(undefined);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
+  const [recipe, setRecipe] = useState<Recipe | undefined>(undefined);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
@@ -29,12 +30,14 @@ export function ExtractionDetail() {
       const extraction = await db.getExtraction(Number(id));
       if (!extraction) { setNotFound(true); return; }
       setExt(extraction);
-      const [b, allEq] = await Promise.all([
+      const [b, allEq, rcp] = await Promise.all([
         extraction.beanId ? db.getBean(extraction.beanId) : Promise.resolve(undefined),
         db.getAllEquipment(),
+        extraction.recipeId != null ? db.getRecipe(extraction.recipeId) : Promise.resolve(undefined),
       ]);
       setBean(b);
       setEquipment(allEq.filter(e => (extraction.equipmentIds ?? []).includes(e.id!)));
+      setRecipe(rcp);
     }
     load();
   }, [id]);
@@ -67,6 +70,12 @@ export function ExtractionDetail() {
           <div><dt>{t('home.trail.no')}</dt><dd>{sampleNo(ext.id)}</dd></div>
           <div><dt>{t('sheet.method')}</dt><dd><MethodBadge method={ext.method} /></dd></div>
           <div><dt>{t('home.logged')}</dt><dd>{fmtRelDate(ext.createdAt)}</dd></div>
+          {recipe?.id != null && (
+            <div className={s.recipeCell}>
+              <dt>{t('guidedBrew.recipe')}</dt>
+              <dd><Link to={`/recipes/${recipe.id}`} className={s.recipeLink}><span className={s.recipeName}>{recipe.name}</span></Link></dd>
+            </div>
+          )}
           <div className="field-row-end"><dt className="sr-only">{t('extraction.steps.tasting.outcome')}</dt><dd><FlagMark flag={ext.flag} stamp /></dd></div>
         </dl>
       </header>

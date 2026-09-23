@@ -348,6 +348,24 @@
     "unknownBean": "Unknown bean",
     "equipmentSection": "Equipment"
   },
+  "guidedBrew": {
+    "open": "Guided brew",
+    "title": "Guided brew",
+    "close": "Close guided brew",
+    "now": "Now",
+    "ready": "Press start",
+    "getReady": "Get ready",
+    "pourTo": "Pour to {{weight}} g",
+    "nextIn": "{{label}} in {{time}}",
+    "finalStage": "Last pour. Wait for the drawdown.",
+    "done": "Done · use {{time}}",
+    "stages": "Pour stages",
+    "recipe": "Recipe",
+    "noRecipe": "No recipe",
+    "savedRecipe": "Saved recipe",
+    "summary_one": "{{count}} pour · {{time}}",
+    "summary_other": "{{count}} pours · {{time}}"
+  },
   "beans": {
     "title": "Beans",
     "total": "{{count}} total",

@@ -46,3 +46,18 @@
 .actionRow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
 .actionRow > :first-child { grid-column: 1 / -1; }
 .fieldRow { margin-top: 14px; margin-bottom: 0; }
+
+/* Recipe the shot was brewed with: a field-row cell with an ink link */
+.recipeCell { min-width: 0; max-width: 100%; }
+.recipeCell dd { min-width: 0; }
+.recipeLink {
+  position: relative; display: inline-flex; max-width: 22ch;
+  font-weight: 600; color: var(--accent); text-decoration: none;
+}
+.recipeName {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-decoration: underline; text-decoration-color: var(--accent-dim); text-decoration-thickness: 1px; text-underline-offset: 3px;
+}
+/* Extend the tap area to 44px without moving the ruled row. */
+.recipeLink::after { content: ''; position: absolute; inset: -14px -8px; }
+@media (hover: hover) { .recipeLink:hover .recipeName { text-decoration-color: var(--accent); } }

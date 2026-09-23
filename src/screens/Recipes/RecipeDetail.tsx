@@ -69,7 +69,7 @@ export function RecipeDetail() {
       )}
 
       <div className={s.actionRow}>
-        <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp } })}>
+        <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp, recipeId: r.id } })}>
           {t('recipes.startBrew')}
         </Button>
         <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
