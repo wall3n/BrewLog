@@ -25,6 +25,16 @@ export interface Equipment {
   updatedAt: string;
 }
 
+// A brewing water: a bottled brand or a home mineral recipe.
+export interface Water {
+  id?: number;
+  brand: string;
+  tdsPpm?: number;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PourStage {
   id: string;
   label: string;
@@ -43,6 +53,7 @@ export interface Recipe {
   time: number;
   stages: PourStage[];
   grindSetting?: string;
+  waterId?: number;          // Not indexed, so no index change on recipes.
   lastUsedAt?: string;
   createdAt: string;
   updatedAt: string;

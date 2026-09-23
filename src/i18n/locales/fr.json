@@ -711,5 +711,22 @@
     "noBeansMatch": "Aucun café ne correspond.",
     "localOnly": "Stocké sur cet appareil",
     "needOutcome": "Indiquez le résultat pour enregistrer"
+  },
+  "water": {
+    "label": "Eau",
+    "hint": "Facultatif · la marque en bouteille ou la recette minérale de cette préparation",
+    "none": "N'importe quelle eau",
+    "add": "Ajouter une eau",
+    "brand": "Marque ou recette",
+    "brandPlaceholder": "ex. Volvic, Third Wave Water",
+    "tds": "TDS (ppm)",
+    "tdsPlaceholder": "Facultatif",
+    "save": "Ajouter l'eau",
+    "ppm": "{{value}} ppm",
+    "errors": {
+      "duplicate": "Cette eau est déjà dans la liste.",
+      "tds": "Saisissez un TDS de {{min}} à {{max}} ppm.",
+      "save": "L'eau n'a pas été enregistrée. Réessayez."
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { db } from '../db/schema';
 import { useApp } from '../context/AppContext';
-import type { Bean, Equipment, Recipe, Extraction, AppSettings } from '../db/types';
+import type { Bean, Equipment, Recipe, Extraction, AppSettings, Water } from '../db/types';
 import { planStock, summariseUsage, type StockBrew, type BeanUsage } from '../utils/beanStock';
 
 const now = () => new Date().toISOString();
@@ -61,6 +61,9 @@ export function useDb() {
     },
     async getRecipe(id: number): Promise<Recipe | undefined> {
       return db.recipes.get(id);
+    },
+    async getAllWaters(): Promise<Water[]> {
+      return db.waters.orderBy('brand').toArray();
     },
 
     // ── Paginated Queries ─────────────────────────────────────────
@@ -361,6 +364,13 @@ export function useDb() {
       await db.recipes.delete(id);
     },
 
+    // ── Waters ────────────────────────────────────────────────────
+    async addWater(data: Omit<Water, 'id' | 'createdAt' | 'updatedAt'>): Promise<Water> {
+      const ts = now();
+      const id = await db.waters.add({ ...data, createdAt: ts, updatedAt: ts });
+      return { ...data, id, createdAt: ts, updatedAt: ts };
+    },
+
     // ── Settings ──────────────────────────────────────────────────
     async updateSettings(data: Partial<AppSettings>): Promise<void> {
       const ts = now();
@@ -376,14 +386,15 @@ export function useDb() {
 
     // ── Export / Import ───────────────────────────────────────────
     async exportAll() {
-      const [beans, equipment, recipes, extractions, settings] = await Promise.all([
+      const [beans, equipment, recipes, extractions, settings, waters] = await Promise.all([
         db.beans.toArray(),
         db.equipment.toArray(),
         db.recipes.toArray(),
         db.extractions.toArray(),
         db.settings.toArray(),
+        db.waters.toArray(),
       ]);
-      return { beans, equipment, recipes, extractions, settings };
+      return { beans, equipment, recipes, extractions, settings, waters };
     },
 
     async importAll(data: {
@@ -391,11 +402,13 @@ export function useDb() {
       equipment?: Equipment[];
       recipes?: Recipe[];
       extractions?: Extraction[];
+      waters?: Water[];
     }): Promise<void> {
       await db.beans.clear();       await db.beans.bulkAdd(data.beans ?? []);
       await db.equipment.clear();   await db.equipment.bulkAdd(data.equipment ?? []);
       await db.recipes.clear();     await db.recipes.bulkAdd(data.recipes ?? []);
       await db.extractions.clear(); await db.extractions.bulkAdd(data.extractions ?? []);
+      await db.waters.clear();      await db.waters.bulkAdd(data.waters ?? []);
     },
 
     async clearAll(): Promise<void> {
@@ -403,6 +416,7 @@ export function useDb() {
       await db.equipment.clear();
       await db.recipes.clear();
       await db.extractions.clear();
+      await db.waters.clear();
       await db.settings.clear();
     },
   };

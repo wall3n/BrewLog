@@ -1,6 +1,8 @@
-import { Fragment, useId, useState } from 'react';
+import { Fragment, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Field, GrindField, Input, Stepper, Tag } from '../../components/UI';
+import { Button, Field, GrindField, Input, Stepper, Tag, WaterPicker } from '../../components/UI';
+import type { NewWater } from '../../components/WaterPicker';
+import { useDb } from '../../hooks/useDb';
 import { Icon } from '../../components/Icons';
 import { METHODS, methodById } from '../../utils/methodDefaults';
 import { fmtTime } from '../../utils/formatters';
@@ -8,7 +10,7 @@ import {
   shareProblems, MAX_GRIND_LENGTH, MAX_LABEL_LENGTH, MAX_NAME_LENGTH, MAX_STAGES, SHARE_LIMITS,
   type ShareProblem, type SharedRecipe,
 } from '../../utils/shareCodec';
-import type { Recipe, PourStage } from '../../db/types';
+import type { Recipe, PourStage, Water } from '../../db/types';
 import s from './styles.module.css';
 
 function parseTime(val: string): number | null {
@@ -39,6 +41,7 @@ interface RecipeFormProps {
 
 export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
   const { t } = useTranslation();
+  const db = useDb();
 
   const [name, setName] = useState(initial.name ?? '');
   const [method, setMethod] = useState(initial.method ?? 'espresso');
@@ -48,6 +51,18 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
   const [timeS, setTimeS] = useState(initial.time ?? 28);
   const [stages, setStages] = useState<PourStage[]>(initial.stages ?? []);
   const [grindSetting, setGrindSetting] = useState(initial.grindSetting ?? '');
+  const [waterId, setWaterId] = useState<number | null>(initial.waterId ?? null);
+  const [waters, setWaters] = useState<readonly Water[]>([]);
+
+  useEffect(() => {
+    db.getAllWaters().then(setWaters).catch(() => setWaters([]));
+  }, []);
+
+  async function addWater(water: NewWater): Promise<void> {
+    const saved = await db.addWater(water);
+    setWaters(list => [...list, saved].sort((a, b) => a.brand.localeCompare(b.brand)));
+    setWaterId(saved.id ?? null);
+  }
 
   const isEspresso = method === 'espresso' || method === 'moka-pot';
   const yieldG = Math.round(dose * ratio * 10) / 10;
@@ -150,6 +165,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
       time: timeS,
       stages: savedStages,
       grindSetting: savedGrind || undefined,
+      waterId: waterId ?? undefined,
       lastUsedAt: undefined,
     });
   }
@@ -207,6 +223,10 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
         <GrindField value={grindSetting} onChange={setGrindSetting} />
       </div>
       {errors.grind && <p className={s.fieldError}>{errors.grind}</p>}
+
+      <Field label={t('water.label')} hint={t('water.hint')}>
+        <WaterPicker waters={waters} value={waterId} onChange={setWaterId} onAdd={addWater} />
+      </Field>
 
       {!isEspresso && (
         <Field label={t('recipes.form.pourSchedule')} hint={t('recipes.form.pourScheduleHint')}>

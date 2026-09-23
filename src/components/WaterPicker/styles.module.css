@@ -1,0 +1,6 @@
+.ppm     { margin-left: 6px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.addForm { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+.cell    { display: flex; flex-direction: column; gap: 6px; }
+.error   { grid-column: 1 / -1; margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--danger); }
+.actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 8px; }
+.addForm :global(.input-underline[aria-invalid="true"]) { border-color: var(--danger); }
