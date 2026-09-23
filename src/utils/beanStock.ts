@@ -87,11 +87,8 @@ export interface BeanStockView {
   isEmpty: boolean;
 }
 
-// Days off roast. Espresso needs more rest for the CO2 to leave the bean.
-export const REST_WINDOWS: Readonly<Record<BrewKind, readonly [number, number]>> = {
-  espresso: [7, 21],
-  filter: [5, 14],
-};
+// Days off roast, inclusive. The peak starts on day 15 and lasts two weeks, for every method.
+export const PEAK_WINDOW: readonly [number, number] = [15, 28];
 
 const DEFAULT_DOSE_G: Readonly<Record<BrewKind, number>> = { espresso: 18, filter: 15 };
 const DAY_MS = 86_400_000;
@@ -101,12 +98,12 @@ export function brewKind(method: string): BrewKind {
   return method === 'espresso' || method === 'moka-pot' ? 'espresso' : 'filter';
 }
 
-export function getFreshness(roastedAt: string | undefined, kind: BrewKind, now: Date): Freshness {
+export function getFreshness(roastedAt: string | undefined, now: Date): Freshness {
   if (!roastedAt) return UNKNOWN;
   const roasted = new Date(roastedAt).getTime();
   if (Number.isNaN(roasted)) return UNKNOWN;
   const days = Math.max(0, Math.floor((now.getTime() - roasted) / DAY_MS));
-  const [start, end] = REST_WINDOWS[kind];
+  const [start, end] = PEAK_WINDOW;
   if (days < start) return { days, state: 'resting', daysUntilPeak: start - days, daysLeftInPeak: null };
   if (days <= end) return { days, state: 'peak', daysUntilPeak: null, daysLeftInPeak: end - days };
   const state: FreshnessState = days <= end * 2 ? 'fading' : 'stale';
@@ -137,7 +134,7 @@ export function beanStockView(
   const kind = brewKind(usage?.lastMethod ?? fallbackMethod);
   const servings = servingsLeft(bean.weightG, averageDose(usage?.doses ?? [], DEFAULT_DOSE_G[kind]));
   return {
-    freshness: getFreshness(bean.roastedAt, kind, now),
+    freshness: getFreshness(bean.roastedAt, now),
     servings,
     isLow: servings !== null && servings <= LOW_STOCK_SERVINGS,
     isEmpty: bean.weightG === 0,
