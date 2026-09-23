@@ -555,7 +555,23 @@
       "save": "Save recipe",
       "pourLabel": "Pour {{number}}",
       "labelPlaceholder": "Label",
-      "defaultName": "{{method}} recipe"
+      "defaultName": "{{method}} recipe",
+      "errors": {
+        "name": "Use 1 to {{max}} characters.",
+        "method": "Choose a method from the list.",
+        "dose": "Enter a dose from {{min}} to {{max}} g.",
+        "yield": "Yield must be {{min}} to {{max}} g. Lower the dose or the ratio.",
+        "ratio": "Set a ratio from 1:{{min}} to 1:{{max}}.",
+        "time": "Enter a brew time as m:ss.",
+        "temp": "Enter a temperature from {{min}} to {{max}} °C.",
+        "stages": "Use {{max}} pours or fewer. Remove a pour.",
+        "stageLabel": "Pour {{number}}: use {{max}} characters or fewer in the label.",
+        "stageTime": "Pour {{number}}: enter a time as m:ss.",
+        "stageWeight": "Pour {{number}}: enter a weight from {{min}} to {{max}} g.",
+        "payload": "This recipe is too long to share as a link. Shorten the name or the pour labels.",
+        "summary": "Fix the marked fields to save."
+      },
+      "maxPours": "{{max}} pours max."
     },
     "pourCount_one": "{{count}} pour",
     "pourCount_other": "{{count}} pours",
@@ -564,6 +580,30 @@
     "deleteRecipe": "Delete recipe",
     "confirmDelete": "Delete this recipe?",
     "lastUsedLabel": "Last used"
+  },
+  "share": {
+    "section": "Share",
+    "image": "Share image",
+    "link": "Share link",
+    "preparing": "Preparing image…",
+    "copied": "Link copied.",
+    "downloaded": "Image saved.",
+    "failed": "Could not share. Try again.",
+    "recipeSubtitle": "Recipe",
+    "import": {
+      "open": "Import",
+      "title": "Import recipe",
+      "pasteLabel": "Recipe link",
+      "paste": "Paste a BrewLog recipe link",
+      "go": "Open",
+      "invalid": "This recipe link is not valid.",
+      "invalidBody": "Ask the sender for a new link.",
+      "from": "Shared recipe",
+      "sourceLabel": "Source",
+      "save": "Save recipe",
+      "failed": "Could not save the recipe. Try again."
+    },
+    "linkBlocked": "This recipe has values a share link cannot carry. Edit the recipe to share it as a link."
   },
   "analytics": {
     "title": "Analytics",

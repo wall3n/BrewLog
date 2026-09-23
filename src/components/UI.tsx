@@ -18,3 +18,4 @@ export { Stepper } from './Stepper';
 export { ListToolbar } from './ListToolbar';
 export { StockMeter } from './StockMeter';
 export { FreshnessBadge } from './FreshnessBadge';
+export { ShareActions } from './ShareActions';

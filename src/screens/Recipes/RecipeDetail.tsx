@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Button, BackBar, MethodBadge, Empty, Sheet } from '../../components/UI';
-import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { Button, BackBar, MethodBadge, Empty, Sheet, ShareActions } from '../../components/UI';
+import { fmtDate, fmtRelDate, fmtTime } from '../../utils/formatters';
+import { recipeCard } from '../../utils/shareCard';
+import { buildRecipeShareUrl, shareProblems, toSharedRecipe } from '../../utils/shareCodec';
 import { RecipeForm } from './RecipeForm';
 import type { Recipe } from '../../db/types';
 import s from './styles.module.css';
@@ -25,6 +27,17 @@ export function RecipeDetail() {
       else setR(recipe);
     });
   }, [id]);
+
+  const shareModel = useMemo(
+    () => (r ? recipeCard(toSharedRecipe(r), { t, time: fmtTime, date: fmtDate }) : null),
+    [r, t],
+  );
+  // Old data can hold values the link decoder rejects. Offer the image only, and say why.
+  const link = useMemo(() => {
+    if (!r) return undefined;
+    const shared = toSharedRecipe(r);
+    return shareProblems(shared).length === 0 ? buildRecipeShareUrl(window.location.origin, shared) : undefined;
+  }, [r]);
 
   if (notFound) return <div><BackBar onClick={() => navigate('/recipes')} label={t('recipes.backToRecipes')} /><Empty icon="recipe" title={t('recipes.notFound')} /></div>;
   if (!r) return null;
@@ -68,6 +81,12 @@ export function RecipeDetail() {
         </section>
       )}
 
+      <ShareActions
+        model={shareModel}
+        fileName={`brewlog-recipe-${r.id}.png`}
+        link={link}
+        note={link ? undefined : t('share.linkBlocked')}
+      />
       <div className={s.actionRow}>
         <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp, recipeId: r.id } })}>
           {t('recipes.startBrew')}

@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import { Fragment, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Field, Input, Stepper, Tag } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { METHODS, methodById } from '../../utils/methodDefaults';
 import { fmtTime } from '../../utils/formatters';
+import {
+  shareProblems, MAX_LABEL_LENGTH, MAX_NAME_LENGTH, MAX_STAGES, SHARE_LIMITS,
+  type ShareProblem, type SharedRecipe,
+} from '../../utils/shareCodec';
 import type { Recipe, PourStage } from '../../db/types';
 import s from './styles.module.css';
 
@@ -12,6 +16,17 @@ function parseTime(val: string): number | null {
   if (!m) return null;
   return parseInt(m[1]) * 60 + parseInt(m[2]);
 }
+
+// An empty number input gives NaN. Show it as an empty field, not "NaN".
+function numValue(n: number): number | string {
+  return Number.isNaN(n) ? '' : n;
+}
+
+function readNumber(value: string): number {
+  return value.trim() === '' ? Number.NaN : parseFloat(value);
+}
+
+type FieldKey = Exclude<ShareProblem['field'], 'stageLabel' | 'stageTime' | 'stageWeight'>;
 
 function uid(): string {
   return Math.random().toString(36).slice(2, 10);
@@ -35,6 +50,58 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
 
   const isEspresso = method === 'espresso' || method === 'moka-pot';
   const yieldG = Math.round(dose * ratio * 10) / 10;
+  const savedName = name.trim() || t('recipes.form.defaultName', { method: t(`methods.${method}`) });
+  const savedStages = isEspresso ? [] : stages;
+  const idBase = useId();
+
+  // Only save what a share link can carry, so every saved recipe can be shared.
+  const candidate: SharedRecipe = {
+    name: savedName, method, dose, ratio, yield: yieldG, temp, time: timeS, stages: savedStages,
+  };
+  const problems = shareProblems(candidate);
+  const atStageLimit = stages.length >= MAX_STAGES;
+
+  function fieldError(field: FieldKey): string | null {
+    if (!problems.some(p => p.field === field)) return null;
+    switch (field) {
+      case 'name': return t('recipes.form.errors.name', { max: MAX_NAME_LENGTH });
+      case 'stages': return t('recipes.form.errors.stages', { max: MAX_STAGES });
+      case 'payload': return t('recipes.form.errors.payload');
+      case 'method': return t('recipes.form.errors.method');
+      case 'time': return t('recipes.form.errors.time');
+      default: {
+        const [min, max] = SHARE_LIMITS[field];
+        return t(`recipes.form.errors.${field}`, { min, max });
+      }
+    }
+  }
+
+  function stageError(index: number): string | null {
+    const found = problems.find(p => p.stage === index);
+    if (!found) return null;
+    const number = index + 1;
+    if (found.field === 'stageLabel') return t('recipes.form.errors.stageLabel', { number, max: MAX_LABEL_LENGTH });
+    if (found.field === 'stageTime') return t('recipes.form.errors.stageTime', { number });
+    const [min, max] = SHARE_LIMITS.stageWeight;
+    return t('recipes.form.errors.stageWeight', { number, min, max });
+  }
+
+  function errorProps(message: string | null, id: string): { 'aria-invalid'?: true; 'aria-describedby'?: string } {
+    return message ? { 'aria-invalid': true, 'aria-describedby': id } : {};
+  }
+
+  const errors = {
+    name: fieldError('name'),
+    method: fieldError('method'),
+    dose: fieldError('dose'),
+    yield: fieldError('yield'),
+    ratio: fieldError('ratio'),
+    time: fieldError('time'),
+    temp: fieldError('temp'),
+    stages: fieldError('stages'),
+    payload: fieldError('payload'),
+  };
+  const errId = (key: string): string => `${idBase}-${key}-error`;
 
   function pickMethod(id: string) {
     const m = methodById(id);
@@ -48,6 +115,7 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
   }
 
   function addStage() {
+    if (atStageLimit) return;
     const last = stages[stages.length - 1];
     setStages([...stages, {
       id: uid(),
@@ -66,27 +134,31 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
   }
 
   function handleSave() {
+    if (problems.length > 0) return;
     onSave({
-      name: name.trim() || t('recipes.form.defaultName', { method: t(`methods.${method}`) }),
+      name: savedName,
       method,
       dose,
       ratio,
       yield: yieldG,
       temp,
       time: timeS,
-      stages: isEspresso ? [] : stages,
+      stages: savedStages,
       lastUsedAt: undefined,
     });
   }
 
   return (
-    <div className="col col-gap-20">
+    <div className={`col col-gap-20 ${s.form}`}>
       <Field label={t('recipes.form.name')}>
         <Input
           value={name}
+          maxLength={MAX_NAME_LENGTH}
           onChange={e => setName(e.target.value)}
           placeholder={t('recipes.form.namePlaceholder')}
+          {...errorProps(errors.name, errId('name'))}
         />
+        {errors.name && <p id={errId('name')} className={s.fieldError}>{errors.name}</p>}
       </Field>
 
       <Field label={t('recipes.form.method')}>
@@ -97,62 +169,102 @@ export function RecipeForm({ initial = {}, onSave }: RecipeFormProps) {
             </Tag>
           ))}
         </div>
+        {errors.method && <p className={s.fieldError}>{errors.method}</p>}
       </Field>
 
       <div className={s.params}>
-        <Stepper label={t('recipes.form.dose')} value={dose} onChange={setDose} step={0.1} unit="g" max={2000} />
-        <div className={s.autoCell}>
+        <Stepper
+          label={t('recipes.form.dose')} value={dose} onChange={setDose} step={0.1} unit="g"
+          min={SHARE_LIMITS.dose[0]} max={SHARE_LIMITS.dose[1]} error={errors.dose}
+        />
+        <div className={`${s.autoCell} ${errors.yield ? s.autoInvalid : ''}`}>
           <span className="field-label">{t('recipes.form.yield')}</span>
-          <span className={s.autoValue}>{yieldG}<span className={s.autoUnit}>g</span></span>
-          <span className="field-hint">{t('recipes.form.yieldAuto')}</span>
+          <span className={s.autoValue} aria-invalid={errors.yield ? true : undefined} aria-describedby={errors.yield ? errId('yield') : undefined}>
+            {numValue(yieldG)}<span className={s.autoUnit}>g</span>
+          </span>
+          {errors.yield
+            ? <p id={errId('yield')} className={s.fieldError}>{errors.yield}</p>
+            : <span className="field-hint">{t('recipes.form.yieldAuto')}</span>}
         </div>
-        <Stepper label={t('recipes.form.ratio')} value={ratio} onChange={setRatio} step={isEspresso ? 0.1 : 0.5} prefix="1:" decimals={1} max={30} size="md" />
-        <Stepper label={t('recipes.form.temperature')} value={temp} onChange={setTemp} step={1} decimals={0} unit="°C" max={100} size="md" />
-        <Stepper label={t('recipes.form.brewTime')} value={timeS} onChange={setTimeS} step={isEspresso ? 1 : 5} decimals={0} unit="s" max={86400} hint={fmtTime(timeS)} size="md" />
+        <Stepper
+          label={t('recipes.form.ratio')} value={ratio} onChange={setRatio} step={isEspresso ? 0.1 : 0.5} prefix="1:" decimals={1}
+          min={SHARE_LIMITS.ratio[0]} max={SHARE_LIMITS.ratio[1]} size="md" error={errors.ratio}
+        />
+        <Stepper
+          label={t('recipes.form.temperature')} value={temp} onChange={setTemp} step={1} decimals={0} unit="°C"
+          min={SHARE_LIMITS.temp[0]} max={SHARE_LIMITS.temp[1]} size="md" error={errors.temp}
+        />
+        <Stepper
+          label={t('recipes.form.brewTime')} value={timeS} onChange={setTimeS} step={isEspresso ? 1 : 5} decimals={0} unit="s"
+          min={SHARE_LIMITS.time[0]} max={SHARE_LIMITS.time[1]} hint={fmtTime(timeS)} size="md" error={errors.time}
+        />
       </div>
 
       {!isEspresso && (
         <Field label={t('recipes.form.pourSchedule')} hint={t('recipes.form.pourScheduleHint')}>
           <div className={`col col-gap-8 ${s.stagesEdit}`}>
-            {stages.map((st, i) => (
-              <div key={st.id} className="stage-edit-row">
-                <span className="sn">{i + 1}</span>
-                <input
-                  className="stage-mini-input left"
-                  aria-label={t('recipes.form.labelPlaceholder')}
-                  value={st.label}
-                  onChange={e => updateStage(st.id, { label: e.target.value })}
-                  placeholder={t('recipes.form.labelPlaceholder')}
-                />
-                <input
-                  className="stage-mini-input"
-                  value={fmtTime(st.timeS)}
-                  onChange={e => {
-                    const parsed = parseTime(e.target.value);
-                    if (parsed != null) updateStage(st.id, { timeS: parsed });
-                  }}
-                  placeholder="0:00"
-                />
-                <input
-                  className="stage-mini-input"
-                  type="number"
-                  value={st.weightG}
-                  onChange={e => updateStage(st.id, { weightG: parseFloat(e.target.value) || 0 })}
-                  placeholder="g"
-                />
-                <button type="button" className="icon-btn" onClick={() => removeStage(st.id)} aria-label={t('common.removePour')}>
-                  <Icon name="x" size={15} />
-                </button>
-              </div>
-            ))}
-            <button type="button" className="btn-link" onClick={addStage}>
-              <Icon name="plus" size={16} /> {t('recipes.form.addPour')}
-            </button>
+            {stages.map((st, i) => {
+              const message = stageError(i);
+              const problem = problems.find(p => p.stage === i)?.field;
+              const id = errId(`stage-${i}`);
+              return (
+                <Fragment key={st.id}>
+                  <div className="stage-edit-row">
+                    <span className="sn">{i + 1}</span>
+                    <input
+                      className="stage-mini-input left"
+                      aria-label={t('recipes.form.labelPlaceholder')}
+                      value={st.label}
+                      maxLength={MAX_LABEL_LENGTH}
+                      onChange={e => updateStage(st.id, { label: e.target.value })}
+                      placeholder={t('recipes.form.labelPlaceholder')}
+                      {...errorProps(problem === 'stageLabel' ? message : null, id)}
+                    />
+                    <input
+                      className="stage-mini-input"
+                      value={fmtTime(st.timeS)}
+                      onChange={e => {
+                        const parsed = parseTime(e.target.value);
+                        if (parsed != null) updateStage(st.id, { timeS: parsed });
+                      }}
+                      placeholder="0:00"
+                      {...errorProps(problem === 'stageTime' ? message : null, id)}
+                    />
+                    <input
+                      className="stage-mini-input"
+                      type="number"
+                      inputMode="decimal"
+                      min={SHARE_LIMITS.stageWeight[0]}
+                      max={SHARE_LIMITS.stageWeight[1]}
+                      value={numValue(st.weightG)}
+                      onChange={e => updateStage(st.id, { weightG: readNumber(e.target.value) })}
+                      placeholder="g"
+                      {...errorProps(problem === 'stageWeight' ? message : null, id)}
+                    />
+                    <button type="button" className="icon-btn" onClick={() => removeStage(st.id)} aria-label={t('common.removePour')}>
+                      <Icon name="x" size={15} />
+                    </button>
+                  </div>
+                  {message && <p id={id} className={`${s.fieldError} ${s.stageError}`}>{message}</p>}
+                </Fragment>
+              );
+            })}
+            {errors.stages && <p className={s.fieldError}>{errors.stages}</p>}
+            <div className={s.addPourRow}>
+              <button type="button" className="btn-link" onClick={addStage} disabled={atStageLimit}>
+                <Icon name="plus" size={16} /> {t('recipes.form.addPour')}
+              </button>
+              {atStageLimit && <span className={s.limitNote}>{t('recipes.form.maxPours', { max: MAX_STAGES })}</span>}
+            </div>
           </div>
         </Field>
       )}
 
-      <Button full size="lg" onClick={handleSave}>{t('recipes.form.save')}</Button>
+      <div className={s.saveBlock}>
+        {errors.payload && <p className={s.fieldError} role="alert">{errors.payload}</p>}
+        {problems.length > 0 && !errors.payload && <p className={s.fieldError} role="status">{t('recipes.form.errors.summary')}</p>}
+        <Button full size="lg" onClick={handleSave} disabled={problems.length > 0}>{t('recipes.form.save')}</Button>
+      </div>
     </div>
   );
 }

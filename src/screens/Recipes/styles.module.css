@@ -28,3 +28,25 @@
 .autoUnit { font-size: 14px; color: var(--text-secondary); letter-spacing: 0; }
 .stagesEdit { margin-top: 4px; }
 .fieldRow { margin-top: 14px; margin-bottom: 0; }
+
+/* Recipe import: the link preview and the paste sheet */
+.importForm   { display: flex; flex-direction: column; gap: 16px; }
+.importSave   { display: flex; flex-direction: column; gap: 8px; }
+.importError  { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--danger); }
+.importForm :global(.input-underline[aria-invalid="true"]) { border-color: var(--danger); }
+.importForm :global(.input-underline[aria-invalid="true"]:focus) { box-shadow: 0 0 0 3px var(--danger-bg); }
+.headActions  { display: flex; gap: 8px; flex-wrap: wrap; }
+.titleRow     { flex-wrap: wrap; row-gap: 16px; }
+
+/* RecipeForm: a value a share link cannot carry blocks Save. Fail red marks the blocking value. */
+.form :global(.input-underline[aria-invalid="true"]),
+.form :global(.stage-mini-input[aria-invalid="true"]) { border-color: var(--danger); }
+.form :global(.input-underline[aria-invalid="true"]:focus) { box-shadow: 0 0 0 3px var(--danger-bg); }
+.autoInvalid .autoValue { border-color: var(--danger); border-style: solid; }
+.fieldError   { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--danger); }
+.stageError   { margin: -2px 0 2px 30px; }
+.addPourRow   { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.addPourRow :global(.btn-link:disabled) { opacity: 0.4; cursor: not-allowed; }
+.limitNote    { font-size: 12.5px; color: var(--text-tertiary); }
+.saveBlock    { display: flex; flex-direction: column; gap: 8px; }
+.saveBlock .fieldError { text-align: center; }
