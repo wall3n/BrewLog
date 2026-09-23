@@ -7,7 +7,7 @@ import { fmtDate, fmtRelDate, fmtTime } from '../../utils/formatters';
 import { recipeCard } from '../../utils/shareCard';
 import { buildRecipeShareUrl, shareProblems, toSharedRecipe } from '../../utils/shareCodec';
 import { RecipeForm } from './RecipeForm';
-import type { Recipe } from '../../db/types';
+import type { Recipe, Water } from '../../db/types';
 import s from './styles.module.css';
 
 
@@ -20,6 +20,7 @@ export function RecipeDetail() {
   const [r, setR] = useState<Recipe | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [waters, setWaters] = useState<readonly Water[]>([]);
 
   useEffect(() => {
     db.getRecipe(Number(id)).then(recipe => {
@@ -27,6 +28,11 @@ export function RecipeDetail() {
       else setR(recipe);
     });
   }, [id]);
+
+  // The edit sheet can add a water, so reload the list after each save.
+  const loadWaters = (): void => { db.getAllWaters().then(setWaters).catch(() => setWaters([])); };
+  useEffect(loadWaters, []);
+  const water = waters.find(w => w.id === r?.waterId);
 
   const shareModel = useMemo(
     () => (r ? recipeCard(toSharedRecipe(r), { t, time: fmtTime, date: fmtDate }) : null),
@@ -49,6 +55,9 @@ export function RecipeDetail() {
         <h1 className={s.detailTitle}>{r.name}</h1>
         <dl className={`field-row ${s.fieldRow}`}>
           <div><dt>{t('sheet.method')}</dt><dd><MethodBadge method={r.method} /></dd></div>
+          {water && (
+            <div><dt>{t('water.label')}</dt><dd>{water.brand}{water.tdsPpm != null && ` · ${t('water.ppm', { value: water.tdsPpm })}`}</dd></div>
+          )}
           <div><dt>{t('recipes.lastUsedLabel')}</dt><dd>{r.lastUsedAt ? fmtRelDate(r.lastUsedAt) : t('recipes.neverUsed')}</dd></div>
         </dl>
       </header>
@@ -60,6 +69,7 @@ export function RecipeDetail() {
           { v: `1:${r.ratio.toFixed(1)}`, l: t('recipes.fields.ratio') },
           { v: fmtTime(r.time), l: t('recipes.fields.time') },
           { v: String(r.temp), u: '°C', l: t('recipes.fields.temp') },
+          ...(r.grindSetting ? [{ v: r.grindSetting, l: t('recipes.fields.grind') }] : []),
         ].map(item => (
           <div key={item.l} className="stat">
             <div className="v">{item.v}{item.u && <span className="u">{item.u}</span>}</div>
@@ -88,7 +98,7 @@ export function RecipeDetail() {
         note={link ? undefined : t('share.linkBlocked')}
       />
       <div className={s.actionRow}>
-        <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp, recipeId: r.id } })}>
+        <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp, grindSetting: r.grindSetting, recipeId: r.id } })}>
           {t('recipes.startBrew')}
         </Button>
         <Button variant="ghost" full leftIcon="edit" onClick={() => setEditing(true)}>{t('common.edit')}</Button>
@@ -105,6 +115,7 @@ export function RecipeDetail() {
             const updated = { ...r, ...payload, id: r.id! };
             await db.updateRecipe(updated);
             setR(updated);
+            loadWaters();
             setEditing(false);
           }}
         />

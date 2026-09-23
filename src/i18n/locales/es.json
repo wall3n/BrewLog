@@ -543,7 +543,8 @@
       "yield": "Rendimiento",
       "ratio": "Ratio",
       "time": "Tiempo",
-      "temp": "Temp"
+      "temp": "Temp",
+      "grind": "Molienda"
     },
     "form": {
       "name": "Nombre de la receta",
@@ -575,7 +576,8 @@
         "stageTime": "Vertido {{number}}: introduce el tiempo como m:ss.",
         "stageWeight": "Vertido {{number}}: introduce un peso de {{min}} a {{max}} g.",
         "payload": "Esta receta es demasiado larga para compartirla como enlace. Acorta el nombre o las etiquetas de los vertidos.",
-        "summary": "Corrige los campos marcados para guardar."
+        "summary": "Corrige los campos marcados para guardar.",
+        "grind": "Usa {{max}} caracteres o menos para la molienda."
       },
       "maxPours": "Máximo {{max}} vertidos."
     },
@@ -709,5 +711,37 @@
     "noBeansMatch": "Ningún café coincide.",
     "localOnly": "Guardado en este dispositivo",
     "needOutcome": "Marca el resultado para guardar"
+  },
+  "water": {
+    "label": "Agua",
+    "hint": "Opcional · la marca embotellada o la receta mineral de esta preparación",
+    "none": "Cualquier agua",
+    "add": "Añadir agua",
+    "brand": "Marca o receta",
+    "brandPlaceholder": "p. ej. Font Vella, Third Wave Water",
+    "tds": "TDS (ppm)",
+    "tdsPlaceholder": "Opcional",
+    "save": "Añadir agua",
+    "ppm": "{{value}} ppm",
+    "errors": {
+      "duplicate": "Esta agua ya está en la lista.",
+      "tds": "Introduce un TDS de {{min}} a {{max}} ppm.",
+      "save": "No se guardó el agua. Inténtalo de nuevo.",
+      "load": "No se cargaron las aguas. Recarga la página."
+    },
+    "title": "Aguas",
+    "count_one": "{{count}} agua",
+    "count_other": "{{count}} aguas",
+    "empty": "Aún no hay aguas. Añade las marcas embotelladas o recetas minerales que usas.",
+    "edit": "Editar agua",
+    "editNamed": "Editar {{name}}",
+    "deleteNamed": "Eliminar {{name}}",
+    "notes": "Notas (opcional)",
+    "notesPlaceholder": "p. ej. 1 sobre por 4 L, Ca 30 ppm",
+    "recipeCount_one": "{{count}} receta",
+    "recipeCount_other": "{{count}} recetas",
+    "confirmDelete": "¿Eliminar {{name}}?",
+    "confirmDeleteUsed_one": "¿Eliminar {{name}}? {{count}} receta la usa y quedará sin agua.",
+    "confirmDeleteUsed_other": "¿Eliminar {{name}}? {{count}} recetas la usan y quedarán sin agua."
   }
 }

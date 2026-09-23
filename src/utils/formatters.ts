@@ -1,4 +1,5 @@
 import i18n from '../i18n';
+import { PEAK_WINDOW } from './beanStock';
 
 export const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -10,9 +11,10 @@ export function daysSince(iso: string | undefined): number | null {
 
 export function roastBucket(days: number | null): 'green' | 'amber' | 'red' {
   if (days == null) return 'red';
-  if (days < 7) return 'red';
-  if (days <= 21) return 'green';
-  if (days <= 42) return 'amber';
+  const [start, end] = PEAK_WINDOW;
+  if (days < start) return 'red';
+  if (days <= end) return 'green';
+  if (days <= end * 2) return 'amber';
   return 'red';
 }
 

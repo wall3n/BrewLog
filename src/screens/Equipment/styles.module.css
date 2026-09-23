@@ -1,2 +1,9 @@
 .itemRow { align-items: center; }
 .usageCount { font-size: 13.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Waters */
+.waterSection { margin-top: 48px; }
+.sectionTitle { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+.emptyNote    { margin: 0; font-size: 14px; color: var(--text-secondary); }
+.fieldError   { margin: 4px 0 0; font-size: 12.5px; line-height: 1.4; color: var(--danger); }
+.waterForm :global(.input-underline[aria-invalid="true"]) { border-color: var(--danger); }

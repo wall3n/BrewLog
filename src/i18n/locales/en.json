@@ -543,7 +543,8 @@
       "yield": "Yield",
       "ratio": "Ratio",
       "time": "Time",
-      "temp": "Temp"
+      "temp": "Temp",
+      "grind": "Grind"
     },
     "form": {
       "name": "Recipe name",
@@ -575,7 +576,8 @@
         "stageTime": "Pour {{number}}: enter a time as m:ss.",
         "stageWeight": "Pour {{number}}: enter a weight from {{min}} to {{max}} g.",
         "payload": "This recipe is too long to share as a link. Shorten the name or the pour labels.",
-        "summary": "Fix the marked fields to save."
+        "summary": "Fix the marked fields to save.",
+        "grind": "Use {{max}} characters or fewer for the grind setting."
       },
       "maxPours": "{{max}} pours max."
     },
@@ -709,5 +711,37 @@
     "noBeansMatch": "No beans match.",
     "localOnly": "Stored on this device",
     "needOutcome": "Mark the outcome to save"
+  },
+  "water": {
+    "label": "Water",
+    "hint": "Optional · the bottled brand or mineral recipe for this brew",
+    "none": "Any water",
+    "add": "Add water",
+    "brand": "Brand or recipe",
+    "brandPlaceholder": "e.g. Volvic, Third Wave Water",
+    "tds": "TDS (ppm)",
+    "tdsPlaceholder": "Optional",
+    "save": "Add water",
+    "ppm": "{{value}} ppm",
+    "errors": {
+      "duplicate": "This water is already in the list.",
+      "tds": "Enter a TDS from {{min}} to {{max}} ppm.",
+      "save": "The water was not saved. Try again.",
+      "load": "The waters did not load. Reload the page."
+    },
+    "title": "Waters",
+    "count_one": "{{count}} water",
+    "count_other": "{{count}} waters",
+    "empty": "No waters yet. Add the bottled brands or mineral recipes you brew with.",
+    "edit": "Edit water",
+    "editNamed": "Edit {{name}}",
+    "deleteNamed": "Delete {{name}}",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "e.g. 1 sachet per 4 L, Ca 30 ppm",
+    "recipeCount_one": "{{count}} recipe",
+    "recipeCount_other": "{{count}} recipes",
+    "confirmDelete": "Delete {{name}}?",
+    "confirmDeleteUsed_one": "Delete {{name}}? {{count}} recipe uses it and will have no water.",
+    "confirmDeleteUsed_other": "Delete {{name}}? {{count}} recipes use it and will have no water."
   }
 }

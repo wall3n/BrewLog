@@ -143,33 +143,36 @@ describe('brewKind', () => {
 
 describe('getFreshness', () => {
   it('is unknown with no or an invalid roast date', () => {
-    expect(getFreshness(undefined, 'espresso', NOW).state).toBe('unknown');
-    expect(getFreshness('not a date', 'espresso', NOW)).toEqual({
+    expect(getFreshness(undefined, NOW).state).toBe('unknown');
+    expect(getFreshness('not a date', NOW)).toEqual({
       days: null, state: 'unknown', daysUntilPeak: null, daysLeftInPeak: null,
     });
   });
 
-  it('is resting before the window', () => {
-    expect(getFreshness(daysAgo(3), 'espresso', NOW)).toEqual({
-      days: 3, state: 'resting', daysUntilPeak: 4, daysLeftInPeak: null,
+  it('is resting for the first 14 days', () => {
+    expect(getFreshness(daysAgo(3), NOW)).toEqual({
+      days: 3, state: 'resting', daysUntilPeak: 12, daysLeftInPeak: null,
     });
+    expect(getFreshness(daysAgo(14), NOW).state).toBe('resting');
   });
 
-  it('is at peak in the window, with the days left', () => {
-    expect(getFreshness(daysAgo(10), 'espresso', NOW)).toEqual({
-      days: 10, state: 'peak', daysUntilPeak: null, daysLeftInPeak: 11,
+  it('is at peak from day 15 to day 28, with the days left', () => {
+    expect(getFreshness(daysAgo(15), NOW)).toEqual({
+      days: 15, state: 'peak', daysUntilPeak: null, daysLeftInPeak: 13,
     });
-    expect(getFreshness(daysAgo(5), 'filter', NOW).state).toBe('peak');
+    expect(getFreshness(daysAgo(28), NOW)).toEqual({
+      days: 28, state: 'peak', daysUntilPeak: null, daysLeftInPeak: 0,
+    });
   });
 
   it('is fading up to 2× the window end, then stale', () => {
-    expect(getFreshness(daysAgo(30), 'espresso', NOW).state).toBe('fading');
-    expect(getFreshness(daysAgo(43), 'espresso', NOW).state).toBe('stale');
-    expect(getFreshness(daysAgo(20), 'filter', NOW).state).toBe('fading');
+    expect(getFreshness(daysAgo(29), NOW).state).toBe('fading');
+    expect(getFreshness(daysAgo(56), NOW).state).toBe('fading');
+    expect(getFreshness(daysAgo(57), NOW).state).toBe('stale');
   });
 
   it('treats a future roast date as day 0', () => {
-    expect(getFreshness(daysAgo(-5), 'espresso', NOW).days).toBe(0);
+    expect(getFreshness(daysAgo(-5), NOW).days).toBe(0);
   });
 });
 
@@ -187,7 +190,7 @@ describe('summariseUsage', () => {
 
 describe('beanStockView', () => {
   it('uses the fallback method and dose when the bean has no brews', () => {
-    const view = beanStockView({ roastedAt: daysAgo(10), weightG: 45 }, undefined, 'espresso', NOW);
+    const view = beanStockView({ roastedAt: daysAgo(20), weightG: 45 }, undefined, 'espresso', NOW);
     expect(view.servings).toBe(2);   // 45 / 18
     expect(view.isLow).toBe(true);
     expect(view.freshness.state).toBe('peak');

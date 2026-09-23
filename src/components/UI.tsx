@@ -16,6 +16,8 @@ export { Pagination } from './Pagination';
 export { FilterBar } from './FilterBar';
 export { FlagMark } from './FlagMark';
 export { Stepper } from './Stepper';
+export { GrindField } from './GrindField';
+export { WaterPicker } from './WaterPicker';
 export { ListToolbar } from './ListToolbar';
 export { StockMeter } from './StockMeter';
 export { FreshnessBadge } from './FreshnessBadge';

@@ -56,6 +56,7 @@ export function RecipeImport() {
           { v: `1:${recipe.ratio.toFixed(1)}`, l: t('recipes.fields.ratio') },
           { v: fmtTime(recipe.time), l: t('recipes.fields.time') },
           { v: String(recipe.temp), u: '°C', l: t('recipes.fields.temp') },
+          ...(recipe.grindSetting ? [{ v: recipe.grindSetting, l: t('recipes.fields.grind') }] : []),
         ].map(item => (
           <div key={item.l} className="stat">
             <div className="v">{item.v}{item.u && <span className="u">{item.u}</span>}</div>

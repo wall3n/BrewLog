@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-09-23
+
+### Added
+- **Recipe Grind Setting**: Recipes store a grind setting. The recipe detail and the import screen show it. Start brew copies it to the brew sheet, and share links carry it.
+- **Waters**: Link a bottled water brand or a mineral recipe, with an optional TDS in ppm, to a recipe. The recipe form adds a new water inline. The Equipment page has a Waters section to add, edit and delete waters.
+- **Database Schema v4**: A new `waters` table. Export, import and clear-all include it.
+
+### Changed
+- **Bean Peak Window**: The peak starts on day 15 after the roast and lasts two weeks (days 15–28), for every method. Before, it was 7–21 days for espresso and 5–14 days for filter. The freshness badge and the days-off-roast pill both use the new window.
+
+---
+
 ## [0.3.0] - 2026-09-23
 
 ### Added
