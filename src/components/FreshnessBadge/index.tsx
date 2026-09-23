@@ -1,19 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import type { Freshness, FreshnessState } from '../../utils/beanStock';
+import type { Freshness } from '../../utils/beanStock';
 import s from './styles.module.css';
 
 export interface FreshnessBadgeProps {
   freshness: Freshness;
 }
 
-// Uses the global days-pill classes from global.css.
-const PILL: Readonly<Record<Exclude<FreshnessState, 'unknown'>, string>> = {
-  resting: 'amber',
-  peak: 'green',
-  fading: 'amber',
-  stale: 'red',
-};
-
+// Uses the global .days-pill mark (The Graphite Mark Rule):
+// filled dot when the bean is in its peak window, hollow dot outside it. No colour.
 export function FreshnessBadge({ freshness }: FreshnessBadgeProps) {
   const { t } = useTranslation();
   const { state } = freshness;
@@ -23,7 +17,7 @@ export function FreshnessBadge({ freshness }: FreshnessBadgeProps) {
     : state === 'peak' ? t('beans.freshness.peak', { count: freshness.daysLeftInPeak ?? 0 })
     : t(`beans.freshness.${state}`);
   return (
-    <span className={`days-pill ${PILL[state]} ${s.pill}`} title={t('beans.daysOffRoast', { count: freshness.days ?? 0 })}>
+    <span className={`days-pill ${state === 'peak' ? 'green' : ''} ${s.pill}`} title={t('beans.daysOffRoast', { count: freshness.days ?? 0 })}>
       {label}
     </span>
   );

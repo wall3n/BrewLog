@@ -428,7 +428,9 @@
       "servingsLeft_one": "≈ {{count}} extracción restante",
       "servingsLeft_other": "≈ {{count}} extracciones restantes",
       "empty": "Esta bolsa está vacía.",
-      "markFinished": "Marcar como terminado"
+      "markFinished": "Marcar como terminado",
+      "ofBag": "de {{weight}} g",
+      "low": "Se acaba"
     },
     "freshness": {
       "label": "Frescura",

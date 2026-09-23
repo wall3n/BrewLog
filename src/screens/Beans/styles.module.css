@@ -39,5 +39,10 @@
 .roastValue { display: flex; align-items: center; gap: 6px; }
 
 /* Bean stock */
-.emptyBanner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 32px; padding: 12px 0; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--border); }
-.emptyText { flex: 1 1 160px; font-size: 15px; font-weight: 500; }
+/* Empty bag: dashed means empty (DESIGN.md, Shapes) */
+.emptyBanner {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px;
+  margin-bottom: 32px; padding: 8px 8px 8px 16px;
+  border: 1px dashed var(--text-tertiary); border-radius: 2px;
+}
+.emptyText { flex: 1 1 160px; font-size: 15px; font-weight: 500; color: var(--text-primary); }

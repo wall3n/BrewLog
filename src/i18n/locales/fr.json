@@ -428,7 +428,9 @@
       "servingsLeft_one": "≈ {{count}} extraction restante",
       "servingsLeft_other": "≈ {{count}} extractions restantes",
       "empty": "Ce sachet est vide.",
-      "markFinished": "Marquer comme terminé"
+      "markFinished": "Marquer comme terminé",
+      "ofBag": "sur {{weight}} g",
+      "low": "Bientôt épuisé"
     },
     "freshness": {
       "label": "Fraîcheur",

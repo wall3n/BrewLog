@@ -428,7 +428,9 @@
       "servingsLeft_one": "≈ {{count}} brew left",
       "servingsLeft_other": "≈ {{count}} brews left",
       "empty": "This bag is empty.",
-      "markFinished": "Mark as finished"
+      "markFinished": "Mark as finished",
+      "ofBag": "of {{weight}} g",
+      "low": "Running low"
     },
     "freshness": {
       "label": "Freshness",

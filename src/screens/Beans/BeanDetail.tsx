@@ -87,7 +87,7 @@ export function BeanDetail() {
       {bean.weightG != null && (
         <section className={s.block}>
           <div className="section-label"><span className="t-upper">{t('beans.stock.label')}</span></div>
-          <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow} />
+          <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow && !stock.isEmpty} />
         </section>
       )}
 
@@ -96,7 +96,8 @@ export function BeanDetail() {
         <DetailRow label={t('beans.fields.origin')} value={bean.origin ?? '—'} />
         <DetailRow label={t('beans.fields.process')} value={bean.process ?? '—'} />
         <DetailRow label={t('beans.fields.roastedAt')} value={bean.roastedAt ? fmtDate(bean.roastedAt) : '—'} />
-        <DetailRow label={t('beans.fields.weight')} value={bean.weightG != null ? `${bean.weightG} g` : '—'} />
+        {/* With a weight, the stock block above already shows it. */}
+        {bean.weightG == null && <DetailRow label={t('beans.fields.weight')} value="—" />}
         <DetailRow label={t('beans.fields.status')} value={t(`beans.tabs.${bean.status ?? 'active'}`)} />
         {bean.notes && <p className={s.noteText}>{bean.notes}</p>}
       </section>

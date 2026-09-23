@@ -31,7 +31,7 @@ function BeanRow({ bean, usage, fallbackMethod, onClick }: BeanRowProps) {
       <span className="ledger-aside">
         <FreshnessBadge freshness={stock.freshness} />
         {bean.weightG != null && (
-          <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow} />
+          <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow} compact />
         )}
       </span>
     </button>

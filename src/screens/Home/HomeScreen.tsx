@@ -185,10 +185,12 @@ export function HomeScreen() {
               <RoastDot level={bean.roast} />
               <span className="ledger-main">
                 <span className="ledger-title">{bean.name}</span>
-                <span className="ledger-sub">{bean.roaster}</span>
+                <span className="ledger-sub">
+                  {[bean.roaster, stock.servings !== null ? t('beans.stock.servingsLeft', { count: stock.servings }) : null].filter(Boolean).join(' · ')}
+                </span>
               </span>
-              <span className={`ledger-aside ${s.lowAside}`}>
-                <StockMeter weightG={bean.weightG ?? 0} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow />
+              <span className="ledger-aside">
+                <StockMeter weightG={bean.weightG ?? 0} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow compact />
               </span>
             </button>
           ))}
