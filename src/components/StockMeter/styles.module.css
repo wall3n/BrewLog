@@ -1,0 +1,27 @@
+/* StockMeter — remaining coffee in the bag, printed in graphite */
+.meter { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.head { display: flex; align-items: baseline; gap: 6px 12px; flex-wrap: wrap; }
+.value {
+  font-size: 28px; font-weight: 500; font-variation-settings: 'wdth' 90; letter-spacing: -0.02em; line-height: 1.05;
+  color: var(--text-primary); font-variant-numeric: tabular-nums lining-nums; white-space: nowrap;
+}
+.unit { font-size: 14px; font-weight: 500; letter-spacing: 0; color: var(--text-secondary); margin-left: 2px; }
+.bag { font-size: 13.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.lowMark { margin-left: auto; color: var(--text-primary); display: inline-flex; align-items: center; gap: 6px; }
+/* Hollow graphite mark: stock is outside its comfortable range */
+.lowMark::before { content: ''; width: 7px; height: 7px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid currentColor; }
+.servings { font-size: 13.5px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+/* Gauge: pressed-well track, graphite fill; it darkens when stock is low */
+.track { height: 4px; background: var(--bg-elevated); border-radius: 1px; overflow: hidden; }
+.fill { height: 100%; background: var(--text-tertiary); transform-origin: left center; transition: transform 120ms var(--ease-out); }
+.isLow .fill { background: var(--text-primary); }
+.isLow .servings { color: var(--text-primary); font-weight: 600; }
+
+/* Compact: for the aside of a ledger row */
+.compact { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+.compact .track { width: 64px; height: 2px; }
+.compactText { font-size: 13px; font-weight: 500; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.compact.isLow .compactText { color: var(--text-primary); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }

@@ -187,6 +187,7 @@
     "thisWeek": "This week",
     "topExtractions": "Top extractions",
     "topBeans": "Top beans",
+    "runningLow": "Running low",
     "recent": "Recent",
     "seeAll": "All",
     "activeBeans": "Active beans",
@@ -420,6 +421,25 @@
       "ratio": "Ratio",
       "time": "Time",
       "rating": "Rating"
+    },
+    "stock": {
+      "label": "Stock",
+      "remaining": "{{weight}} g left",
+      "servingsLeft_one": "≈ {{count}} brew left",
+      "servingsLeft_other": "≈ {{count}} brews left",
+      "empty": "This bag is empty.",
+      "markFinished": "Mark as finished",
+      "ofBag": "of {{weight}} g",
+      "low": "Running low"
+    },
+    "freshness": {
+      "label": "Freshness",
+      "resting_one": "Resting · peak in {{count}} day",
+      "resting_other": "Resting · peak in {{count}} days",
+      "peak_one": "Peak · {{count}} day left",
+      "peak_other": "Peak · {{count}} days left",
+      "fading": "Past peak",
+      "stale": "Stale"
     },
     "notFound": "Bean not found",
     "backToBeans": "Back to beans",

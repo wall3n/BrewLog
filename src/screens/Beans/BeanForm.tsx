@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Field, Input, Textarea, RoastDot } from '../../components/UI';
 import type { Bean } from '../../db/types';
+import { nextInitialWeight } from '../../utils/beanStock';
 import s from './styles.module.css';
 
 interface BeanFormProps {
@@ -27,6 +28,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
   const [notes, setNotes] = useState(initial.notes ?? '');
 
   function handleSave() {
+    const newWeight = weightG !== '' ? parseFloat(weightG) : undefined;
     onSave({
       name: name.trim() || t('beans.saveName'),
       roaster: roaster.trim(),
@@ -34,7 +36,8 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
       process: process.trim() || undefined,
       roast,
       roastedAt: roastedAt ? new Date(roastedAt).toISOString() : undefined,
-      weightG: weightG !== '' ? parseFloat(weightG) : undefined,
+      weightG: newWeight,
+      initialWeightG: nextInitialWeight(initial.initialWeightG, initial.weightG, newWeight),
       status,
       notes: notes.trim() || undefined,
     });
