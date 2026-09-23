@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-09-23
+
+### Added
+- **Bean Stock**: Each brew subtracts its dose from the bean weight. Bean cards and the bean detail show the stock left and the brews left. Home shows beans that run low.
+- **Bean Freshness**: Beans show a rest window badge based on the days off roast.
+- **Roast Date Picker**: The quick add and the bean form ask for the roast date from a calendar. The field shows the days off roast and blocks a future date.
+- **Dial-in Analytics**: Analytics shows a control chart, rating drivers and a timeline for each bean.
+- **SCA Brewing Control Chart**: The classic chart with EY 14–26 % and TDS 0.80–1.60 %, the nine named zones, the ideal bands and the 40–70 g/L ratio lines.
+- **Guided Brew**: A full-screen overlay guides the pour stages of a recipe, with audio cues and a screen wake lock. Extractions keep a link to the recipe they used.
+- **Share Card**: Share a brew or a recipe as a card. Import a recipe from a share link.
+- **Unit Tests**: Added Vitest and the `npm test` script.
+
+### Changed
+- **QC Lab Sheet Redesign**: The app uses a new lab-sheet look. Archivo Variable replaces DM Serif Display and DM Mono. Green, amber and red mark only the shot outcome.
+- **Single Brew Sheet**: One brew sheet with steppers, an inline timer, target ranges and deltas against the previous shot replaces the 6-step log wizard. Home shows the last shot and a one-tap "Next shot".
+- **Database Schema v3**: Extractions store the ID of the recipe they used.
+
+### Fixed
+- **Extraction Yield**: The brew wizard and Analytics use the same EY formula.
+
+### Breaking
+- The `/log` wizard steps are gone. New shots start with no outcome and no cupping scores.
+
+---
+
 ## [0.2.0] - 2026-06-17
 
 ### Added
