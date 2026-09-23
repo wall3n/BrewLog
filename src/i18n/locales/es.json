@@ -726,7 +726,22 @@
     "errors": {
       "duplicate": "Esta agua ya está en la lista.",
       "tds": "Introduce un TDS de {{min}} a {{max}} ppm.",
-      "save": "No se guardó el agua. Inténtalo de nuevo."
-    }
+      "save": "No se guardó el agua. Inténtalo de nuevo.",
+      "load": "No se cargaron las aguas. Recarga la página."
+    },
+    "title": "Aguas",
+    "count_one": "{{count}} agua",
+    "count_other": "{{count}} aguas",
+    "empty": "Aún no hay aguas. Añade las marcas embotelladas o recetas minerales que usas.",
+    "edit": "Editar agua",
+    "editNamed": "Editar {{name}}",
+    "deleteNamed": "Eliminar {{name}}",
+    "notes": "Notas (opcional)",
+    "notesPlaceholder": "p. ej. 1 sobre por 4 L, Ca 30 ppm",
+    "recipeCount_one": "{{count}} receta",
+    "recipeCount_other": "{{count}} recetas",
+    "confirmDelete": "¿Eliminar {{name}}?",
+    "confirmDeleteUsed_one": "¿Eliminar {{name}}? {{count}} receta la usa y quedará sin agua.",
+    "confirmDeleteUsed_other": "¿Eliminar {{name}}? {{count}} recetas la usan y quedarán sin agua."
   }
 }

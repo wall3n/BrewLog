@@ -726,7 +726,22 @@
     "errors": {
       "duplicate": "Cette eau est déjà dans la liste.",
       "tds": "Saisissez un TDS de {{min}} à {{max}} ppm.",
-      "save": "L'eau n'a pas été enregistrée. Réessayez."
-    }
+      "save": "L'eau n'a pas été enregistrée. Réessayez.",
+      "load": "Les eaux ne se sont pas chargées. Rechargez la page."
+    },
+    "title": "Eaux",
+    "count_one": "{{count}} eau",
+    "count_other": "{{count}} eaux",
+    "empty": "Aucune eau pour l'instant. Ajoutez les marques en bouteille ou les recettes minérales que vous utilisez.",
+    "edit": "Modifier l'eau",
+    "editNamed": "Modifier {{name}}",
+    "deleteNamed": "Supprimer {{name}}",
+    "notes": "Notes (facultatif)",
+    "notesPlaceholder": "ex. 1 sachet pour 4 L, Ca 30 ppm",
+    "recipeCount_one": "{{count}} recette",
+    "recipeCount_other": "{{count}} recettes",
+    "confirmDelete": "Supprimer {{name}} ?",
+    "confirmDeleteUsed_one": "Supprimer {{name}} ? {{count}} recette l'utilise et n'aura plus d'eau.",
+    "confirmDeleteUsed_other": "Supprimer {{name}} ? {{count}} recettes l'utilisent et n'auront plus d'eau."
   }
 }

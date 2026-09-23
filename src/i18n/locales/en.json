@@ -726,7 +726,22 @@
     "errors": {
       "duplicate": "This water is already in the list.",
       "tds": "Enter a TDS from {{min}} to {{max}} ppm.",
-      "save": "The water was not saved. Try again."
-    }
+      "save": "The water was not saved. Try again.",
+      "load": "The waters did not load. Reload the page."
+    },
+    "title": "Waters",
+    "count_one": "{{count}} water",
+    "count_other": "{{count}} waters",
+    "empty": "No waters yet. Add the bottled brands or mineral recipes you brew with.",
+    "edit": "Edit water",
+    "editNamed": "Edit {{name}}",
+    "deleteNamed": "Delete {{name}}",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "e.g. 1 sachet per 4 L, Ca 30 ppm",
+    "recipeCount_one": "{{count}} recipe",
+    "recipeCount_other": "{{count}} recipes",
+    "confirmDelete": "Delete {{name}}?",
+    "confirmDeleteUsed_one": "Delete {{name}}? {{count}} recipe uses it and will have no water.",
+    "confirmDeleteUsed_other": "Delete {{name}}? {{count}} recipes use it and will have no water."
   }
 }

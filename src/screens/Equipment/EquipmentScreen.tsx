@@ -5,6 +5,7 @@ import { useDebounce } from '../../hooks/useDebounce';
 import { Button, Sheet, Field, Input, Tag, Empty, Pagination, ListToolbar } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import type { Equipment } from '../../db/types';
+import { WaterSection } from './WaterSection';
 import s from './styles.module.css';
 
 function QuickAddEquipment({ onSave }: { onSave: (p: { type: string; name: string; model?: string }) => void }) {
@@ -158,6 +159,8 @@ export function EquipmentScreen() {
           setPage(1);
         }}
       />
+
+      <WaterSection />
 
       <Sheet open={adding} onClose={() => setAdding(false)} title={t('equipment.addEquipment')}>
         <QuickAddEquipment onSave={async (payload) => { await db.addEquipment({ ...payload, usage: 0 }); await loadEquipment(); setAdding(false); }} />

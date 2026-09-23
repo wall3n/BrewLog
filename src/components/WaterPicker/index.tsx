@@ -5,10 +5,8 @@ import { Input } from '../Input';
 import { Tag } from '../Tag';
 import { Icon } from '../Icons';
 import type { Water } from '../../db/types';
+import { MAX_WATER_BRAND_LENGTH, WATER_TDS_RANGE, isDuplicateWater, parseTds } from '../../utils/water';
 import s from './styles.module.css';
-
-const MAX_WATER_BRAND_LENGTH = 60;
-const WATER_TDS_RANGE: readonly [number, number] = [0, 1000];
 
 export interface NewWater { brand: string; tdsPpm?: number; }
 
@@ -31,9 +29,9 @@ export function WaterPicker({ waters, value, onChange, onAdd }: WaterPickerProps
   const [failed, setFailed] = useState(false);
 
   const trimmed = brand.trim();
-  const tdsNum = tds.trim() === '' ? undefined : Number(tds);
-  const tdsInvalid = tdsNum !== undefined && (!Number.isFinite(tdsNum) || tdsNum < WATER_TDS_RANGE[0] || tdsNum > WATER_TDS_RANGE[1]);
-  const duplicate = waters.some(w => w.brand.toLowerCase() === trimmed.toLowerCase());
+  const tdsNum = parseTds(tds);
+  const tdsInvalid = tdsNum === null;
+  const duplicate = trimmed !== '' && isDuplicateWater(waters, trimmed);
   const canAdd = trimmed.length > 0 && !tdsInvalid && !duplicate && !saving;
 
   function close() {
@@ -44,7 +42,7 @@ export function WaterPicker({ waters, value, onChange, onAdd }: WaterPickerProps
     if (!canAdd) return;
     setSaving(true); setFailed(false);
     try {
-      await onAdd({ brand: trimmed, ...(tdsNum !== undefined ? { tdsPpm: tdsNum } : {}) });
+      await onAdd({ brand: trimmed, ...(tdsNum != null ? { tdsPpm: tdsNum } : {}) });
       close();
     } catch {
       setFailed(true);

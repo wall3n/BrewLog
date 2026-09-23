@@ -370,6 +370,24 @@ export function useDb() {
       const id = await db.waters.add({ ...data, createdAt: ts, updatedAt: ts });
       return { ...data, id, createdAt: ts, updatedAt: ts };
     },
+    async updateWater(data: Water & { id: number }): Promise<void> {
+      await db.waters.put({ ...data, updatedAt: now() });
+    },
+    // Recipes that used the water keep working, with no water linked.
+    async deleteWater(id: number): Promise<void> {
+      await db.transaction('rw', db.waters, db.recipes, async () => {
+        await db.recipes.filter(r => r.waterId === id).modify(r => { delete r.waterId; });
+        await db.waters.delete(id);
+      });
+    },
+    // Number of recipes that use each water.
+    async getWaterUsage(): Promise<Map<number, number>> {
+      const usage = new Map<number, number>();
+      await db.recipes.each(r => {
+        if (r.waterId != null) usage.set(r.waterId, (usage.get(r.waterId) ?? 0) + 1);
+      });
+      return usage;
+    },
 
     // ── Settings ──────────────────────────────────────────────────
     async updateSettings(data: Partial<AppSettings>): Promise<void> {
