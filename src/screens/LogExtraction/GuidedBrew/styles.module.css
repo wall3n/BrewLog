@@ -137,9 +137,10 @@
 .controls { flex: none; display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
 .primary  { display: flex; }
 .ctrl     { min-height: 56px; justify-content: center; }
-.pause    { border-color: var(--text-secondary); }
-.resume   { border-color: var(--accent); color: var(--accent); }
-@media (hover: hover) { .resume:hover:not(:disabled) { background: var(--accent-bg); } }
+/* Two classes so these win over the global .btn-ghost, which loads later. */
+.ctrl.pause  { border-color: var(--text-secondary); }
+.ctrl.resume { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) { .ctrl.resume:hover:not(:disabled) { background: var(--accent-bg); } }
 .done     { grid-column: 1 / -1; }
 
 /* Short phones (iPhone SE, landscape) */
