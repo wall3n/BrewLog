@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '../Icons';
 import s from './styles.module.css';
@@ -17,6 +17,8 @@ interface StepperProps {
   previous?: number | null;
   hint?: string;
   size?: 'lg' | 'md';
+  /** Message printed under the cell when the value cannot be saved */
+  error?: string | null;
 }
 
 function round(v: number, decimals: number): number {
@@ -26,9 +28,10 @@ function round(v: number, decimals: number): number {
 
 /** A fill-in cell on the sheet: printed label, ink value, − and + for one-hand use. */
 export function Stepper({
-  label, value, onChange, step, unit, prefix, min = 0, max = 9999, decimals = 1, previous, hint, size = 'lg',
+  label, value, onChange, step, unit, prefix, min = 0, max = 9999, decimals = 1, previous, hint, size = 'lg', error,
 }: StepperProps) {
   const { t } = useTranslation();
+  const errorId = useId();
   // Draft text only while the user types; otherwise the cell shows the value.
   const [text, setText] = useState<string | null>(null);
 
@@ -42,7 +45,7 @@ export function Stepper({
   const delta = previous != null ? round(value - previous, decimals) : null;
 
   return (
-    <div className={`${s.root} ${size === 'md' ? s.md : ''}`}>
+    <div className={`${s.root} ${size === 'md' ? s.md : ''} ${error ? s.invalid : ''}`}>
       <div className={s.head}>
         <span className="field-label">{label}</span>
         {hint && <span className={s.hint}>{hint}</span>}
@@ -63,6 +66,8 @@ export function Stepper({
             onBlur={e => commit(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
             aria-label={label}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
           />
           {unit && <span className={s.unit}>{unit}</span>}
         </label>
@@ -70,6 +75,7 @@ export function Stepper({
           <Icon name="plus" size={18} />
         </button>
       </div>
+      {error && <p id={errorId} className={s.error}>{error}</p>}
       {delta != null && (
         <div className={s.delta}>
           {delta === 0

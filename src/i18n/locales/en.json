@@ -187,6 +187,7 @@
     "thisWeek": "This week",
     "topExtractions": "Top extractions",
     "topBeans": "Top beans",
+    "runningLow": "Running low",
     "recent": "Recent",
     "seeAll": "All",
     "activeBeans": "Active beans",
@@ -347,6 +348,24 @@
     "unknownBean": "Unknown bean",
     "equipmentSection": "Equipment"
   },
+  "guidedBrew": {
+    "open": "Guided brew",
+    "title": "Guided brew",
+    "close": "Close guided brew",
+    "now": "Now",
+    "ready": "Press start",
+    "getReady": "Get ready",
+    "pourTo": "Pour to {{weight}} g",
+    "nextIn": "{{label}} in {{time}}",
+    "finalStage": "Last pour. Wait for the drawdown.",
+    "done": "Done · use {{time}}",
+    "stages": "Pour stages",
+    "recipe": "Recipe",
+    "noRecipe": "No recipe",
+    "savedRecipe": "Saved recipe",
+    "summary_one": "{{count}} pour · {{time}}",
+    "summary_other": "{{count}} pours · {{time}}"
+  },
   "beans": {
     "title": "Beans",
     "total": "{{count}} total",
@@ -381,7 +400,6 @@
       "roaster": "Roaster",
       "process": "Process",
       "roastLevel": "Roast level",
-      "daysSinceRoast": "Days since roast",
       "roastedAt": "Roast date",
       "origin": "Origin",
       "weight": "Weight remaining",
@@ -421,6 +439,25 @@
       "time": "Time",
       "rating": "Rating"
     },
+    "stock": {
+      "label": "Stock",
+      "remaining": "{{weight}} g left",
+      "servingsLeft_one": "≈ {{count}} brew left",
+      "servingsLeft_other": "≈ {{count}} brews left",
+      "empty": "This bag is empty.",
+      "markFinished": "Mark as finished",
+      "ofBag": "of {{weight}} g",
+      "low": "Running low"
+    },
+    "freshness": {
+      "label": "Freshness",
+      "resting_one": "Resting · peak in {{count}} day",
+      "resting_other": "Resting · peak in {{count}} days",
+      "peak_one": "Peak · {{count}} day left",
+      "peak_other": "Peak · {{count}} days left",
+      "fading": "Past peak",
+      "stale": "Stale"
+    },
     "notFound": "Bean not found",
     "backToBeans": "Back to beans",
     "confirmDelete": "Delete this bean?",
@@ -428,7 +465,14 @@
     "saveName": "Untitled bean",
     "saveBeanBtn": "Save bean",
     "daysUnit": "d",
-    "specSheet": "Spec sheet"
+    "specSheet": "Spec sheet",
+    "roastDate": {
+      "days_one": "{{count}} day off roast",
+      "days_other": "{{count}} days off roast",
+      "today": "Roasted today",
+      "future": "This date is after today.",
+      "empty": "Use the date on the bag"
+    }
   },
   "equipment": {
     "title": "Equipment",
@@ -517,7 +561,23 @@
       "save": "Save recipe",
       "pourLabel": "Pour {{number}}",
       "labelPlaceholder": "Label",
-      "defaultName": "{{method}} recipe"
+      "defaultName": "{{method}} recipe",
+      "errors": {
+        "name": "Use 1 to {{max}} characters.",
+        "method": "Choose a method from the list.",
+        "dose": "Enter a dose from {{min}} to {{max}} g.",
+        "yield": "Yield must be {{min}} to {{max}} g. Lower the dose or the ratio.",
+        "ratio": "Set a ratio from 1:{{min}} to 1:{{max}}.",
+        "time": "Enter a brew time as m:ss.",
+        "temp": "Enter a temperature from {{min}} to {{max}} °C.",
+        "stages": "Use {{max}} pours or fewer. Remove a pour.",
+        "stageLabel": "Pour {{number}}: use {{max}} characters or fewer in the label.",
+        "stageTime": "Pour {{number}}: enter a time as m:ss.",
+        "stageWeight": "Pour {{number}}: enter a weight from {{min}} to {{max}} g.",
+        "payload": "This recipe is too long to share as a link. Shorten the name or the pour labels.",
+        "summary": "Fix the marked fields to save."
+      },
+      "maxPours": "{{max}} pours max."
     },
     "pourCount_one": "{{count}} pour",
     "pourCount_other": "{{count}} pours",
@@ -526,6 +586,30 @@
     "deleteRecipe": "Delete recipe",
     "confirmDelete": "Delete this recipe?",
     "lastUsedLabel": "Last used"
+  },
+  "share": {
+    "section": "Share",
+    "image": "Share image",
+    "link": "Share link",
+    "preparing": "Preparing image…",
+    "copied": "Link copied.",
+    "downloaded": "Image saved.",
+    "failed": "Could not share. Try again.",
+    "recipeSubtitle": "Recipe",
+    "import": {
+      "open": "Import",
+      "title": "Import recipe",
+      "pasteLabel": "Recipe link",
+      "paste": "Paste a BrewLog recipe link",
+      "go": "Open",
+      "invalid": "This recipe link is not valid.",
+      "invalidBody": "Ask the sender for a new link.",
+      "from": "Shared recipe",
+      "sourceLabel": "Source",
+      "save": "Save recipe",
+      "failed": "Could not save the recipe. Try again."
+    },
+    "linkBlocked": "This recipe has values a share link cannot carry. Edit the recipe to share it as a link."
   },
   "analytics": {
     "title": "Analytics",
@@ -537,7 +621,59 @@
     "topBeans": "Top beans by rating",
     "noRatings": "Need more rated extractions.",
     "logFirst": "Log some extractions first.",
-    "beansUsed": "Beans used"
+    "beansUsed": "Beans used",
+    "controlChart": {
+      "title": "SCA brewing control chart",
+      "eyAxis": "Extraction yield (%)",
+      "empty": "Log a filter brew with a TDS reading to see it here.",
+      "note": "Filter brews only. The shaded bands are the SCA ideal strength (TDS 1.15–1.35 %) and extraction (EY 18–22 %). Where they cross is the ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds.",
+      "tdsAxis": "TDS (%)",
+      "summary_one": "{{ideal}} of {{count}} brew in the ideal zone",
+      "summary_other": "{{ideal}} of {{count}} brews in the ideal zone",
+      "hint": "Tap a dot to open the brew.",
+      "ratioAxis": "Brew ratio: g of coffee per L of water",
+      "ratioLine": "{{g}} g",
+      "offChart_one": "{{count}} brew is off the chart. It shows on the nearest edge.",
+      "offChart_other": "{{count}} brews are off the chart. They show on the nearest edge.",
+      "figure": "SCA brewing control chart with {{count}} brews"
+    },
+    "zones": {
+      "strongUnder": "Strong\nunderdeveloped",
+      "strong": "Strong",
+      "strongBitter": "Strong\nbitter",
+      "under": "Underdeveloped",
+      "ideal": "Ideal",
+      "bitter": "Bitter",
+      "weakUnder": "Weak\nunderdeveloped",
+      "weak": "Weak",
+      "weakBitter": "Weak\nbitter"
+    },
+    "drivers": {
+      "title": "What moves your rating",
+      "empty": "Rate at least {{min}} brews of one method to see this.",
+      "positive": "Higher {{param}} gave better ratings.",
+      "negative": "Lower {{param}} gave better ratings.",
+      "weak": "No parameter has a clear link to your rating yet.",
+      "sample": "Based on {{n}} rated brews",
+      "params": {
+        "dose": "Dose",
+        "ratio": "Ratio",
+        "timeS": "Time",
+        "temp": "Temperature",
+        "grind": "Grind"
+      },
+      "lowerBetter": "Lower is better",
+      "higherBetter": "Higher is better"
+    },
+    "timeline": {
+      "title": "Dial-in timeline",
+      "empty": "Log 2 or more brews of one bean to see its timeline.",
+      "time": "Time",
+      "grind": "Grind",
+      "brew": "Brew {{n}}",
+      "beanLabel": "Bean",
+      "brewAxis": "Brew number"
+    }
   },
   "sheet": {
     "newShot": "New shot",

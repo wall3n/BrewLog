@@ -9,6 +9,7 @@ export interface Bean {
   notes?: string;
   status: 'active' | 'finished' | 'wishlist';
   weightG?: number;
+  initialWeightG?: number;   // bag size, for the stock bar. Not indexed, so no schema version change.
   createdAt: string;
   updatedAt: string;
 }
@@ -50,6 +51,7 @@ export interface Extraction {
   id?: number;
   method: string;
   beanId: number;
+  recipeId?: number;
   equipmentIds: number[];
   grindSetting?: string;
   dose: number;
@@ -68,6 +70,9 @@ export interface Extraction {
   balance: number;
   flavours: string[];
   notes?: string;
+  // Grams really taken from the bean for this brew (0 if the bean had no weight or ran out).
+  // Missing on brews logged before stock tracking. Not indexed, so no schema version change.
+  stockUsedG?: number;
   createdAt: string;
   updatedAt: string;
 }

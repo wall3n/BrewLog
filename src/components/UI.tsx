@@ -1,5 +1,6 @@
 export { Button } from './Button';
 export { Field, Input, Textarea } from './Input';
+export { RoastDateField } from './RoastDateField';
 export { Slider } from './Slider';
 export { Tag } from './Tag';
 export { Sheet } from './Modal';
@@ -16,3 +17,6 @@ export { FilterBar } from './FilterBar';
 export { FlagMark } from './FlagMark';
 export { Stepper } from './Stepper';
 export { ListToolbar } from './ListToolbar';
+export { StockMeter } from './StockMeter';
+export { FreshnessBadge } from './FreshnessBadge';
+export { ShareActions } from './ShareActions';

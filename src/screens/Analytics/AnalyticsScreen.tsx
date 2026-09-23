@@ -4,6 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { Stars, Empty, FlagMark } from '../../components/UI';
 import type { Extraction, Bean } from '../../db/types';
+import { toControlPoints } from '../../utils/analytics';
+import { ControlChart } from './ControlChart';
+import { RatingDrivers } from './RatingDrivers';
+import { BeanTimeline } from './BeanTimeline';
 import s from './styles.module.css';
 
 const FLAGS = ['dialled', 'adjust', 'fail'] as const;
@@ -133,6 +137,21 @@ export function AnalyticsScreen() {
                 </div>
               ))}
             </div>
+          </section>
+
+          <section className={s.block}>
+            <div className="section-label"><span className="t-upper">{t('analytics.controlChart.title')}</span></div>
+            <ControlChart points={toControlPoints(extractions)} onSelect={id => navigate(`/history/${id}`)} />
+          </section>
+
+          <section className={s.block}>
+            <div className="section-label"><span className="t-upper">{t('analytics.drivers.title')}</span></div>
+            <RatingDrivers extractions={extractions} />
+          </section>
+
+          <section className={s.block}>
+            <div className="section-label"><span className="t-upper">{t('analytics.timeline.title')}</span></div>
+            <BeanTimeline extractions={extractions} beans={beans} />
           </section>
 
           <section className={s.block}>

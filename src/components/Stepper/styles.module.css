@@ -32,3 +32,8 @@
 .md .body { min-height: 48px; }
 .md .input { font-size: 21px; }
 .prefix { font-size: 16px; font-weight: 500; color: var(--text-secondary); flex-shrink: 0; }
+
+/* A value that cannot be saved: fail-red border and a printed reason under the cell */
+.invalid .body, .invalid .body:focus-within { border-color: var(--danger); }
+.invalid .body:focus-within { box-shadow: 0 0 0 3px var(--danger-bg); }
+.error { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--danger); }
