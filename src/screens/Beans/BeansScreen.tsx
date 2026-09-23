@@ -3,14 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
 import { useDebounce } from '../../hooks/useDebounce';
-import { Button, Sheet, Empty, RoastDot, DaysOffRoast, Field, Input, Stepper, Pagination, ListToolbar } from '../../components/UI';
+import { Button, Sheet, Empty, RoastDot, Field, Input, RoastDateField, Pagination, ListToolbar, StockMeter, FreshnessBadge } from '../../components/UI';
+import { useApp } from '../../context/AppContext';
+import { beanStockView, type BeanUsage } from '../../utils/beanStock';
+import { daysOffRoast, fromDateInputValue } from '../../utils/roastDate';
 import type { Bean } from '../../db/types';
 import s from './styles.module.css';
 
 const BEAN_SORTS = ['nameAsc', 'nameDesc', 'roastedDesc', 'roastedAsc', 'createdDesc'] as const;
 type BeanSort = typeof BEAN_SORTS[number];
 
-function BeanRow({ bean, onClick }: { bean: Bean; onClick: () => void }) {
+interface BeanRowProps {
+  bean: Bean;
+  usage: BeanUsage | undefined;
+  fallbackMethod: string;
+  onClick: () => void;
+}
+
+function BeanRow({ bean, usage, fallbackMethod, onClick }: BeanRowProps) {
+  const stock = beanStockView(bean, usage, fallbackMethod, new Date());
   return (
     <button type="button" className="ledger-row" onClick={onClick}>
       <RoastDot level={bean.roast} />
@@ -19,7 +30,10 @@ function BeanRow({ bean, onClick }: { bean: Bean; onClick: () => void }) {
         <span className="ledger-sub">{[bean.roaster, bean.origin, bean.process].filter(Boolean).join(' · ')}</span>
       </span>
       <span className="ledger-aside">
-        <DaysOffRoast iso={bean.roastedAt} />
+        <FreshnessBadge freshness={stock.freshness} />
+        {bean.weightG != null && (
+          <StockMeter weightG={bean.weightG} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow={stock.isLow} compact />
+        )}
       </span>
     </button>
   );
@@ -31,7 +45,8 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
   const [roaster, setRoaster] = useState('');
   const [process, setProcess] = useState('Washed');
   const [roast, setRoast] = useState<'light'|'medium'|'dark'>('light');
-  const [days, setDays] = useState(7);
+  const [roastedAt, setRoastedAt] = useState('');
+  const roastFuture = (daysOffRoast(roastedAt, new Date()) ?? 0) < 0;
 
   return (
     <div className="col col-gap-16">
@@ -59,11 +74,10 @@ export function QuickAddBean({ onSave }: { onSave: (p: Omit<Bean, 'id'|'createdA
           </div>
         </Field>
       </div>
-      <Stepper label={t('beans.fields.daysSinceRoast')} value={days} onChange={setDays} step={1} decimals={0} max={365} unit={t('beans.daysUnit')} size="md" />
+      <RoastDateField value={roastedAt} onChange={setRoastedAt} />
       <Button full size="lg" onClick={() => {
-        const d = new Date(); d.setDate(d.getDate() - days);
-        onSave({ name: name || t('beans.saveName'), roaster, process, roast, roastedAt: d.toISOString(), status: 'active' });
-      }} disabled={!name}>{t('beans.saveBeanBtn')}</Button>
+        onSave({ name: name || t('beans.saveName'), roaster, process, roast, roastedAt: fromDateInputValue(roastedAt), status: 'active' });
+      }} disabled={!name || roastFuture}>{t('beans.saveBeanBtn')}</Button>
     </div>
   );
 }
@@ -85,6 +99,8 @@ export function BeansScreen() {
   const [sort, setSort] = useState<BeanSort>('nameAsc');
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const { state } = useApp();
+  const [usage, setUsage] = useState<Map<number, BeanUsage>>(new Map());
 
 
   const loadBeans = useCallback(() => {
@@ -95,9 +111,12 @@ export function BeansScreen() {
       sort,
       page,
       limit: itemsPerPage
-    }).then(({ items, total }) => {
+    }).then(async ({ items, total }) => {
+      // Load usage first so the rows never render with the fallback dose.
+      const pageUsage = await db.getBeanUsage(items.map(b => b.id!));
       setBeans(items);
       setTotalCount(total);
+      setUsage(pageUsage);
     });
 
     Promise.all([
@@ -184,7 +203,7 @@ export function BeansScreen() {
         ? <Empty icon="bean" title={noBeansTitle} body={noBeansBody} />
         : (
           <div className="ledger">
-            {beans.map(b => <BeanRow key={b.id} bean={b} onClick={() => navigate(`/beans/${b.id}`)} />)}
+            {beans.map(b => <BeanRow key={b.id} bean={b} usage={usage.get(b.id!)} fallbackMethod={state.settings.defaultMethod} onClick={() => navigate(`/beans/${b.id}`)} />)}
           </div>
         )}
 

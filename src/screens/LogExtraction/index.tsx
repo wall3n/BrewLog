@@ -8,6 +8,7 @@ import { Icon } from '../../components/Icons';
 import { METHODS, methodById, getTargets } from '../../utils/methodDefaults';
 import { fmtTime } from '../../utils/formatters';
 import { sampleNo, previousShot } from '../../utils/shots';
+import { initialRecipeChoice, recipePatchOnChoose, recipePatchOnGuidedDone, recipeIdToSave } from '../../utils/brewStages';
 import type { Bean, Equipment, Extraction, Recipe } from '../../db/types';
 import { BeanPicker } from './sections/BeanPicker';
 import { GrindField } from './sections/GrindField';
@@ -22,6 +23,8 @@ export interface ShotDraft {
   createdAt?: string;
   method: string;
   beanId: number | null;
+  recipeId: number | null;       // linked on save; see RecipeDraft in utils/brewStages
+  recipeChoice?: number | null;  // chip the user picked; undefined = not chosen yet
   equipmentIds: number[];
   grindSetting: string;
   dose: number;
@@ -78,6 +81,7 @@ export function LogExtractionScreen() {
       createdAt: prefill?.createdAt,
       method,
       beanId: prefill?.beanId ?? state.activeBeans.find(b => b.status === 'active')?.id ?? null,
+      recipeId: prefill?.recipeId ?? null,
       equipmentIds: prefill?.equipmentIds ?? [],
       grindSetting: prefill?.grindSetting ?? '',
       dose,
@@ -103,7 +107,7 @@ export function LogExtractionScreen() {
   const [extractions, setExtractions] = useState<Extraction[]>([]);
   const [beans, setBeans] = useState<Bean[]>([]);
   const [equipment, setEquipment] = useState<Equipment[]>([]);
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[] | null>(null);
   const [pickingBean, setPickingBean] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -136,7 +140,13 @@ export function LogExtractionScreen() {
   const bean = beans.find(b => b.id === draft.beanId);
   const targets = getTargets(draft.method);
   const pressureMethod = isPressureMethod(draft.method);
-  const recipe = recipes.find(r => r.method === draft.method && r.stages?.length > 0);
+  const recipesForMethod = (recipes ?? []).filter(r => r.method === draft.method);
+  // Derived on every render: the default only fills in until the user taps a chip,
+  // and a chip tap (draft.recipeChoice) always wins over it.
+  const recipeChoice = initialRecipeChoice(recipesForMethod, draft);
+  const recipe = recipesForMethod.find(r => r.id === recipeChoice);
+  const chooseRecipe = (id: number | null) => update(recipePatchOnChoose(id));
+  const finishGuided = (timeS: number, recipeId: number) => update({ timeS, ...recipePatchOnGuidedDone(recipeId) });
   const nextNo = draft.id ?? extractions.reduce((max, e) => Math.max(max, e.id ?? 0), 0) + 1;
 
   const close = () => {
@@ -149,14 +159,25 @@ export function LogExtractionScreen() {
     if (!draft.beanId || !draft.flag || saving) return;
     setSaving(true);
     setError(null);
-    const { showTds, isEditing, id, createdAt, ...payload } = draft;
-    const data = { ...payload, flag: draft.flag, tds: showTds ? payload.tds : null, beanId: draft.beanId };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { showTds, isEditing, id, createdAt, recipeId: _recipeId, recipeChoice: _recipeChoice, ...payload } = draft;
+    // Drop a Start brew recipe when the user switched to another method. Before the
+    // recipes load there is nothing to compare with, so keep it.
+    const recipeId = recipeIdToSave(draft, recipes ? recipesForMethod : undefined);
+    const data = {
+      ...payload,
+      ...(recipeId != null ? { recipeId } : {}),
+      flag: draft.flag,
+      tds: showTds ? payload.tds : null,
+      beanId: draft.beanId,
+    };
     try {
       if (isEditing && id) {
         await db.updateExtraction({ ...data, id, createdAt: createdAt!, updatedAt: new Date().toISOString() });
         navigate(`/history/${id}`);
       } else {
         await db.addExtraction(data);
+        if (recipeId != null) await db.updateRecipe({ id: recipeId, lastUsedAt: new Date().toISOString() });
         navigate('/');
       }
     } catch {
@@ -227,7 +248,15 @@ export function LogExtractionScreen() {
       </SheetSection>
 
       <SheetSection label={t('sheet.time')} aside={targets.time && t('sheet.target', { range: targets.time })}>
-        <TimerBlock timeS={draft.timeS} previous={prev?.timeS} onTime={v => update({ timeS: v })} recipe={recipe} />
+        <TimerBlock
+          timeS={draft.timeS}
+          previous={prev?.timeS}
+          onTime={v => update({ timeS: v })}
+          recipes={recipesForMethod}
+          recipe={recipe}
+          onChooseRecipe={chooseRecipe}
+          onGuidedDone={finishGuided}
+        />
       </SheetSection>
 
       {equipment.length > 0 && (

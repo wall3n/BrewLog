@@ -1,0 +1,183 @@
+/* Guided brew: a full-screen timer sheet, read at arm's length next to the kettle.
+   Order of importance: clock, target weight, countdown, stage list, controls.
+   Lab sheet rules apply: graphite print, ink for the running clock and recipe values,
+   grid paper only behind the clock face, ruled rows instead of cards. */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100dvh;
+  padding:
+    calc(8px + env(safe-area-inset-top))
+    calc(16px + env(safe-area-inset-right))
+    calc(16px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
+  background: var(--bg-base);
+  color: var(--text-primary);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Header: the recipe name is the heading; close sits at the far edge */
+.head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
+.recipeName {
+  margin: 0; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 20px; font-weight: 650; font-variation-settings: 'wdth' 82; letter-spacing: -0.01em; line-height: 1.05;
+}
+.close {
+  flex: none;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; margin-right: -10px;
+  background: none; border: 0; border-radius: var(--radius);
+  color: var(--text-primary); cursor: pointer;
+  transition: background 120ms var(--ease-out);
+}
+@media (hover: hover) { .close:hover { background: var(--bg-elevated); } }
+
+/* Clock face: the one grid-paper box on this screen */
+.face {
+  flex: none;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 12px 18px;
+  border: 1px solid var(--border); border-radius: 2px;
+  text-align: center;
+}
+.clock {
+  /* Past the 80px sheet timer on purpose: read at arm's length from the kettle. */
+  font-size: clamp(80px, 26vw, 152px);
+  font-weight: 400;
+  font-variation-settings: 'wdth' 90;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--text-secondary);
+  transition: color 120ms var(--ease-out);
+}
+.clockRunning { color: var(--accent); }
+
+.now        { display: flex; flex-direction: column; align-items: center; gap: 2px; max-width: 100%; }
+.stageLabel {
+  font-size: 28px; font-weight: 650; font-variation-settings: 'wdth' 82;
+  letter-spacing: -0.01em; line-height: 1.1; text-wrap: balance;
+}
+.target {
+  font-size: 30px; font-weight: 500; font-variation-settings: 'wdth' 88;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1.1;
+  color: var(--accent);
+}
+
+/* Countdown to the next pour */
+.next {
+  flex: none;
+  min-height: 1.45em;
+  font-size: 16px; font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--text-secondary);
+  transition: color 120ms var(--ease-out);
+}
+/* The last seconds before a pour: heavier graphite and a slow pulse, no outcome colour. */
+.imminent { color: var(--text-primary); font-weight: 700; }
+
+.progress     { flex: none; display: flex; flex-direction: column; gap: 6px; }
+.progressMeta {
+  display: flex; justify-content: space-between;
+  font-size: 11.5px; font-weight: 600; font-variation-settings: 'wdth' 75; letter-spacing: 0.07em;
+  font-variant-numeric: tabular-nums; color: var(--text-tertiary);
+}
+
+/* Stage list: a ruled block that takes the space left and scrolls on short screens */
+.stagesBlock { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.stagesLabel { flex: none; margin-bottom: 0; padding-bottom: 8px; }
+.stages {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  /* Fade the bottom edge so a cut-off row reads as "more below". */
+  mask-image: linear-gradient(to bottom, currentColor calc(100% - 20px), transparent);
+}
+.stages::-webkit-scrollbar { display: none; }
+.stage {
+  display: grid;
+  grid-template-columns: 28px 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 8px 8px 8px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 120ms var(--ease-out), color 120ms var(--ease-out);
+}
+.stageActive { background: var(--accent-bg); }
+.stageDone   { color: var(--text-tertiary); }
+.stageNum {
+  display: inline-flex; justify-content: center;
+  font-size: 16px; font-weight: 700; font-variation-settings: 'wdth' 75; line-height: 1;
+  color: var(--text-tertiary);
+}
+.stageActive .stageNum { color: var(--accent); }
+.stageName   { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 500; }
+.stageText   { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stageActive .stageName { font-weight: 650; }
+.nowBadge    { color: var(--text-primary); }
+.stageTime   { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.stageWeight { min-width: 5ch; text-align: right; font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--accent); }
+.stageDone .stageTime, .stageDone .stageWeight { color: var(--text-tertiary); }
+.unit        { margin-left: 2px; font-size: 14px; color: var(--text-secondary); }
+
+/* Controls: big targets, reachable with one thumb */
+.controls { flex: none; display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+.primary  { display: flex; }
+.ctrl     { min-height: 56px; justify-content: center; }
+/* Two classes so these win over the global .btn-ghost, which loads later. */
+.ctrl.pause  { border-color: var(--text-secondary); }
+.ctrl.resume { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) { .ctrl.resume:hover:not(:disabled) { background: var(--accent-bg); } }
+.done     { grid-column: 1 / -1; }
+
+/* Short phones (iPhone SE, landscape) */
+@media (max-height: 700px) {
+  .overlay    { gap: 10px; }
+  .face       { padding: 14px 12px 12px; gap: 6px; }
+  .clock      { font-size: clamp(64px, 20vw, 104px); }
+  .stageLabel { font-size: 20px; }
+  .target     { font-size: 28px; }
+  .stage      { min-height: 46px; }
+}
+
+@media (min-width: 1024px) {
+  .overlay {
+    padding-left: max(24px, calc(50% - 300px));
+    padding-right: max(24px, calc(50% - 300px));
+    padding-top: 24px;
+  }
+  .clock { font-size: 168px; }
+}
+
+/* Motion: one quiet entrance and a slow pulse on the countdown in the last seconds.
+   Both stop when the user asks for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .overlay  { animation: guided-in 220ms var(--ease-out); }
+  .imminent { animation: guided-pulse 1s var(--ease-out) infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clock, .next, .stage, .close { transition: none; }
+}
+
+@keyframes guided-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes guided-pulse {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.55; }
+  100% { opacity: 1; }
+}

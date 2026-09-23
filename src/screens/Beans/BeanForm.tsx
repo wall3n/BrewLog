@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Field, Input, Textarea, RoastDot } from '../../components/UI';
+import { Button, Field, Input, Textarea, RoastDot, RoastDateField } from '../../components/UI';
 import type { Bean } from '../../db/types';
+import { nextInitialWeight } from '../../utils/beanStock';
+import { daysOffRoast, fromDateInputValue, toDateInputValue } from '../../utils/roastDate';
 import s from './styles.module.css';
 
 interface BeanFormProps {
@@ -17,24 +19,25 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
   const [origin, setOrigin] = useState(initial.origin ?? '');
   const [process, setProcess] = useState(initial.process ?? 'Washed');
   const [roast, setRoast] = useState<'light' | 'medium' | 'dark'>(initial.roast ?? 'light');
-  
-  // Format initial.roastedAt (ISO string) to YYYY-MM-DD for input type="date"
-  const initialDate = initial.roastedAt ? initial.roastedAt.split('T')[0] : '';
-  const [roastedAt, setRoastedAt] = useState(initialDate);
-  
+
+  const [roastedAt, setRoastedAt] = useState(toDateInputValue(initial.roastedAt));
+  const roastFuture = (daysOffRoast(roastedAt, new Date()) ?? 0) < 0;
+
   const [weightG, setWeightG] = useState<string>(initial.weightG != null ? String(initial.weightG) : '');
   const [status, setStatus] = useState<'active' | 'finished' | 'wishlist'>(initial.status ?? 'active');
   const [notes, setNotes] = useState(initial.notes ?? '');
 
   function handleSave() {
+    const newWeight = weightG !== '' ? parseFloat(weightG) : undefined;
     onSave({
       name: name.trim() || t('beans.saveName'),
       roaster: roaster.trim(),
       origin: origin.trim() || undefined,
       process: process.trim() || undefined,
       roast,
-      roastedAt: roastedAt ? new Date(roastedAt).toISOString() : undefined,
-      weightG: weightG !== '' ? parseFloat(weightG) : undefined,
+      roastedAt: fromDateInputValue(roastedAt),
+      weightG: newWeight,
+      initialWeightG: nextInitialWeight(initial.initialWeightG, initial.weightG, newWeight),
       status,
       notes: notes.trim() || undefined,
     });
@@ -115,13 +118,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
       </div>
 
       <div className={s.formGrid}>
-        <Field label={t('beans.fields.roastedAt')}>
-          <Input
-            type="date"
-            value={roastedAt}
-            onChange={e => setRoastedAt(e.target.value)}
-          />
-        </Field>
+        <RoastDateField value={roastedAt} onChange={setRoastedAt} />
 
         <Field label={t('beans.fields.status')}>
           <select
@@ -146,7 +143,7 @@ export function BeanForm({ initial = {}, onSave }: BeanFormProps) {
         />
       </Field>
 
-      <Button full size="lg" onClick={handleSave} disabled={!name || !roaster}>
+      <Button full size="lg" onClick={handleSave} disabled={!name || !roaster || roastFuture}>
         {t('common.save')}
       </Button>
     </div>

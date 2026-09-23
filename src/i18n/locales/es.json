@@ -187,6 +187,7 @@
     "thisWeek": "Esta semana",
     "topExtractions": "Mejores extracciones",
     "topBeans": "Mejores cafés",
+    "runningLow": "Se acaba",
     "recent": "Recientes",
     "seeAll": "Ver todo",
     "activeBeans": "Cafés activos",
@@ -347,6 +348,24 @@
     "unknownBean": "Café desconocido",
     "equipmentSection": "Equipo"
   },
+  "guidedBrew": {
+    "open": "Preparación guiada",
+    "title": "Preparación guiada",
+    "close": "Cerrar la preparación guiada",
+    "now": "Ahora",
+    "ready": "Pulsa iniciar",
+    "getReady": "Prepárate",
+    "pourTo": "Vierte hasta {{weight}} g",
+    "nextIn": "{{label}} en {{time}}",
+    "finalStage": "Último vertido. Espera a que drene.",
+    "done": "Listo · usar {{time}}",
+    "stages": "Etapas de vertido",
+    "recipe": "Receta",
+    "noRecipe": "Sin receta",
+    "savedRecipe": "Receta guardada",
+    "summary_one": "{{count}} vertido · {{time}}",
+    "summary_other": "{{count}} vertidos · {{time}}"
+  },
   "beans": {
     "title": "Cafés",
     "total": "{{count}} en total",
@@ -381,7 +400,6 @@
       "roaster": "Tostador",
       "process": "Proceso",
       "roastLevel": "Nivel de tueste",
-      "daysSinceRoast": "Días desde el tueste",
       "roastedAt": "Fecha de tueste",
       "origin": "Origen",
       "weight": "Peso restante",
@@ -421,6 +439,25 @@
       "time": "Tiempo",
       "rating": "Valoración"
     },
+    "stock": {
+      "label": "Existencias",
+      "remaining": "Quedan {{weight}} g",
+      "servingsLeft_one": "≈ {{count}} extracción restante",
+      "servingsLeft_other": "≈ {{count}} extracciones restantes",
+      "empty": "Esta bolsa está vacía.",
+      "markFinished": "Marcar como terminado",
+      "ofBag": "de {{weight}} g",
+      "low": "Se acaba"
+    },
+    "freshness": {
+      "label": "Frescura",
+      "resting_one": "En reposo · óptimo en {{count}} día",
+      "resting_other": "En reposo · óptimo en {{count}} días",
+      "peak_one": "Óptimo · queda {{count}} día",
+      "peak_other": "Óptimo · quedan {{count}} días",
+      "fading": "Pasado de punto",
+      "stale": "Rancio"
+    },
     "notFound": "Café no encontrado",
     "backToBeans": "Volver a cafés",
     "confirmDelete": "¿Eliminar este café?",
@@ -428,7 +465,14 @@
     "saveName": "Café sin nombre",
     "saveBeanBtn": "Guardar café",
     "daysUnit": "d",
-    "specSheet": "Ficha técnica"
+    "specSheet": "Ficha técnica",
+    "roastDate": {
+      "days_one": "{{count}} día desde el tueste",
+      "days_other": "{{count}} días desde el tueste",
+      "today": "Tostado hoy",
+      "future": "Esta fecha es posterior a hoy.",
+      "empty": "Usa la fecha de la bolsa"
+    }
   },
   "equipment": {
     "title": "Equipo",
@@ -517,7 +561,23 @@
       "save": "Guardar receta",
       "pourLabel": "Vertido {{number}}",
       "labelPlaceholder": "Etiqueta",
-      "defaultName": "Receta de {{method}}"
+      "defaultName": "Receta de {{method}}",
+      "errors": {
+        "name": "Usa de 1 a {{max}} caracteres.",
+        "method": "Elige un método de la lista.",
+        "dose": "Introduce una dosis de {{min}} a {{max}} g.",
+        "yield": "El rendimiento debe ser de {{min}} a {{max}} g. Baja la dosis o el ratio.",
+        "ratio": "Elige un ratio de 1:{{min}} a 1:{{max}}.",
+        "time": "Introduce el tiempo como m:ss.",
+        "temp": "Introduce una temperatura de {{min}} a {{max}} °C.",
+        "stages": "Usa {{max}} vertidos como máximo. Quita un vertido.",
+        "stageLabel": "Vertido {{number}}: usa {{max}} caracteres como máximo en la etiqueta.",
+        "stageTime": "Vertido {{number}}: introduce el tiempo como m:ss.",
+        "stageWeight": "Vertido {{number}}: introduce un peso de {{min}} a {{max}} g.",
+        "payload": "Esta receta es demasiado larga para compartirla como enlace. Acorta el nombre o las etiquetas de los vertidos.",
+        "summary": "Corrige los campos marcados para guardar."
+      },
+      "maxPours": "Máximo {{max}} vertidos."
     },
     "pourCount_one": "{{count}} vertido",
     "pourCount_other": "{{count}} vertidos",
@@ -526,6 +586,30 @@
     "deleteRecipe": "Eliminar receta",
     "confirmDelete": "¿Eliminar esta receta?",
     "lastUsedLabel": "Último uso"
+  },
+  "share": {
+    "section": "Compartir",
+    "image": "Compartir imagen",
+    "link": "Compartir enlace",
+    "preparing": "Preparando imagen…",
+    "copied": "Enlace copiado.",
+    "downloaded": "Imagen guardada.",
+    "failed": "No se pudo compartir. Inténtalo de nuevo.",
+    "recipeSubtitle": "Receta",
+    "import": {
+      "open": "Importar",
+      "title": "Importar receta",
+      "pasteLabel": "Enlace de la receta",
+      "paste": "Pega un enlace de receta de BrewLog",
+      "go": "Abrir",
+      "invalid": "Este enlace de receta no es válido.",
+      "invalidBody": "Pide un enlace nuevo a quien te lo envió.",
+      "from": "Receta compartida",
+      "sourceLabel": "Origen",
+      "save": "Guardar receta",
+      "failed": "No se pudo guardar la receta. Inténtalo de nuevo."
+    },
+    "linkBlocked": "Esta receta tiene valores que un enlace no puede llevar. Edita la receta para compartirla como enlace."
   },
   "analytics": {
     "title": "Análisis",
@@ -537,7 +621,59 @@
     "topBeans": "Mejores cafés por valoración",
     "noRatings": "Se necesitan más extracciones valoradas.",
     "logFirst": "Registra algunas extracciones primero.",
-    "beansUsed": "Cafés usados"
+    "beansUsed": "Cafés usados",
+    "controlChart": {
+      "title": "Carta de control SCA",
+      "eyAxis": "Rendimiento de extracción (%)",
+      "empty": "Registra un filtro con lectura de TDS para verlo aquí.",
+      "note": "Solo filtros. Las bandas sombreadas son la fuerza ideal SCA (TDS 1,15–1,35 %) y la extracción ideal (EY 18–22 %). Donde se cruzan está la zona ideal. BrewLog resta 2 g de agua por gramo de café por el poso húmedo.",
+      "tdsAxis": "TDS (%)",
+      "summary_one": "{{ideal}} de {{count}} extracción en la zona ideal",
+      "summary_other": "{{ideal}} de {{count}} extracciones en la zona ideal",
+      "hint": "Toca un punto para abrir la extracción.",
+      "ratioAxis": "Ratio: g de café por L de agua",
+      "ratioLine": "{{g}} g",
+      "offChart_one": "{{count}} extracción está fuera de la carta. Se muestra en el borde más cercano.",
+      "offChart_other": "{{count}} extracciones están fuera de la carta. Se muestran en el borde más cercano.",
+      "figure": "Carta de control SCA con {{count}} extracciones"
+    },
+    "zones": {
+      "strongUnder": "Fuerte\nsubdesarrollado",
+      "strong": "Fuerte",
+      "strongBitter": "Fuerte\namargo",
+      "under": "Subdesarrollado",
+      "ideal": "Ideal",
+      "bitter": "Amargo",
+      "weakUnder": "Débil\nsubdesarrollado",
+      "weak": "Débil",
+      "weakBitter": "Débil\namargo"
+    },
+    "drivers": {
+      "title": "Qué mueve tu valoración",
+      "empty": "Valora al menos {{min}} extracciones de un método para ver esto.",
+      "positive": "Más {{param}} dio mejores valoraciones.",
+      "negative": "Menos {{param}} dio mejores valoraciones.",
+      "weak": "Ningún parámetro tiene aún una relación clara con tu valoración.",
+      "sample": "Basado en {{n}} extracciones valoradas",
+      "params": {
+        "dose": "Dosis",
+        "ratio": "Ratio",
+        "timeS": "Tiempo",
+        "temp": "Temperatura",
+        "grind": "Molienda"
+      },
+      "lowerBetter": "Menos es mejor",
+      "higherBetter": "Más es mejor"
+    },
+    "timeline": {
+      "title": "Evolución del ajuste",
+      "empty": "Registra 2 o más extracciones de un café para ver su evolución.",
+      "time": "Tiempo",
+      "grind": "Molienda",
+      "brew": "Extracción {{n}}",
+      "beanLabel": "Café",
+      "brewAxis": "Número de extracción"
+    }
   },
   "sheet": {
     "newShot": "Nuevo shot",

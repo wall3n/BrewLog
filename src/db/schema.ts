@@ -28,6 +28,15 @@ export class AppDB extends Dexie {
         if (s.language === undefined) s.language = 'auto';
       });
     });
+    this.version(3).stores({
+      beans: '++id, status, roastedAt, createdAt',
+      equipment: '++id, type, createdAt',
+      recipes: '++id, method, createdAt',
+      extractions: '++id, method, beanId, recipeId, flag, rating, createdAt',
+      settings: '++id',
+    }).upgrade(() => {
+      // recipeId is optional. Existing extractions keep it undefined, so no data changes.
+    });
   }
 }
 

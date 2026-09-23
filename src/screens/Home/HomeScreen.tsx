@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDb } from '../../hooks/useDb';
-import { Stars, MethodBadge, Empty, RoastDot, DaysOffRoast, FlagMark, Button } from '../../components/UI';
+import { Stars, MethodBadge, Empty, RoastDot, DaysOffRoast, FlagMark, Button, StockMeter } from '../../components/UI';
 import { Icon } from '../../components/Icons';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
+import { useApp } from '../../context/AppContext';
+import { beanStockView, summariseUsage } from '../../utils/beanStock';
 import { sampleNo, previousShot, fmtDelta, nextShotFrom } from '../../utils/shots';
 import i18n from '../../i18n';
 import type { Extraction, Bean } from '../../db/types';
@@ -36,6 +38,7 @@ export function HomeScreen() {
   const db = useDb();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { state } = useApp();
 
   const [extractions, setExtractions] = useState<Extraction[]>([]);
   const [beans, setBeans] = useState<Bean[]>([]);
@@ -56,6 +59,11 @@ export function HomeScreen() {
     : [];
 
   const shelf = beans.filter(b => b.status === 'active');
+  const usageByBean = summariseUsage(extractions);
+  const runningLow = shelf
+    .filter(b => b.weightG != null)
+    .map(b => ({ bean: b, stock: beanStockView(b, usageByBean.get(b.id!), state.settings.defaultMethod, new Date()) }))
+    .filter(x => x.stock.isLow);
 
   const startNext = () => {
     if (last) navigate('/log', { state: nextShotFrom(last) });
@@ -164,6 +172,28 @@ export function HomeScreen() {
           {trail.length === 1 && (
             <p className={s.trailNote}>{t('home.firstSample', { method: t(`methods.${last!.method}`) })}</p>
           )}
+        </section>
+      )}
+
+      {runningLow.length > 0 && (
+        <section className={s.block}>
+          <div className="section-label">
+            <span className="t-upper">{t('home.runningLow')}</span>
+          </div>
+          {runningLow.map(({ bean, stock }) => (
+            <button type="button" key={bean.id} className="ledger-row" onClick={() => navigate(`/beans/${bean.id}`)}>
+              <RoastDot level={bean.roast} />
+              <span className="ledger-main">
+                <span className="ledger-title">{bean.name}</span>
+                <span className="ledger-sub">
+                  {[bean.roaster, stock.servings !== null ? t('beans.stock.servingsLeft', { count: stock.servings }) : null].filter(Boolean).join(' · ')}
+                </span>
+              </span>
+              <span className="ledger-aside">
+                <StockMeter weightG={bean.weightG ?? 0} initialWeightG={bean.initialWeightG} servings={stock.servings} isLow compact />
+              </span>
+            </button>
+          ))}
         </section>
       )}
 
