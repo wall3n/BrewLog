@@ -626,19 +626,27 @@
       "title": "Diagramme de contrôle SCA",
       "eyAxis": "Rendement d’extraction (%)",
       "empty": "Enregistrez un filtre avec une mesure TDS pour le voir ici.",
-      "note": "Filtres uniquement. La zone ombrée est la zone idéale SCA. BrewLog retire 2 g d’eau par gramme de café pour le marc humide.",
+      "note": "Filtres uniquement. Les bandes ombrées sont la force idéale SCA (TDS 1,15–1,35 %) et l’extraction idéale (EY 18–22 %). Leur croisement est la zone idéale. BrewLog retire 2 g d’eau par gramme de café pour le marc humide.",
       "tdsAxis": "TDS (%)",
       "summary_one": "{{ideal}} extraction sur {{count}} dans la zone idéale",
       "summary_other": "{{ideal}} extractions sur {{count}} dans la zone idéale",
-      "hint": "Touchez un point pour ouvrir l’extraction."
+      "hint": "Touchez un point pour ouvrir l’extraction.",
+      "ratioAxis": "Ratio : g de café par L d’eau",
+      "ratioLine": "{{g}} g",
+      "offChart_one": "{{count}} extraction est hors du diagramme. Elle apparaît sur le bord le plus proche.",
+      "offChart_other": "{{count}} extractions sont hors du diagramme. Elles apparaissent sur le bord le plus proche.",
+      "figure": "Diagramme de contrôle SCA avec {{count}} extractions"
     },
     "zones": {
-      "ideal": "Idéal",
-      "under": "Sous-extrait",
-      "over": "Sur-extrait",
-      "weak": "Faible",
+      "strongUnder": "Fort\nsous-développé",
       "strong": "Fort",
-      "underdeveloped": "Sous-extrait et faible"
+      "strongBitter": "Fort\namer",
+      "under": "Sous-développé",
+      "ideal": "Idéal",
+      "bitter": "Amer",
+      "weakUnder": "Faible\nsous-développé",
+      "weak": "Faible",
+      "weakBitter": "Faible\namer"
     },
     "drivers": {
       "title": "Ce qui influence votre note",

@@ -626,19 +626,27 @@
       "title": "Carta de control SCA",
       "eyAxis": "Rendimiento de extracción (%)",
       "empty": "Registra un filtro con lectura de TDS para verlo aquí.",
-      "note": "Solo filtros. La zona sombreada es la zona ideal SCA. BrewLog resta 2 g de agua por gramo de café por el poso húmedo.",
+      "note": "Solo filtros. Las bandas sombreadas son la fuerza ideal SCA (TDS 1,15–1,35 %) y la extracción ideal (EY 18–22 %). Donde se cruzan está la zona ideal. BrewLog resta 2 g de agua por gramo de café por el poso húmedo.",
       "tdsAxis": "TDS (%)",
       "summary_one": "{{ideal}} de {{count}} extracción en la zona ideal",
       "summary_other": "{{ideal}} de {{count}} extracciones en la zona ideal",
-      "hint": "Toca un punto para abrir la extracción."
+      "hint": "Toca un punto para abrir la extracción.",
+      "ratioAxis": "Ratio: g de café por L de agua",
+      "ratioLine": "{{g}} g",
+      "offChart_one": "{{count}} extracción está fuera de la carta. Se muestra en el borde más cercano.",
+      "offChart_other": "{{count}} extracciones están fuera de la carta. Se muestran en el borde más cercano.",
+      "figure": "Carta de control SCA con {{count}} extracciones"
     },
     "zones": {
-      "ideal": "Ideal",
-      "under": "Subextraído",
-      "over": "Sobreextraído",
-      "weak": "Débil",
+      "strongUnder": "Fuerte\nsubdesarrollado",
       "strong": "Fuerte",
-      "underdeveloped": "Subextraído y débil"
+      "strongBitter": "Fuerte\namargo",
+      "under": "Subdesarrollado",
+      "ideal": "Ideal",
+      "bitter": "Amargo",
+      "weakUnder": "Débil\nsubdesarrollado",
+      "weak": "Débil",
+      "weakBitter": "Débil\namargo"
     },
     "drivers": {
       "title": "Qué mueve tu valoración",

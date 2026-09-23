@@ -68,3 +68,20 @@
 .beanField { margin-bottom: 16px; max-width: 360px; }
 .beanSelect { width: 100%; cursor: pointer; }
 .axisCaption { display: block; margin-top: 6px; text-align: center; }
+
+/* SCA brewing control chart. Portrait on phones like the printed chart, wider on desktop.
+   Its own ruled grid replaces the 12px grid paper, so the box has no grid-paper class. */
+.scaBox { padding-right: 0; }
+.scaPlot { height: 420px; }
+@media (min-width: 640px) { .scaPlot { height: 480px; } }
+.zoneName, .zoneIdeal {
+  font-family: var(--font-sans); font-size: 10px; font-weight: 600; font-variation-settings: 'wdth' 75;
+  letter-spacing: 0.07em; text-transform: uppercase; fill: var(--text-secondary);
+  stroke: var(--bg-surface); stroke-width: 3px; stroke-linejoin: round; paint-order: stroke;
+  pointer-events: none;
+}
+.zoneIdeal { font-size: 11px; font-weight: 700; fill: var(--text-primary); }
+.ratioFigure { font-family: var(--font-sans); font-size: 10.5px; font-weight: 500; fill: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.ratioKey { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; font-size: 12.5px; color: var(--text-secondary); }
+.ratioSwatch { flex: none; width: 18px; height: 1.25px; background: var(--text-tertiary); transform: rotate(-35deg); }
+@media (min-width: 640px) { .zoneName { font-size: 11px; } .zoneIdeal { font-size: 12px; } }

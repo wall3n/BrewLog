@@ -1,5 +1,5 @@
 import type { Extraction } from '../db/types';
-import { brewEY, beverageWeight as beverageWeightOf, getSCAZone, isFilterMethod, type SCAZone } from './scaChart';
+import { brewEY, beverageWeight as beverageWeightOf, controlZone, isFilterMethod, type ControlZone } from './scaChart';
 
 export { ABSORPTION_G_PER_G } from './scaChart';
 export const MIN_DRIVER_SAMPLES = 5;
@@ -12,7 +12,7 @@ export interface ControlPoint {
   id: number;
   ey: number;
   tds: number;
-  zone: SCAZone;
+  zone: ControlZone;
   rating: number;
   createdAt: string;
 }
@@ -49,7 +49,7 @@ export function toControlPoints(extractions: readonly Extraction[]): readonly Co
     const raw = brewEY(e.method, e.dose, e.yield, e.tds);
     if (raw === null) return [];
     const ey = round(raw, 1);
-    return [{ id: e.id, ey, tds: e.tds, zone: getSCAZone(ey, e.tds), rating: e.rating, createdAt: e.createdAt }];
+    return [{ id: e.id, ey, tds: e.tds, zone: controlZone(ey, e.tds), rating: e.rating, createdAt: e.createdAt }];
   });
 }
 

@@ -626,19 +626,27 @@
       "title": "SCA brewing control chart",
       "eyAxis": "Extraction yield (%)",
       "empty": "Log a filter brew with a TDS reading to see it here.",
-      "note": "Filter brews only. The shaded box is the SCA ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds.",
+      "note": "Filter brews only. The shaded bands are the SCA ideal strength (TDS 1.15–1.35 %) and extraction (EY 18–22 %). Where they cross is the ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds.",
       "tdsAxis": "TDS (%)",
       "summary_one": "{{ideal}} of {{count}} brew in the ideal zone",
       "summary_other": "{{ideal}} of {{count}} brews in the ideal zone",
-      "hint": "Tap a dot to open the brew."
+      "hint": "Tap a dot to open the brew.",
+      "ratioAxis": "Brew ratio: g of coffee per L of water",
+      "ratioLine": "{{g}} g",
+      "offChart_one": "{{count}} brew is off the chart. It shows on the nearest edge.",
+      "offChart_other": "{{count}} brews are off the chart. They show on the nearest edge.",
+      "figure": "SCA brewing control chart with {{count}} brews"
     },
     "zones": {
-      "ideal": "Ideal",
-      "under": "Under-extracted",
-      "over": "Over-extracted",
-      "weak": "Weak",
+      "strongUnder": "Strong\nunderdeveloped",
       "strong": "Strong",
-      "underdeveloped": "Under-extracted and weak"
+      "strongBitter": "Strong\nbitter",
+      "under": "Underdeveloped",
+      "ideal": "Ideal",
+      "bitter": "Bitter",
+      "weakUnder": "Weak\nunderdeveloped",
+      "weak": "Weak",
+      "weakBitter": "Weak\nbitter"
     },
     "drivers": {
       "title": "What moves your rating",
