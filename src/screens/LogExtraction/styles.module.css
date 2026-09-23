@@ -59,7 +59,35 @@
 .timerCaption { font-size: 13px; color: var(--text-secondary); }
 .timerControls { display: grid; grid-template-columns: 1fr 56px; gap: 8px; }
 .timerMain { width: 100%; }
-.stages { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.stages { display: flex; flex-direction: column; margin-top: 4px; }
+.stagesHead {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.stagesRecipe {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 13.5px; font-weight: 500; color: var(--text-secondary);
+}
+.stageList { list-style: none; margin: 0; padding: 0; }
+.stageList :global(.pour-stage:last-child) { border-bottom: none; }
+
+/* Saved recipe picker and the guided brew entry, above the timer face */
+.recipePick { display: flex; flex-direction: column; gap: 8px; }
+.recipeChips { gap: 6px; padding-top: 2px; padding-bottom: 2px; scroll-padding-inline: 16px; }
+.recipeChips :global(.tag) { flex: 0 0 auto; white-space: nowrap; }
+.guidedBtn {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+  width: 100%; min-height: 54px; margin-top: 4px; padding: 10px 16px;
+  background: transparent; border: 1px solid var(--accent); border-radius: var(--radius);
+  color: var(--accent); text-align: left; cursor: pointer;
+  transition: background 120ms var(--ease-out), transform 90ms var(--ease-out);
+}
+.guidedBtn svg { stroke: var(--accent); }
+.guidedBtn:active { transform: scale(0.98); }
+@media (hover: hover) { .guidedBtn:hover { background: var(--accent-bg); } }
+.guidedLabel { font-size: 16px; font-weight: 600; }
+.guidedMeta { font-size: 13.5px; font-weight: 500; color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .guidedBtn { transition: none; } .guidedBtn:active { transform: none; } }
 
 /* EY */
 .eyCell { display: flex; flex-direction: column; gap: 6px; }

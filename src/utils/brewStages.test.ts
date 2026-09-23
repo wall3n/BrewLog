@@ -177,3 +177,42 @@ describe('recipe choice on the timer step', () => {
     expect(recipeIdToSave({ recipeId: 99 }, forMethod)).toBeNull();
   });
 });
+
+// The brew sheet is one screen. It derives the chip on every render from the loaded
+// recipes and the draft, so the default must never replace a choice the user made.
+describe('recipe choice on the single-screen brew sheet', () => {
+  const a = recipe({ id: 1, createdAt: '2026-01-01T00:00:00.000Z' });
+  const b = recipe({ id: 2, lastUsedAt: '2026-09-12T00:00:00.000Z' });
+  const esp = recipe({ id: 3, method: 'espresso' });
+  const newBrew: RecipeDraft = { recipeId: null };
+
+  it('selects nothing until the recipes load, then the default', () => {
+    expect(initialRecipeChoice([], newBrew)).toBeNull();
+    expect(initialRecipeChoice([a, b], newBrew)).toBe(2);
+  });
+
+  it('keeps a tapped chip when the recipes load again', () => {
+    const draft = { ...newBrew, ...recipePatchOnChoose(1) };
+    const reloaded = [a, recipe({ id: 2, lastUsedAt: '2026-09-20T00:00:00.000Z' })];
+    expect(initialRecipeChoice(reloaded, draft)).toBe(1);
+  });
+
+  it('restores the tapped chip after a switch to another method and back', () => {
+    const draft = { ...newBrew, ...recipePatchOnChoose(1) };
+    expect(initialRecipeChoice([esp], draft)).toBe(3);
+    expect(initialRecipeChoice([a, b], draft)).toBe(1);
+  });
+
+  it('keeps No recipe across method changes', () => {
+    const draft = { ...newBrew, ...recipePatchOnChoose(null) };
+    expect(initialRecipeChoice([esp], draft)).toBeNull();
+    expect(initialRecipeChoice([a, b], draft)).toBeNull();
+    expect(recipeIdToSave(draft, [a, b])).toBeNull();
+  });
+
+  it('links a Start brew recipe again when the user switches back to its method', () => {
+    const draft: RecipeDraft = { recipeId: 1 };
+    expect(recipeIdToSave(draft, [esp])).toBeNull();
+    expect(recipeIdToSave(draft, [a, b])).toBe(1);
+  });
+});

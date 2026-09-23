@@ -360,7 +360,10 @@
     "done": "Done · use {{time}}",
     "stages": "Pour stages",
     "recipe": "Recipe",
-    "noRecipe": "No recipe"
+    "noRecipe": "No recipe",
+    "savedRecipe": "Saved recipe",
+    "summary_one": "{{count}} pour · {{time}}",
+    "summary_other": "{{count}} pours · {{time}}"
   },
   "beans": {
     "title": "Beans",

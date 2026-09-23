@@ -360,7 +360,10 @@
     "done": "Terminé · utiliser {{time}}",
     "stages": "Étapes de versement",
     "recipe": "Recette",
-    "noRecipe": "Sans recette"
+    "noRecipe": "Sans recette",
+    "savedRecipe": "Recette enregistrée",
+    "summary_one": "{{count}} versement · {{time}}",
+    "summary_other": "{{count}} versements · {{time}}"
   },
   "beans": {
     "title": "Cafés",

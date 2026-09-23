@@ -61,14 +61,15 @@ export function pickDefaultRecipe(
 // The recipe fields of the log wizard draft.
 // recipeId is the recipe the brew is linked to on save. Only Start brew, an edited brew,
 // a finished guided brew, or "No recipe" (null) write it.
-// recipeChoice is the chip selected on the timer step. undefined means not chosen yet.
+// recipeChoice is the chip the user tapped in the Time section. undefined means not chosen yet.
 export interface RecipeDraft {
   recipeId: number | null;
   recipeChoice?: number | null;
   isEditing?: boolean;
 }
 
-// The chip to select when the timer step opens. It is a UI preselection only.
+// The chip to show as selected. The brew sheet derives it on every render; it is a UI
+// preselection only and never links a recipe by itself.
 export function initialRecipeChoice(forMethod: readonly Recipe[], draft: RecipeDraft): number | null {
   const has = (id: number | null | undefined): boolean => forMethod.some(r => r.id === id);
   if (draft.recipeChoice === null) return null;

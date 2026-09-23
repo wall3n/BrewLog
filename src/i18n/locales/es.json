@@ -360,7 +360,10 @@
     "done": "Listo · usar {{time}}",
     "stages": "Etapas de vertido",
     "recipe": "Receta",
-    "noRecipe": "Sin receta"
+    "noRecipe": "Sin receta",
+    "savedRecipe": "Receta guardada",
+    "summary_one": "{{count}} vertido · {{time}}",
+    "summary_other": "{{count}} vertidos · {{time}}"
   },
   "beans": {
     "title": "Cafés",
