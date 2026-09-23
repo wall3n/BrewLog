@@ -544,6 +544,7 @@
     "lastUsedLabel": "Último uso"
   },
   "share": {
+    "section": "Compartir",
     "image": "Compartir imagen",
     "link": "Compartir enlace",
     "preparing": "Preparando imagen…",

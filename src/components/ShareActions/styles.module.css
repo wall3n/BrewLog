@@ -1,17 +1,21 @@
-.root    { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+/* A ruled block on the sheet: section rule, printed label, then two ghost controls. */
+.root { margin-bottom: 32px; }
+.note { margin: -4px 0 12px; max-width: 60ch; font-size: 13.5px; line-height: 1.45; color: var(--text-secondary); }
 
-/* Two buttons share a row. A long label (e.g. French "Préparation de l’image…") wraps its button onto its own row. */
-.buttons { display: flex; flex-wrap: wrap; gap: 12px; }
-.buttons > .action { flex: 1 1 160px; min-height: 44px; white-space: nowrap; }
+.buttons { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+/* Image and link share one row from phone width up; a long label wraps inside its button. */
+.pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.buttons > .action { white-space: normal; text-align: center; line-height: 1.2; }
 
-/* The ghost button has no disabled look of its own. Keep it calm while the image renders. */
+/* While the image renders the control stays readable, not faded: it is waiting, not unavailable. */
 .buttons > .action:disabled {
-  opacity: 0.55;
+  opacity: 1;
   cursor: progress;
-  border-color: var(--border);
-  color: var(--text-secondary);
+  color: var(--text-tertiary);
+  border-style: dashed;
   transform: none;
 }
 
-.status      { min-height: 18px; font-size: 12px; letter-spacing: 0.02em; text-align: center; color: var(--text-secondary); }
+.status { margin: 8px 0 0; min-height: 18px; font-size: 12.5px; line-height: 1.45; color: var(--text-secondary); }
+.status:empty { margin-top: 0; }
 .statusError { color: var(--danger); }

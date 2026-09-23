@@ -10,11 +10,13 @@ export interface ShareActionsProps {
   model: CardModel | null;
   fileName: string;
   link?: string;
+  /** Printed under the label, e.g. why a recipe cannot travel as a link */
+  note?: string;
 }
 
 type Status = ShareOutcome | 'failed' | null;
 
-export function ShareActions({ model, fileName, link }: ShareActionsProps) {
+export function ShareActions({ model, fileName, link, note }: ShareActionsProps) {
   const { t } = useTranslation();
   const [rendered, setRendered] = useState<{ model: CardModel; blob: Blob } | null>(null);
   const [status, setStatus] = useState<Status>(null);
@@ -47,8 +49,10 @@ export function ShareActions({ model, fileName, link }: ShareActionsProps) {
     : null;
 
   return (
-    <div className={s.root}>
-      <div className={s.buttons}>
+    <section className={s.root} aria-label={t('share.section')}>
+      <div className="section-label"><span className="t-upper">{t('share.section')}</span></div>
+      {note && <p className={s.note}>{note}</p>}
+      <div className={`${s.buttons} ${link ? s.pair : ''}`}>
         <Button variant="ghost" full leftIcon="share" className={s.action} disabled={!blob} aria-busy={!blob}
           onClick={() => { if (blob) void run(() => shareImage(blob, fileName, title)); }}>
           {blob ? t('share.image') : t('share.preparing')}
@@ -59,7 +63,7 @@ export function ShareActions({ model, fileName, link }: ShareActionsProps) {
           </Button>
         )}
       </div>
-      <span className={`t-mono ${s.status} ${status === 'failed' ? s.statusError : ''}`} aria-live="polite">{message}</span>
-    </div>
+      <p className={`${s.status} ${status === 'failed' ? s.statusError : ''}`} aria-live="polite">{message}</p>
+    </section>
   );
 }

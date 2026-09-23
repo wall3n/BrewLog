@@ -81,11 +81,11 @@ export function RecipeDetail() {
         </section>
       )}
 
-      {!link && <p className={s.shareNote}>{t('share.linkBlocked')}</p>}
       <ShareActions
         model={shareModel}
         fileName={`brewlog-recipe-${r.id}.png`}
         link={link}
+        note={link ? undefined : t('share.linkBlocked')}
       />
       <div className={s.actionRow}>
         <Button full size="lg" leftIcon="play" onClick={() => navigate('/log', { state: { method: r.method, ratio: r.ratio, dose: r.dose, yield: r.yield, timeS: r.time, temp: r.temp } })}>
