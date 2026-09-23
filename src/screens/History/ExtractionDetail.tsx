@@ -5,6 +5,7 @@ import { useDb } from '../../hooks/useDb';
 import { Button, BackBar, Stars, MethodBadge, Empty, FlagMark } from '../../components/UI';
 import { fmtRelDate, fmtTime } from '../../utils/formatters';
 import { sampleNo, nextShotFrom } from '../../utils/shots';
+import { brewEY } from '../../utils/scaChart';
 import type { Extraction, Bean, Equipment } from '../../db/types';
 import s from './styles.module.css';
 
@@ -41,7 +42,7 @@ export function ExtractionDetail() {
   if (notFound) return <div><BackBar onClick={() => navigate('/history')} label={t('extraction.backToHistory')} /><Empty icon="flask" title={t('extraction.notFound')} /></div>;
   if (!ext) return null;
 
-  const ey = ext.tds && ext.dose ? (ext.tds / 100) * ext.yield / ext.dose * 100 : null;
+  const ey = ext.tds ? brewEY(ext.method, ext.dose, ext.yield, ext.tds) : null;
   const pressureMethod = ext.method === 'espresso' || ext.method === 'moka-pot';
 
   const readout: ReadoutItem[] = [
