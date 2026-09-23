@@ -1,5 +1,7 @@
-/* Guided brew: full-screen, read at arm's length next to the kettle.
-   Order of importance: clock, target weight, countdown, stage list, controls. */
+/* Guided brew: a full-screen timer sheet, read at arm's length next to the kettle.
+   Order of importance: clock, target weight, countdown, stage list, controls.
+   Lab sheet rules apply: graphite print, ink for the running clock and recipe values,
+   grid paper only behind the clock face, ruled rows instead of cards. */
 
 .overlay {
   position: fixed;
@@ -7,7 +9,7 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   height: 100dvh;
   padding:
     calc(8px + env(safe-area-inset-top))
@@ -20,112 +22,134 @@
   overscroll-behavior: contain;
 }
 
-/* Header */
-.head       { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
-.recipeName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Header: the recipe name is the heading; close sits at the far edge */
+.head { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
+.recipeName {
+  margin: 0; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 20px; font-weight: 650; font-variation-settings: 'wdth' 82; letter-spacing: -0.01em; line-height: 1.05;
+}
 .close {
   flex: none;
   display: inline-flex; align-items: center; justify-content: center;
-  width: 48px; height: 48px; margin-right: -12px;
-  background: none; border: 0; border-radius: 999px;
-  color: var(--text-secondary); cursor: pointer;
+  width: 48px; height: 48px; margin-right: -10px;
+  background: none; border: 0; border-radius: var(--radius);
+  color: var(--text-primary); cursor: pointer;
+  transition: background 120ms var(--ease-out);
 }
-@media (hover: hover) { .close:hover { color: var(--text-primary); background: var(--bg-elevated); } }
-.close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (hover: hover) { .close:hover { background: var(--bg-elevated); } }
 
-/* Hero */
-.hero { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-
+/* Clock face: the one grid-paper box on this screen */
+.face {
+  flex: none;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 12px 18px;
+  border: 1px solid var(--border); border-radius: 2px;
+  text-align: center;
+}
 .clock {
-  font-size: clamp(80px, 27vw, 152px);
-  font-weight: 300;
+  /* Past the 80px sheet timer on purpose: read at arm's length from the kettle. */
+  font-size: clamp(80px, 26vw, 152px);
+  font-weight: 400;
+  font-variation-settings: 'wdth' 90;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.04em;
   line-height: 0.95;
-  color: var(--text-primary);
-  transition: color 200ms ease-out;
+  color: var(--text-secondary);
+  transition: color 120ms var(--ease-out);
 }
-.clockPaused { color: var(--text-secondary); }
+.clockRunning { color: var(--accent); }
 
-.now        { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; max-width: 100%; }
-.stageLabel { font-size: 30px; line-height: 1.1; text-wrap: balance; }
+.now        { display: flex; flex-direction: column; align-items: center; gap: 2px; max-width: 100%; }
+.stageLabel {
+  font-size: 28px; font-weight: 650; font-variation-settings: 'wdth' 82;
+  letter-spacing: -0.01em; line-height: 1.1; text-wrap: balance;
+}
 .target {
-  font-size: 34px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  font-size: 30px; font-weight: 500; font-variation-settings: 'wdth' 88;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1.1;
   color: var(--accent);
 }
 
+/* Countdown to the next pour */
 .next {
-  min-height: 1.4em;
-  font-size: 16px;
+  flex: none;
+  min-height: 1.45em;
+  font-size: 16px; font-weight: 500;
   font-variant-numeric: tabular-nums;
   text-align: center;
   color: var(--text-secondary);
-  transition: color 150ms ease-out;
+  transition: color 120ms var(--ease-out);
 }
-.imminent { color: var(--warning); font-weight: 500; }
+/* The last seconds before a pour: heavier graphite and a slow pulse, no outcome colour. */
+.imminent { color: var(--text-primary); font-weight: 700; }
 
-.progress     { width: 100%; display: flex; flex-direction: column; gap: 6px; }
-.progressMeta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-tertiary); font-variant-numeric: tabular-nums; }
+.progress     { flex: none; display: flex; flex-direction: column; gap: 6px; }
+.progressMeta {
+  display: flex; justify-content: space-between;
+  font-size: 11.5px; font-weight: 600; font-variation-settings: 'wdth' 75; letter-spacing: 0.07em;
+  font-variant-numeric: tabular-nums; color: var(--text-tertiary);
+}
 
-/* Stage list: takes the space that is left and scrolls on short screens */
+/* Stage list: a ruled block that takes the space left and scrolls on short screens */
+.stagesBlock { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+.stagesLabel { flex: none; margin-bottom: 0; padding-bottom: 8px; }
 .stages {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 12px;
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-bottom: 12px;
   scrollbar-width: none;
   /* Fade the bottom edge so a cut-off row reads as "more below". */
   mask-image: linear-gradient(to bottom, currentColor calc(100% - 20px), transparent);
 }
 .stages::-webkit-scrollbar { display: none; }
 .stage {
-  flex: none;
   display: grid;
-  grid-template-columns: 24px 1fr auto auto;
+  grid-template-columns: 28px 1fr auto auto;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-surface);
-  transition: border-color 150ms ease-out, background 150ms ease-out, opacity 150ms ease-out;
+  min-height: 52px;
+  padding: 8px 8px 8px 0;
+  border-bottom: 1px solid var(--border);
+  transition: background 120ms var(--ease-out), color 120ms var(--ease-out);
 }
-.stageActive { border-color: var(--accent); background: var(--accent-bg); }
-.stageDone   { opacity: 0.55; }
-.stageNum    { display: inline-flex; font-family: var(--serif); font-size: 20px; line-height: 1; color: var(--text-tertiary); }
+.stageActive { background: var(--accent-bg); }
+.stageDone   { color: var(--text-tertiary); }
+.stageNum {
+  display: inline-flex; justify-content: center;
+  font-size: 16px; font-weight: 700; font-variation-settings: 'wdth' 75; line-height: 1;
+  color: var(--text-tertiary);
+}
 .stageActive .stageNum { color: var(--accent); }
-.stageDone .stageNum   { color: var(--success); }
-.stageName   { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 13px; letter-spacing: 0.02em; }
-.stageActive .nowBadge { color: var(--accent); }
-.stageTime   { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
-.stageWeight { font-size: 13px; min-width: 5ch; text-align: right; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+.stageName   { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 15px; font-weight: 500; }
+.stageText   { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stageActive .stageName { font-weight: 650; }
+.nowBadge    { color: var(--text-primary); }
+.stageTime   { font-size: 14px; font-variant-numeric: tabular-nums; color: var(--text-secondary); }
+.stageWeight { min-width: 5ch; text-align: right; font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--accent); }
+.stageDone .stageTime, .stageDone .stageWeight { color: var(--text-tertiary); }
+.unit        { margin-left: 2px; font-size: 14px; color: var(--text-secondary); }
 
-/* Controls: large touch targets, reachable with one thumb */
-.controls { flex: none; display: grid; grid-template-columns: 1fr 2fr; gap: 10px; }
+/* Controls: big targets, reachable with one thumb */
+.controls { flex: none; display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
 .primary  { display: flex; }
 .ctrl     { min-height: 56px; justify-content: center; }
-.ctrl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.ctrl:disabled { opacity: 0.4; cursor: not-allowed; }
-.pause    { color: var(--text-primary); border-color: var(--text-secondary); }
+.pause    { border-color: var(--text-secondary); }
+.resume   { border-color: var(--accent); color: var(--accent); }
+@media (hover: hover) { .resume:hover:not(:disabled) { background: var(--accent-bg); } }
 .done     { grid-column: 1 / -1; }
 
-/* Short phones (iPhone SE and landscape) */
+/* Short phones (iPhone SE, landscape) */
 @media (max-height: 700px) {
-  .overlay    { gap: 12px; }
-  .clock      { font-size: clamp(64px, 22vw, 104px); }
-  .stageLabel { font-size: 24px; }
+  .overlay    { gap: 10px; }
+  .face       { padding: 14px 12px 12px; gap: 6px; }
+  .clock      { font-size: clamp(64px, 20vw, 104px); }
+  .stageLabel { font-size: 20px; }
   .target     { font-size: 28px; }
-  .stage      { padding: 10px 12px; }
+  .stage      { min-height: 46px; }
 }
 
 @media (min-width: 1024px) {
@@ -137,14 +161,14 @@
   .clock { font-size: 168px; }
 }
 
-/* Motion: a short entrance, and a pulse on the countdown in the last seconds.
-   Both are off when the user asks for reduced motion. */
+/* Motion: one quiet entrance and a slow pulse on the countdown in the last seconds.
+   Both stop when the user asks for reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .overlay  { animation: guided-in 220ms cubic-bezier(0.16, 1, 0.3, 1); }
-  .imminent { animation: guided-pulse 1s ease-out infinite; }
+  .overlay  { animation: guided-in 220ms var(--ease-out); }
+  .imminent { animation: guided-pulse 1s var(--ease-out) infinite; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .clock, .next, .stage { transition: none; }
+  .clock, .next, .stage, .close { transition: none; }
 }
 
 @keyframes guided-in {

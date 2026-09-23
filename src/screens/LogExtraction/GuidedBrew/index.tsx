@@ -66,69 +66,73 @@ export function GuidedBrew({ recipe, onDone, onClose }: GuidedBrewProps) {
 
   return createPortal(
     <div className={s.overlay} role="dialog" aria-modal="true" aria-label={t('guidedBrew.title')}>
-      <div className={s.head}>
-        <span className={`t-upper ${s.recipeName}`}>{recipe.name}</span>
+      <header className={s.head}>
+        <h2 className={s.recipeName}>{recipe.name}</h2>
         <button type="button" className={s.close} onClick={onClose} aria-label={t('guidedBrew.close')}>
           <Icon name="x" size={24} />
         </button>
-      </div>
+      </header>
 
-      <div className={s.hero}>
-        <div className={`t-mono ${s.clock} ${isRunning ? '' : s.clockPaused}`}>{fmtTime(seconds)}</div>
-
+      <div className={`grid-paper ${s.face}`}>
+        <div className={`${s.clock} ${isRunning ? s.clockRunning : ''}`}>{fmtTime(seconds)}</div>
         <div className={s.now} aria-live="polite" aria-atomic="true">
-          <span className={`h-display ${s.stageLabel}`}>{stageLabel}</span>
+          <span className={s.stageLabel}>{stageLabel}</span>
           {progress.targetWeightG !== null && (
-            <span className={`t-mono ${s.target}`}>{t('guidedBrew.pourTo', { weight: progress.targetWeightG })}</span>
+            <span className={s.target}>{t('guidedBrew.pourTo', { weight: progress.targetWeightG })}</span>
           )}
         </div>
+      </div>
 
-        <div className={`t-mono ${s.next} ${imminent ? s.imminent : ''}`}>
-          {next && progress.secondsToNext !== null
-            ? t('guidedBrew.nextIn', { label: next.label, time: fmtTime(progress.secondsToNext) })
-            : progress.isLastStage ? t('guidedBrew.finalStage') : null}
-        </div>
+      <div className={`${s.next} ${imminent ? s.imminent : ''}`}>
+        {next && progress.secondsToNext !== null
+          ? t('guidedBrew.nextIn', { label: next.label, time: fmtTime(progress.secondsToNext) })
+          : progress.isLastStage ? t('guidedBrew.finalStage') : null}
+      </div>
 
-        <div className={s.progress}>
-          <ProgressBar value={Math.min(seconds, recipe.time)} max={recipe.time > 0 ? recipe.time : 1} />
-          <div className={`t-mono ${s.progressMeta}`}>
-            <span>{fmtTime(Math.min(seconds, recipe.time))}</span>
-            <span>{fmtTime(recipe.time)}</span>
-          </div>
+      <div className={s.progress}>
+        <ProgressBar value={Math.min(seconds, recipe.time)} max={recipe.time > 0 ? recipe.time : 1} />
+        <div className={s.progressMeta}>
+          <span>{fmtTime(Math.min(seconds, recipe.time))}</span>
+          <span>{fmtTime(recipe.time)}</span>
         </div>
       </div>
 
-      <ol className={s.stages} aria-label={t('guidedBrew.stages')}>
-        {stages.map((stage, i) => {
-          const isActive = i === progress.activeIndex;
-          const isDone = i < progress.activeIndex;
-          return (
-            <li
-              key={stage.id}
-              ref={isActive ? activeRowRef : undefined}
-              className={`${s.stage} ${isActive ? s.stageActive : ''} ${isDone ? s.stageDone : ''}`}
-              aria-current={isActive ? 'step' : undefined}
-            >
-              <span className={s.stageNum}>{isDone ? <Icon name="check" size={16} /> : i + 1}</span>
-              <span className={s.stageName}>
-                {stage.label}
-                {isActive && <span className={`t-upper ${s.nowBadge}`}>{t('guidedBrew.now')}</span>}
-              </span>
-              <span className={`t-mono ${s.stageTime}`}>{fmtTime(stage.timeS)}</span>
-              <span className={`t-mono ${s.stageWeight}`}>{stage.weightG} g</span>
-            </li>
-          );
-        })}
-      </ol>
+      <section className={s.stagesBlock}>
+        <div className={`section-label ${s.stagesLabel}`}><span className="t-upper">{t('guidedBrew.stages')}</span></div>
+        <ol className={s.stages} aria-label={t('guidedBrew.stages')}>
+          {stages.map((stage, i) => {
+            const isActive = i === progress.activeIndex;
+            const isDone = i < progress.activeIndex;
+            return (
+              <li
+                key={stage.id}
+                ref={isActive ? activeRowRef : undefined}
+                className={`${s.stage} ${isActive ? s.stageActive : ''} ${isDone ? s.stageDone : ''}`}
+                aria-current={isActive ? 'step' : undefined}
+              >
+                <span className={s.stageNum}>{isDone ? <Icon name="check" size={16} /> : i + 1}</span>
+                <span className={s.stageName}>
+                  <span className={s.stageText}>{stage.label}</span>
+                  {isActive && <span className={`t-upper ${s.nowBadge}`}>{t('guidedBrew.now')}</span>}
+                </span>
+                <span className={s.stageTime}>{fmtTime(stage.timeS)}</span>
+                <span className={s.stageWeight}>{stage.weightG}<span className={s.unit}>g</span></span>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
 
       <div className={s.controls}>
         <Button size="lg" variant="ghost" className={s.ctrl} onClick={handleReset} leftIcon="reset" disabled={!started}>
           {t('extraction.steps.timer.reset')}
         </Button>
         <div ref={primaryRef} className={s.primary}>
-          {!isRunning
-            ? <Button size="lg" full className={s.ctrl} onClick={handleStart} leftIcon="play">{t('extraction.steps.timer.start')}</Button>
-            : <Button size="lg" full variant="ghost" className={`${s.ctrl} ${s.pause}`} onClick={pause} leftIcon="pause">{t('extraction.steps.timer.pause')}</Button>}
+          {isRunning
+            ? <Button size="lg" full variant="ghost" className={`${s.ctrl} ${s.pause}`} onClick={pause} leftIcon="pause">{t('extraction.steps.timer.pause')}</Button>
+            : started
+              ? <Button size="lg" full variant="ghost" className={`${s.ctrl} ${s.resume}`} onClick={handleStart} leftIcon="play">{t('sheet.resume')}</Button>
+              : <Button size="lg" full className={s.ctrl} onClick={handleStart} leftIcon="play">{t('extraction.steps.timer.start')}</Button>}
         </div>
         <Button size="lg" full variant={started && !isRunning ? 'primary' : 'ghost'} className={`${s.ctrl} ${s.done}`} onClick={handleDone} disabled={!started} leftIcon="check">
           {t('guidedBrew.done', { time: fmtTime(seconds) })}
