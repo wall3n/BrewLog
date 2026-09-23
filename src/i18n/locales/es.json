@@ -540,11 +540,10 @@
     "beansUsed": "Cafés usados",
     "controlChart": {
       "title": "Carta de control SCA",
-      "eyAxis": "Rendimiento de extracción",
-      "tooltip": "EY {{ey}}% · TDS {{tds}}%",
+      "eyAxis": "Rendimiento de extracción (%)",
       "empty": "Registra un filtro con lectura de TDS para verlo aquí.",
-      "note": "Solo filtros. La zona sombreada es la zona ideal SCA. BrewLog resta 2 g de agua por gramo de café por el poso húmedo.",
-      "tdsAxis": "TDS",
+      "note": "Solo filtros. La zona sombreada es la zona ideal SCA. BrewLog resta 2 g de agua por gramo de café por el poso húmedo.",
+      "tdsAxis": "TDS (%)",
       "summary_one": "{{ideal}} de {{count}} extracción en la zona ideal",
       "summary_other": "{{ideal}} de {{count}} extracciones en la zona ideal",
       "hint": "Toca un punto para abrir la extracción."

@@ -540,11 +540,10 @@
     "beansUsed": "Beans used",
     "controlChart": {
       "title": "SCA brewing control chart",
-      "eyAxis": "Extraction yield",
-      "tooltip": "EY {{ey}}% · TDS {{tds}}%",
+      "eyAxis": "Extraction yield (%)",
       "empty": "Log a filter brew with a TDS reading to see it here.",
-      "note": "Filter brews only. The shaded box is the SCA ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds.",
-      "tdsAxis": "TDS",
+      "note": "Filter brews only. The shaded box is the SCA ideal zone. BrewLog subtracts 2 g of water per gram of coffee for the wet grounds.",
+      "tdsAxis": "TDS (%)",
       "summary_one": "{{ideal}} of {{count}} brew in the ideal zone",
       "summary_other": "{{ideal}} of {{count}} brews in the ideal zone",
       "hint": "Tap a dot to open the brew."

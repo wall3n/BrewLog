@@ -540,11 +540,10 @@
     "beansUsed": "Cafés utilisés",
     "controlChart": {
       "title": "Diagramme de contrôle SCA",
-      "eyAxis": "Rendement d’extraction",
-      "tooltip": "EY {{ey}}% · TDS {{tds}}%",
+      "eyAxis": "Rendement d’extraction (%)",
       "empty": "Enregistrez un filtre avec une mesure TDS pour le voir ici.",
-      "note": "Filtres uniquement. La zone ombrée est la zone idéale SCA. BrewLog retire 2 g d’eau par gramme de café pour le marc humide.",
-      "tdsAxis": "TDS",
+      "note": "Filtres uniquement. La zone ombrée est la zone idéale SCA. BrewLog retire 2 g d’eau par gramme de café pour le marc humide.",
+      "tdsAxis": "TDS (%)",
       "summary_one": "{{ideal}} extraction sur {{count}} dans la zone idéale",
       "summary_other": "{{ideal}} extractions sur {{count}} dans la zone idéale",
       "hint": "Touchez un point pour ouvrir l’extraction."

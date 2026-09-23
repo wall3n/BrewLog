@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Icon } from '../../components/Icons';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Stars } from '../../components/UI';
 import { beanTimeline, timelineBeanIds, type TimelinePoint } from '../../utils/analytics';
 import { fmtDate, fmtTime } from '../../utils/formatters';
 import type { Bean, Extraction } from '../../db/types';
@@ -12,9 +12,14 @@ export interface BeanTimelineProps {
   beans: readonly Bean[];
 }
 
-const TICK = { fontSize: 10, fontFamily: 'var(--mono)', fill: 'var(--text-tertiary)' };
-const MARGIN = { top: 8, right: 12, bottom: 0, left: 0 };
+// Printed axis figures: graphite tertiary, the sheet's own face.
+const TICK = { fontSize: 11, fontFamily: 'var(--font-sans)', fill: 'var(--text-tertiary)' };
+const MARGIN = { top: 4, right: 12, bottom: 0, left: 0 };
 const Y_WIDTH = 44;
+// Time and grind are both logged values, so both lines are ink. A surface ring separates the dots.
+const DOT = { r: 4, fill: 'var(--accent)', stroke: 'var(--bg-surface)', strokeWidth: 2 };
+const ACTIVE_DOT = { r: 6, fill: 'var(--accent)', stroke: 'var(--bg-surface)', strokeWidth: 2 };
+const CURSOR = { stroke: 'var(--text-tertiary)', strokeDasharray: '2 3' };
 // Fine grinders step in tenths (2.3, 2.4); keep ticks at 2 decimals at most.
 const fmtGrindTick = (v: number): string => String(Number(v.toFixed(2)));
 
@@ -27,13 +32,22 @@ function TimelineTooltip({ active, payload }: { active?: boolean; payload?: read
   const p: unknown = payload?.[0]?.payload;
   if (!active || !isTimelinePoint(p)) return null;
   return (
-    <div className={s.tooltip}>
-      <div className="t-upper">{t('analytics.timeline.brew', { n: p.n })} · {fmtDate(p.createdAt)}</div>
-      <div className="t-mono">{t('analytics.timeline.time')}: {fmtTime(p.timeS)}</div>
-      {p.grind !== null && <div className="t-mono">{t('analytics.timeline.grind')}: {p.grind}</div>}
+    <div className={s.tip}>
+      <div className={`t-upper ${s.tipHead}`}>{t('analytics.timeline.brew', { n: p.n })} · {fmtDate(p.createdAt)}</div>
+      <div className={s.tipRow}>
+        <span className={s.tipKey}>{t('analytics.timeline.time')}</span>
+        <span className={s.tipLogged}>{fmtTime(p.timeS)}</span>
+      </div>
+      {p.grind !== null && (
+        <div className={s.tipRow}>
+          <span className={s.tipKey}>{t('analytics.timeline.grind')}</span>
+          <span className={s.tipLogged}>{p.grind}</span>
+        </div>
+      )}
       {p.rating > 0 && (
-        <div className={`t-mono row ${s.tooltipRating}`}>
-          <Icon name="starFill" size={12} /> {p.rating}/5
+        <div className={s.tipRow}>
+          <span className={s.tipKey}>{t('extraction.fields.rating')}</span>
+          <Stars value={p.rating} size={9} />
         </div>
       )}
     </div>
@@ -50,60 +64,57 @@ export function BeanTimeline({ extractions, beans }: BeanTimelineProps) {
   const [picked, setPicked] = useState<number | null>(null);
   const beanId = picked !== null && beanIds.includes(picked) ? picked : beanIds[0];
 
-  if (beanId === undefined) return <div className={`t-sec ${s.noData}`}>{t('analytics.timeline.empty')}</div>;
+  if (beanId === undefined) return <p className={s.emptyCell}>{t('analytics.timeline.empty')}</p>;
 
   const points = [...beanTimeline(extractions, beanId)];
   const hasGrind = points.some(p => p.grind !== null);
   const xAxis = (showTicks: boolean) => (
-    <XAxis dataKey="n" tick={showTicks ? TICK : false} tickLine={false} stroke="var(--border)"
+    <XAxis dataKey="n" tick={showTicks ? TICK : false} tickLine={false} stroke="var(--rule-strong)"
       height={showTicks ? 24 : 1} allowDecimals={false} />
   );
 
   return (
-    <div className="col col-gap-12">
-      <label htmlFor={selectId} className={s.srOnly}>{t('analytics.timeline.beanLabel')}</label>
-      <select id={selectId} className={`input-underline ${s.beanSelect}`} value={beanId} onChange={e => setPicked(Number(e.target.value))}>
-        {beanIds.map(id => (
-          <option key={id} value={id}>{beans.find(b => b.id === id)?.name ?? t('common.unknown')}</option>
-        ))}
-      </select>
-      <div className={s.plotBox}>
-        <div className={`${s.seriesLabel} ${s.legendTime}`}>{t('analytics.timeline.time')}</div>
+    <div>
+      <div className={`field ${s.beanField}`}>
+        <label htmlFor={selectId} className="field-label">{t('analytics.timeline.beanLabel')}</label>
+        <select id={selectId} className={`input-underline ${s.beanSelect}`} value={beanId} onChange={e => setPicked(Number(e.target.value))}>
+          {beanIds.map(id => (
+            <option key={id} value={id}>{beans.find(b => b.id === id)?.name ?? t('common.unknown')}</option>
+          ))}
+        </select>
+      </div>
+      <div className={`grid-paper ${s.plotBox}`}>
+        <span className={`t-upper ${s.plotLabel}`}>{t('analytics.timeline.time')}</span>
         <ResponsiveContainer width="100%" height={hasGrind ? 150 : 200}>
           <LineChart data={points} syncId={syncId} margin={MARGIN}>
-            <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
             {xAxis(!hasGrind)}
             {/* Whole seconds only: a 27.5 s tick would print as "00:27.5". */}
-            <YAxis tick={TICK} tickLine={false} stroke="var(--border)" width={Y_WIDTH} domain={['auto', 'auto']}
+            <YAxis tick={TICK} tickLine={false} axisLine={false} width={Y_WIDTH} domain={['auto', 'auto']}
               allowDecimals={false} tickFormatter={(v: number) => fmtTime(Math.round(v))} />
-            <Tooltip content={TimelineTooltip} cursor={{ stroke: 'var(--border)' }} />
+            <Tooltip content={TimelineTooltip} cursor={CURSOR} isAnimationActive={false} />
             <Line dataKey="timeS" stroke="var(--accent)" strokeWidth={2}
-              dot={{ r: 4, fill: 'var(--accent)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
-              activeDot={{ r: 5, fill: 'var(--accent)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
-              isAnimationActive={false} />
+              dot={DOT} activeDot={ACTIVE_DOT} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
-        {hasGrind && (
-          <>
-            <div className={`${s.seriesLabel} ${s.seriesLabelGap} ${s.legendGrind}`}>{t('analytics.timeline.grind')}</div>
-            <ResponsiveContainer width="100%" height={120}>
-              <LineChart data={points} syncId={syncId} margin={MARGIN}>
-                <CartesianGrid stroke="var(--border)" strokeDasharray="2 4" vertical={false} />
-                {xAxis(true)}
-                <YAxis tick={TICK} tickLine={false} stroke="var(--border)" width={Y_WIDTH} domain={['auto', 'auto']}
-                  tickFormatter={fmtGrindTick} />
-                {/* The time chart above shows the shared tooltip; this one only tracks the pointer. */}
-                <Tooltip content={() => null} cursor={{ stroke: 'var(--border)' }} />
-                <Line dataKey="grind" stroke="var(--text-secondary)" strokeWidth={2} strokeDasharray="4 3"
-                  dot={{ r: 4, fill: 'var(--text-secondary)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
-                  activeDot={{ r: 5, fill: 'var(--text-secondary)', stroke: 'var(--bg-surface)', strokeWidth: 2 }}
-                  connectNulls isAnimationActive={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </>
-        )}
-        <div className={`t-ter ${s.axisCaption}`}>{t('analytics.timeline.brewAxis')}</div>
+        {!hasGrind && <span className={`t-upper ${s.axisCaption}`}>{t('analytics.timeline.brewAxis')}</span>}
       </div>
+      {hasGrind && (
+        <div className={`grid-paper ${s.plotBox}`}>
+          <span className={`t-upper ${s.plotLabel}`}>{t('analytics.timeline.grind')}</span>
+          <ResponsiveContainer width="100%" height={120}>
+            <LineChart data={points} syncId={syncId} margin={MARGIN}>
+              {xAxis(true)}
+              <YAxis tick={TICK} tickLine={false} axisLine={false} width={Y_WIDTH} domain={['auto', 'auto']}
+                tickFormatter={fmtGrindTick} />
+              {/* The time chart above shows the shared tooltip; this one only tracks the pointer. */}
+              <Tooltip content={() => null} cursor={CURSOR} />
+              <Line dataKey="grind" stroke="var(--accent)" strokeWidth={2}
+                dot={DOT} activeDot={ACTIVE_DOT} connectNulls isAnimationActive={false} />
+            </LineChart>
+          </ResponsiveContainer>
+          <span className={`t-upper ${s.axisCaption}`}>{t('analytics.timeline.brewAxis')}</span>
+        </div>
+      )}
     </div>
   );
 }

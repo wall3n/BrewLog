@@ -9,13 +9,14 @@ export interface RatingDriversProps {
   extractions: readonly Extraction[];
 }
 
+// Correlations are computed, so the bars and figures print in graphite, not ink.
 export function RatingDrivers({ extractions }: RatingDriversProps) {
   const { t, i18n } = useTranslation();
   const methods = driverMethods(extractions);
   const [picked, setPicked] = useState<string | null>(null);
   const method = picked !== null && methods.includes(picked) ? picked : methods[0];
 
-  if (!method) return <div className={`t-sec ${s.noData}`}>{t('analytics.drivers.empty', { min: MIN_DRIVER_SAMPLES })}</div>;
+  if (!method) return <p className={s.emptyCell}>{t('analytics.drivers.empty', { min: MIN_DRIVER_SAMPLES })}</p>;
 
   const drivers = ratingDrivers(extractions, method);
   const top = drivers[0];
@@ -24,44 +25,51 @@ export function RatingDrivers({ extractions }: RatingDriversProps) {
     minimumFractionDigits: 2, maximumFractionDigits: 2, signDisplay: 'exceptZero',
   });
 
+  // A real minus sign, as in the sheet's deltas.
+  const fmtSigned = (r: number): string => fmtR.format(r).replace('-', '\u2212');
+
   return (
-    <div className="col col-gap-16">
+    <div>
       {methods.length > 1 && (
-        <SegToggle value={method} onChange={setPicked}
-          options={methods.map(m => [m, t(`methods.${m}`, { defaultValue: m })])} />
+        <div className={s.driverToggle}>
+          <SegToggle value={method} onChange={setPicked}
+            options={methods.map(m => [m, t(`methods.${m}`, { defaultValue: m })])} />
+        </div>
       )}
-      <p className={s.driverSummary}>
+      <p className={`${s.summaryLine} ${s.driverSummary} ${topStrength === 'weak' ? s.driverWeakSummary : ''}`}>
         {top && topStrength !== 'weak'
           ? t(`analytics.drivers.${topStrength}`, { param: t(`analytics.drivers.params.${top.key}`).toLowerCase() })
           : t('analytics.drivers.weak')}
       </p>
       {drivers.length > 0 && (
-        <div className="col col-gap-16">
-          <div className={`row row-between ${s.driverScale}`} aria-hidden="true">
-            <span>{t('analytics.drivers.lowerBetter')}</span>
-            <span>{t('analytics.drivers.higherBetter')}</span>
+        <>
+          <div className={s.driverScale} aria-hidden="true">
+            <span className={s.driverScaleEnds}>
+              <span>{t('analytics.drivers.lowerBetter')}</span>
+              <span>{t('analytics.drivers.higherBetter')}</span>
+            </span>
           </div>
-          {drivers.map(d => {
-            const strong = driverStrength(d.r) !== 'weak';
-            return (
-              <div key={d.key}>
-                <div className={`row row-between ${s.driverHead}`}>
-                  <span className={`${s.driverLabel} ${strong ? '' : 't-sec'}`}>{t(`analytics.drivers.params.${d.key}`)}</span>
-                  <span className={`t-mono ${strong ? '' : 't-sec'} ${s.driverValue}`}>{fmtR.format(d.r)}</span>
+          <div className={s.driverList}>
+            {drivers.map(d => {
+              const strong = driverStrength(d.r) !== 'weak';
+              return (
+                <div key={d.key} className={s.driverRow}>
+                  <span className={`${s.driverLabel} ${strong ? '' : s.driverMuted}`}>{t(`analytics.drivers.params.${d.key}`)}</span>
+                  <div className={s.driverTrack}>
+                    {/* runtime values: the bar starts at the centre rule and grows left or right with r */}
+                    <div
+                      className={`${s.driverFill} ${strong ? '' : s.driverFillWeak}`}
+                      style={{ left: `${d.r < 0 ? 50 + d.r * 50 : 50}%`, width: `${Math.abs(d.r) * 50}%` }}
+                    />
+                  </div>
+                  <span className={`${s.driverValue} ${strong ? '' : s.driverMuted}`}>{fmtSigned(d.r)}</span>
                 </div>
-                <div className={s.driverTrack}>
-                  {/* runtime values: the bar starts at the centre line and grows left or right with r */}
-                  <div
-                    className={`${s.driverFill} ${strong ? '' : s.driverWeak}`}
-                    style={{ left: `${d.r < 0 ? 50 + d.r * 50 : 50}%`, width: `${Math.abs(d.r) * 50}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+          <p className={s.plotNote}>{t('analytics.drivers.sample', { n: drivers[0].n })}</p>
+        </>
       )}
-      {drivers.length > 0 && <span className={`t-ter t-mono ${s.chartNote}`}>{t('analytics.drivers.sample', { n: drivers[0].n })}</span>}
     </div>
   );
 }
